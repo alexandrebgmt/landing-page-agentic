@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Database, ShieldCheck, Cpu, ArrowRight, CheckCircle2, Server, BarChart3, Lock } from "lucide-react";
+import { Database, ShieldCheck, Cpu, ArrowRight, CheckCircle2, Server, BarChart3, Lock, Sparkles } from "lucide-react";
 import { LeadFormData } from "@/lib/schema";
+import DataSphere3D from "@/components/DataSphere3D";
 
 export default function Home() {
   const [formData, setFormData] = useState<LeadFormData>({
@@ -41,13 +42,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
-      {/* Header / Navbar */}
+      {/* Header */}
       <header className="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Database className="h-6 w-6 text-cyan-400" />
             <span className="font-semibold text-lg tracking-tight">
-              NexusData <span className="text-cyan-400 text-xs font-mono px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800">AGENTIC</span>
+              NexusData <span className="text-cyan-400 text-xs font-mono px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800">AGENTIC 3D</span>
             </span>
           </div>
           <nav className="flex items-center gap-6 text-sm text-slate-400">
@@ -58,33 +59,26 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="max-w-6xl mx-auto px-6 pt-20 pb-16">
+      {/* Hero Section com Canvas 3D */}
+      <main className="max-w-6xl mx-auto px-6 pt-12 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-400">
-              <Server className="h-3.5 w-3.5" /> Pipelines Resilientes & Engenharia de Dados
+              <Sparkles className="h-3.5 w-3.5" /> Arquitetura de Dados & Inteligência 3D
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight">
               Transforme dados brutos em <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">decisões de alta precisão</span>.
             </h1>
             <p className="text-slate-400 text-lg leading-relaxed">
-              Auditoria de arquitetura de dados, modelagem analítica e pipelines zero-downtime com segurança militar (RLS) e observabilidade completa.
+              Auditoria de arquitetura de dados, modelagem analítica e pipelines com segurança militar (RLS) e observabilidade completa.
             </p>
 
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-900">
-              <div>
-                <p className="text-2xl font-bold text-slate-200 font-mono">99.99%</p>
-                <p className="text-xs text-slate-500">SLA de Pipeline</p>
+            {/* Espaço 3D Interativo */}
+            <div className="relative rounded-2xl bg-slate-900/40 border border-slate-800/80 p-2 overflow-hidden shadow-inner">
+              <div className="absolute top-3 left-4 text-[10px] font-mono text-slate-500 uppercase tracking-wider">
+                Visualização Neural de Dados • Mova o cursor
               </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-200 font-mono">&lt; 200ms</p>
-                <p className="text-xs text-slate-500">Latência Analítica</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-200 font-mono">100%</p>
-                <p className="text-xs text-slate-500">Conformidade LGPD</p>
-              </div>
+              <DataSphere3D />
             </div>
           </div>
 
@@ -162,7 +156,7 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Gargalo / Desafio Principal</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-1">Gargalo Principal</label>
                   <textarea
                     required
                     rows={3}
@@ -189,36 +183,7 @@ export default function Home() {
             )}
           </div>
         </div>
-
-        {/* Pilares da Arquitetura */}
-        <section id="arquitetura" className="mt-28">
-          <h2 className="text-2xl font-bold text-slate-200 mb-8 flex items-center gap-3">
-            <Cpu className="h-6 w-6 text-cyan-400" /> Padrões de Engenharia Aplicados
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl space-y-3">
-              <Lock className="h-6 w-6 text-emerald-400" />
-              <h3 className="font-semibold text-slate-200">Defesa em Profundidade</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Políticas RLS ativas em cada camada, eliminando pontos únicos de exposição e vazamento de dados analíticos.</p>
-            </div>
-            <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl space-y-3">
-              <BarChart3 className="h-6 w-6 text-cyan-400" />
-              <h3 className="font-semibold text-slate-200">Schema Enforcement</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Validação estrita de contratos de dados (Zod) antes de atingir bancos transacionais ou data warehouses.</p>
-            </div>
-            <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-xl space-y-3">
-              <ShieldCheck className="h-6 w-6 text-indigo-400" />
-              <h3 className="font-semibold text-slate-200">Observabilidade Contínua</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Auditoria append-only e telemetria ponta a ponta sem degradação de performance nos endpoints.</p>
-            </div>
-          </div>
-        </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-900 py-8 text-center text-xs text-slate-600">
-        NexusData Architecture • Construído sob princípios de Engenharia de Dados & Agentic Governance.
-      </footer>
     </div>
   );
 }
