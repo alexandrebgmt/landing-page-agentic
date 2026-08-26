@@ -1,0 +1,16 @@
+CAMPAIGN: Arquitetura de Dados
+PERSONAGEM: Robô Analítico de Massinha
+ESTILO: CLAYMATION / BONECO DE MASSA
+
+[CENA 1: APRESENTAÇÃO E GANCHO (0s a 15s)]
+Fala: Olá! Você sabia que Arquitetura de Dados pode transformar os seus resultados hoje mesmo?
+Prompt: A charismatic Robô Analítico de Massinha speaking to camera, neutral mouth open pose ready for lip-sync, in Arquitetura de Dados setting, claymation style, plasticine texture, visible clay fingerprints, stop-motion animation aesthetic, miniature studio lighting, shallow depth of field, handcrafted detailed look, 8k render --ar 16:9
+
+[CENA 2: DEMONSTRAÇÃO DO VALOR (15s a 45s)]
+Fala: Muitas empresas perdem clientes com páginas lentas e perfis sem engajamento. Mas com a nossa estratégia digital, tudo muda!
+Prompt: A charismatic Robô Analítico de Massinha demonstrating digital growth charts and modern interface, dynamic lighting, claymation style, plasticine texture, visible clay fingerprints, stop-motion animation aesthetic, miniature studio lighting, shallow depth of field, handcrafted detailed look, 8k render --ar 16:9
+
+[CENA 3: CHAMADA PARA AÇÃO (45s a 60s)]
+Fala: Clique no link abaixo e solicite agora a análise da sua marca com a nossa equipe!
+Prompt: A charismatic Robô Analítico de Massinha smiling confidently and pointing towards the bottom banner, warm welcoming lighting, claymation style, plasticine texture, visible clay fingerprints, stop-motion animation aesthetic, miniature studio lighting, shallow depth of field, handcrafted detailed look, 8k render --ar 16:9
+
