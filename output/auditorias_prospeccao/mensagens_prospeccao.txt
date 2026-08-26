@@ -1,0 +1,21 @@
+SITE: google.com
+STATUS: ONLINE (HTTP 200)
+PONTOS DE ATENÇÃO: Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo.
+MENSAGEM DE CONTATO:
+Olá! Realizamos uma análise técnica no site google.com e identificamos gargalos que afetam a conversão de clientes: Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo. Podemos implementar uma arquitetura moderna com carregamento instantâneo e identidade visual premium.
+--------------------------------------------------
+
+SITE: github.com
+STATUS: ONLINE (HTTP 200)
+PONTOS DE ATENÇÃO: Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo.
+MENSAGEM DE CONTATO:
+Olá! Realizamos uma análise técnica no site github.com e identificamos gargalos que afetam a conversão de clientes: Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo. Podemos implementar uma arquitetura moderna com carregamento instantâneo e identidade visual premium.
+--------------------------------------------------
+
+SITE: site-teste-invalido-99.com
+STATUS: OFFLINE (HTTP None)
+PONTOS DE ATENÇÃO: Falha de resposta ou certificado SSL (<urlopen error [Errno -2] Name or service not known>).
+MENSAGEM DE CONTATO:
+Olá! Realizamos uma análise técnica no site site-teste-invalido-99.com e identificamos gargalos que afetam a conversão de clientes: Falha de resposta ou certificado SSL (<urlopen error [Errno -2] Name or service not known>). Podemos implementar uma arquitetura moderna com carregamento instantâneo e identidade visual premium.
+--------------------------------------------------
+

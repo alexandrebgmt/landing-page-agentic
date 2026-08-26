@@ -1,0 +1,38 @@
+[
+  {
+    "url": "google.com",
+    "url_completa": "https://google.com",
+    "online": true,
+    "codigo_http": 200,
+    "tempo_resposta_seg": 0.75,
+    "tamanho_kb": 85.21,
+    "pontos_de_dor": [
+      "Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo."
+    ],
+    "proposta_copy": "Olá! Realizamos uma análise técnica no site google.com e identificamos gargalos que afetam a conversão de clientes: Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo. Podemos implementar uma arquitetura moderna com carregamento instantâneo e identidade visual premium."
+  },
+  {
+    "url": "github.com",
+    "url_completa": "https://github.com",
+    "online": true,
+    "codigo_http": 200,
+    "tempo_resposta_seg": 0.18,
+    "tamanho_kb": 561.32,
+    "pontos_de_dor": [
+      "Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo."
+    ],
+    "proposta_copy": "Olá! Realizamos uma análise técnica no site github.com e identificamos gargalos que afetam a conversão de clientes: Infraestrutura básica estável. Oportunidade em conversão visual e 3D interativo. Podemos implementar uma arquitetura moderna com carregamento instantâneo e identidade visual premium."
+  },
+  {
+    "url": "site-teste-invalido-99.com",
+    "url_completa": "https://site-teste-invalido-99.com",
+    "online": false,
+    "codigo_http": null,
+    "tempo_resposta_seg": null,
+    "tamanho_kb": null,
+    "pontos_de_dor": [
+      "Falha de resposta ou certificado SSL (<urlopen error [Errno -2] Name or service not known>)."
+    ],
+    "proposta_copy": "Olá! Realizamos uma análise técnica no site site-teste-invalido-99.com e identificamos gargalos que afetam a conversão de clientes: Falha de resposta ou certificado SSL (<urlopen error [Errno -2] Name or service not known>). Podemos implementar uma arquitetura moderna com carregamento instantâneo e identidade visual premium."
+  }
+]
