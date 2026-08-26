@@ -6,6 +6,7 @@ export const LeadSchema = z.object({
   company: z.string().min(2, "Informe o nome da empresa ou projeto"),
   dataVolume: z.string().min(1, "Selecione o volume de dados estimado"),
   pipelineChallenge: z.string().min(5, "Descreva brevemente seu objetivo ou desafio"),
+  honeypot: z.string().optional(),
   bot_field: z.string().optional(),
 });
 
