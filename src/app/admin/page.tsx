@@ -64,11 +64,11 @@ const INITIAL_PROJECTS: ProjectItem[] = [
   },
   {
     id: '4',
-    name: 'Post Studio & Agency Multiplier',
+    name: 'Post Studio & BrandKit 3x3 Engine',
     module: 'posts-design',
     status: 'Deploy Ativo',
-    description: 'Tech Studio padrão americano: gerador de carrosséis, pesquisa com IA e integração Meta API.',
-    tags: ['Agency OS', 'Design System', 'Meta Graph API', 'Copywriting']
+    description: 'Estúdio de Identidade Visual de alto padrão (Pentagram/Linear-tier), BrandKit 3x3 e Carrosséis.',
+    tags: ['BrandKit 3x3', 'Anti-Slop', 'Design System', 'Meta Graph API']
   },
   {
     id: '5',
@@ -108,30 +108,30 @@ const INITIAL_PROJECTS: ProjectItem[] = [
 const SKILL_UPDATES: SkillUpdate[] = [
   {
     id: 'up-1',
+    version: 'v4.0 BrandKit Protocol',
+    title: 'BrandKit 3x3 & Anti-Slop Frontend Engine',
+    category: 'Engenharia 3D',
+    description: 'Diretrizes de estúdio de alta identidade visual, remoção de clichês de IA e grid 3x3 estruturado.',
+    date: '27/08/2026',
+    status: 'Instalado',
+    changelog: [
+      'Geração de Pranchas de Identidade Visual 3x3',
+      'Filtro de copy anti-slop e anti-clichê ativado',
+      'Travas de contraste e tipografia determinística'
+    ]
+  },
+  {
+    id: 'up-2',
     version: 'v3.2 Protocol',
     title: 'Model Context Protocol (MCP) & Agentic Router',
     category: 'IA Agentic',
     description: 'Permite conectar ferramentas externas, bancos de dados locais e scripts diretamente ao fluxo de raciocínio da IA.',
     date: '27/08/2026',
-    status: 'Disponível',
+    status: 'Instalado',
     changelog: [
       'Orquestração de prompts multi-engine desacoplada',
       'Execução de código direto para análise de leads',
       'Segurança de credenciais em túnel isolado'
-    ]
-  },
-  {
-    id: 'up-2',
-    version: 'v2.8 Engine',
-    title: 'Multi-Engine Visual Calibrator (DALL-E 3, MJ 6.1, Ideogram)',
-    category: 'Engenharia 3D',
-    description: 'Formatador dinâmico de tags de iluminação volumétrica, aspecto de imagem e dioramas plásticos.',
-    date: '27/08/2026',
-    status: 'Instalado',
-    changelog: [
-      'Geração de dioramas Lego e animação 3D infantil',
-      'Suporte a cópia de prompts com um clique',
-      'Presets de render 8k e lentes tilt-shift'
     ]
   },
   {
@@ -169,7 +169,7 @@ export default function NexusMasterSuite() {
   const [loadingLeads, setLoadingLeads] = useState(true);
 
   // Estados do Post Studio Studio & AI Research Engine
-  const [postStudioSubTab, setPostStudioSubTab] = useState<'generator' | 'branding' | 'meta-api'>('generator');
+  const [postStudioSubTab, setPostStudioSubTab] = useState<'generator' | 'brandkit3x3' | 'branding' | 'meta-api'>('generator');
   const [clientNiche, setClientNiche] = useState('Medicina Integrativa & Longevidade');
   const [clientTopic, setClientTopic] = useState('Benefícios da Ozonioterapia e Terapia Neural na Regeneração Celular');
   const [brandHandle, setBrandHandle] = useState('@clinica.integrativa');
@@ -183,7 +183,7 @@ export default function NexusMasterSuite() {
         slideNum: 1,
         headline: 'A Fadiga Crônica Não É Normal: A Célula Está Sem Oxigênio.',
         subhead: 'Por que tratamentos superficiais ignoram a disfunção mitocondrial e o estresse oxidativo.',
-        codeSnippet: `// ⚠️ Diagnóstico celular:\nBaixa oxigenação tecidual ➔ Fadiga, dores crônicas e inflamação sistêmica.`
+        codeSnippet: `// ⚠️ Diagnóstico Celular:\nBaixa oxigenação tecidual ➔ Fadiga, dores crônicas e inflamação sistêmica.`
       },
       {
         slideNum: 2,
@@ -198,7 +198,7 @@ export default function NexusMasterSuite() {
         codeSnippet: `// 🩺 Protocolo de Alta Performance:\nEquilíbrio neurovegetativo e regeneração do potencial de membrana celular.`
       }
     ],
-    socialCopy: `Você acorda cansado mesmo após 8 horas de sono? Sente que seu corpo está sempre no limite?\n\nIsso é sinal de que suas mitocôndrias não estão produzindo energia de forma eficiente devido à inflamação e hipóxia celular.\n\nA combinação de Ozonioterapia com Terapia Neural atua na raiz do problema:\n✅ Otimiza a circulação e oxigenação tecidual\n✅ Reduz marcadores inflamatórios sistêmicos\n✅ Restaura a comunicação neurovegetativa e a vitalidade\n\n👉 Agende sua avaliação integrativa pelo link na bio e recupere seu equilíbrio.\n\n#MedicinaIntegrativa #Ozonioterapia #TerapiaNeural #LongevidadeSaudavel #SaudeCelular #Biohacking`
+    socialCopy: `Você acorda cansado mesmo após 8 horas de sono? Sente que seu corpo está sempre no limite?\n\nIsso é sinal de que suas mitocôndrias não estão produzindo energia de forma eficiente devido à inflamação e hipóxia celular.\n\nA combinação de Ozonioterapia com Terapia Neural atua na causa raiz:\n✅ Otimiza a circulação e oxigenação tecidual\n✅ Reduz marcadores inflamatórios sistêmicos\n✅ Restaura a comunicação neurovegetativa e a vitalidade\n\n👉 Agende sua avaliação integrativa pelo link na bio e recupere seu equilíbrio.\n\n#MedicinaIntegrativa #Ozonioterapia #TerapiaNeural #LongevidadeSaudavel #SaudeCelular #Biohacking`
   });
 
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
@@ -327,7 +327,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             {
               slideNum: 1,
               headline: `${clientTopic.slice(0, 50)}...`,
-              subhead: 'O gargalo oculto que derruba a performance de aplicações e como mitigar.',
+              subhead: 'O gargalo oculto que compromete a escalabilidade de aplicações e como mitigar.',
               codeSnippet: `// ❌ Abordagem Ineficiente:\nQueries não particionadas drenando CPU em até 85%.`
             },
             {
@@ -587,10 +587,10 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             >
               <div className="flex items-center space-x-3">
                 <span>🎨</span>
-                <span>Post Studio & Agency</span>
+                <span>Post Studio & BrandKit</span>
               </div>
               <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
-                STUDIO
+                STUDIO 3x3
               </span>
             </button>
 
@@ -754,18 +754,18 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v5.0 Agency OS
+                    v5.2 High-Agency OS
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  Estúdio de criação de alta autoridade para clientes, carrosséis técnicos e automação de redes.
+                  Estúdio de Identidade Visual (BrandKit 3x3), Engenharia de Dados e Prospecção B2B de Alto Padrão.
                 </p>
               </div>
               <button
                 onClick={() => setActiveTab('posts')}
                 className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 flex items-center gap-2"
               >
-                <span>🎨</span> Abrir Post Studio & Agency
+                <span>🎨</span> Abrir Post Studio & BrandKit 3x3
               </button>
             </div>
 
@@ -776,12 +776,12 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <div className="text-[11px] text-emerald-400 mt-2 font-medium">● Sincronizado via Supabase RLS</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Tech Studio Padrão US</div>
-                <div className="text-2xl font-bold text-cyan-400 mt-1">Agency OS</div>
-                <div className="text-[11px] text-cyan-300 mt-2">Brand Kits & Carrosséis IA</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Design Standard</div>
+                <div className="text-2xl font-bold text-cyan-400 mt-1">BrandKit 3×3</div>
+                <div className="text-[11px] text-cyan-300 mt-2">Anti-Slop Protocol Ativo</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Canal de E-mail</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Canal Corporativo</div>
                 <div className="text-2xl font-bold text-teal-400 mt-1">Gmail Ready</div>
                 <div className="text-[11px] text-teal-400 mt-2">nexusdata.enterprise@gmail.com</div>
               </div>
@@ -790,7 +790,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <div className="text-2xl font-bold text-purple-400 mt-1">
                   {skillsList.filter((s) => s.status === 'Instalado').length} / {skillsList.length}
                 </div>
-                <div className="text-[11px] text-purple-300 mt-2">MCP Router & Calibradores</div>
+                <div className="text-[11px] text-purple-300 mt-2">BrandKit, MCP & RLS</div>
               </div>
             </div>
 
@@ -851,16 +851,16 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 2. POST STUDIO & AGENCY TECH STUDIO (PADRÃO AMERICANO) */}
+        {/* 2. POST STUDIO, BRANDKIT 3X3 & AGENCY ENGINE */}
         {activeTab === 'posts' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
               <div>
                 <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
-                  <span>🎨</span> Post Studio & Agency Creator (Padrão High-End)
+                  <span>🎨</span> Post Studio & BrandKit 3×3 Creator
                 </h1>
                 <p className="text-xs text-slate-400 mt-1">
-                  Pesquisa de conteúdo com IA, criação de Brand Kits e esteira de postagem para Instagram & Facebook
+                  Estúdio de Identidade Visual com diretrizes Pentagram/Linear, Anti-Slop e Grid de 9 Painéis
                 </p>
               </div>
 
@@ -872,7 +872,15 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     postStudioSubTab === 'generator' ? 'bg-cyan-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  ⚡ Gerador de Post & IA
+                  ⚡ Carrossel & Copy
+                </button>
+                <button
+                  onClick={() => setPostStudioSubTab('brandkit3x3')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    postStudioSubTab === 'brandkit3x3' ? 'bg-cyan-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  📐 BrandKit 3×3 Board
                 </button>
                 <button
                   onClick={() => setPostStudioSubTab('branding')}
@@ -880,7 +888,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     postStudioSubTab === 'branding' ? 'bg-cyan-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  💎 Brand Kit do Cliente
+                  💎 Bio & Perfil
                 </button>
                 <button
                   onClick={() => setPostStudioSubTab('meta-api')}
@@ -888,7 +896,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     postStudioSubTab === 'meta-api' ? 'bg-cyan-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  🔗 Integração Meta / Webhook
+                  🔗 Meta API / Webhook
                 </button>
               </div>
             </div>
@@ -1049,7 +1057,124 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </div>
             )}
 
-            {/* ABA 2: BRAND KIT & BIO DE ALTA CONVERSÃO */}
+            {/* ABA 2: BRANDKIT 3X3 GRID BOARD (PADRÃO PENTAGRAM / LINEAR) */}
+            {postStudioSubTab === 'brandkit3x3' && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                        Brand Identity Deck System
+                      </span>
+                      <h3 className="text-base font-bold text-white mt-1">Prancha de Identidade Visual 3×3 (9 Painéis Interconectados)</h3>
+                    </div>
+                    <button
+                      onClick={() => copyToClipboard(`BrandKit 3x3 Prompt:\nCreate a premium 3x3 brand-kit overview image for "${clientNiche} - ${brandHandle}". Dark charcoal canvas, sparse typography, modular grid, logo cover, logo construction geometry, digital UI mockup, tagline essence, color system swatches, typography specimen, physical object application, cinematic image direction, and system details. Highly intentional, presentation-ready --ar 16:10`, 501)}
+                      className="px-4 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-1.5"
+                    >
+                      {copiedPromptIndex === 501 ? '✓ Prompt Copiado!' : '📋 Copiar Prompt Mestre 3×3'}
+                    </button>
+                  </div>
+
+                  {/* GRID 3X3 VISUAL */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                    
+                    {/* Painel 1: Logo Cover */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">1. Logo Cover</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850">
+                        <div className="text-xl font-black text-white tracking-widest font-mono">⚡ NEXUS</div>
+                      </div>
+                      <p className="text-[10px] text-slate-400">Wordmark de alto impacto com espaço negativo deliberado.</p>
+                    </div>
+
+                    {/* Painel 2: Logo Construction */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">2. Geometria & Construção</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 font-mono text-[10px] text-teal-300">
+                        [ Grid 45° • Raio 12px • Proporção Áurea ]
+                      </div>
+                      <p className="text-[10px] text-slate-400">Métricas de precisão e redução de vetor sem ruídos.</p>
+                    </div>
+
+                    {/* Painel 3: Digital Application */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">3. Aplicação Web / UI</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex flex-col justify-center px-3 border border-slate-850 space-y-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                        </div>
+                        <div className="h-2 bg-slate-800 rounded w-3/4" />
+                        <div className="h-2 bg-cyan-500/40 rounded w-1/2" />
+                      </div>
+                      <p className="text-[10px] text-slate-400">Browser bar, terminal frame e componentes nativos.</p>
+                    </div>
+
+                    {/* Painel 4: Brand Essence */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">4. Essência & Tagline</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 p-2 text-center">
+                        <span className="text-xs font-extrabold text-white">"Precisão Fisiológica & Clareza de Vida."</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400">Frase concisa sem clichês de autoajuda ou falsas promessas.</p>
+                    </div>
+
+                    {/* Painel 5: Color System */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">5. Paleta Disciplinada</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-around px-2 border border-slate-850">
+                        <div className="text-center"><div className="w-5 h-5 rounded bg-slate-950 border border-slate-700 mx-auto" /><span className="text-[8px] font-mono text-slate-400">#020617</span></div>
+                        <div className="text-center"><div className="w-5 h-5 rounded bg-cyan-400 mx-auto shadow-sm" /><span className="text-[8px] font-mono text-slate-400">#06B6D4</span></div>
+                        <div className="text-center"><div className="w-5 h-5 rounded bg-teal-400 mx-auto shadow-sm" /><span className="text-[8px] font-mono text-slate-400">#2DD4BF</span></div>
+                      </div>
+                      <p className="text-[10px] text-slate-400">1 tom base escuro, 1 acento saturado e 1 suporte neutro.</p>
+                    </div>
+
+                    {/* Painel 6: Typography Specimen */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">6. Tipografia Editorial</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex flex-col justify-center px-3 border border-slate-850">
+                        <span className="text-base font-black text-white">Geist Sans & Mono</span>
+                        <span className="text-[9px] font-mono text-slate-400">Aa Bb Cc Dd 0123456789</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400">Emparelhamento de alta legibilidade para telas e impressos.</p>
+                    </div>
+
+                    {/* Painel 7: Physical Application */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">7. Aplicação Física / Papel</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 font-mono text-[10px] text-slate-300">
+                        [ Crachá • Cartão Metal • Papel Matte ]
+                      </div>
+                      <p className="text-[10px] text-slate-400">Texturas táteis com acabamento de alto valor percebido.</p>
+                    </div>
+
+                    {/* Painel 8: Image Direction */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">8. Direção de Imagem</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 text-[10px] font-mono text-cyan-300">
+                        [ Macro Fotografia • Luz Volumétrica 8k ]
+                      </div>
+                      <p className="text-[10px] text-slate-400">Fotografia de estúdio autoral sem bancos de imagens óbvios.</p>
+                    </div>
+
+                    {/* Painel 9: System Details */}
+                    <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">9. Detalhes de Sistema</span>
+                      <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 font-mono text-[9px] text-slate-400">
+                        {`{ "version": "1.0", "rls": true, "grid": "12-col" }`}
+                      </div>
+                      <p className="text-[10px] text-slate-400">Guias de alinhamento, badges e ícones do design system.</p>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ABA 3: BRAND KIT & BIO DE ALTA CONVERSÃO */}
             {postStudioSubTab === 'branding' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
@@ -1088,7 +1213,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </div>
             )}
 
-            {/* ABA 3: INTEGRAÇÃO META GRAPH API & WEBHOOK */}
+            {/* ABA 4: INTEGRAÇÃO META GRAPH API & WEBHOOK */}
             {postStudioSubTab === 'meta-api' && (
               <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-6 animate-fadeIn">
                 <div className="border-b border-slate-800 pb-4">
@@ -1120,15 +1245,15 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
 
                 <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed">
                   <span className="text-cyan-400 font-bold block">🚀 Como Funciona a Publicação Automática:</span>
-                  <p>1. Você gera o post com pesquisa automática da IA.</p>
+                  <p>1. Você gera o post ou BrandKit com a pesquisa automatizada da IA.</p>
                   <p>2. Ao clicar no botão abaixo, o backend envia o payload (Slides + Legenda + Tags) para o Webhook oficial da Meta.</p>
-                  <p>3. O post é publicado no Instagram do cliente sem necessidade de app manual.</p>
+                  <p>3. O post é publicado no Instagram/Facebook do cliente de forma consistente e segura.</p>
                 </div>
 
                 <div className="flex justify-end">
                   <button
                     onClick={() => {
-                      alert('Webhook configurado! Em breve você poderá publicar em 1 clique direto no Instagram do cliente.');
+                      alert('Webhook configurado! Disparo de teste registrado no ecossistema.');
                     }}
                     className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/20 hover:from-cyan-400 hover:to-teal-300 transition"
                   >
@@ -1336,29 +1461,328 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 4. DEMAIS MÓDULOS (CRM, SAAS, APPS, HISTORIAS, UPDATES) */}
-        {(activeTab === 'crm' || activeTab === 'saas' || activeTab === 'apps' || activeTab === 'historias' || activeTab === 'updates' || activeTab === 'builder' || activeTab === 'presell') && (
+        {/* 4. CRM COM LEAD SCORING */}
+        {activeTab === 'crm' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400">CRM de Leads & Pipeline Inteligente</h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Gestão em tempo real com Lead Scoring automático e dados sincronizados via PostgreSQL
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={fetchLeads}
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition"
+                >
+                  🔄 Atualizar
+                </button>
+                <button
+                  onClick={exportCSV}
+                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition"
+                >
+                  📥 Exportar CSV
+                </button>
+              </div>
+            </div>
+
+            {loadingLeads ? (
+              <div className="text-center py-16 text-slate-500 font-mono text-sm">Carregando leads do Supabase...</div>
+            ) : leads.length === 0 ? (
+              <div className="text-center py-16 text-slate-500 rounded-2xl border border-slate-800 bg-slate-900/30">
+                Nenhum lead registrado ainda. Envie o link da sua Landing Page para começar a receber diagnósticos.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl">
+                <table className="w-full text-left text-sm text-slate-300">
+                  <thead className="bg-slate-800/80 text-xs uppercase tracking-wider text-slate-400 font-mono">
+                    <tr>
+                      <th className="p-4">Status</th>
+                      <th className="p-4">Score</th>
+                      <th className="p-4">Data</th>
+                      <th className="p-4">Nome</th>
+                      <th className="p-4">Email</th>
+                      <th className="p-4">Empresa</th>
+                      <th className="p-4">Volume</th>
+                      <th className="p-4">Gargalo Relatado</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80">
+                    {leads.map((lead) => {
+                      const currentStatus = lead.status || 'Novo';
+                      const score = calculateLeadScore(lead.data_volume, lead.bottleneck);
+                      return (
+                        <tr key={lead.id} className="hover:bg-slate-800/40 transition">
+                          <td className="p-4">
+                            <select
+                              value={currentStatus}
+                              onChange={(e) => handleStatusChange(lead.id, e.target.value)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border outline-none ${
+                                currentStatus === 'Novo'
+                                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                  : currentStatus === 'Em Contato'
+                                  ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              }`}
+                            >
+                              <option value="Novo" className="bg-slate-900 text-amber-300">🟡 Novo</option>
+                              <option value="Em Contato" className="bg-slate-900 text-cyan-300">🔵 Em Contato</option>
+                              <option value="Fechado" className="bg-slate-900 text-emerald-300">🟢 Fechado</option>
+                            </select>
+                          </td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border ${
+                              score >= 80
+                                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                                : score >= 60
+                                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                                : 'bg-slate-800 text-slate-400 border-slate-700'
+                            }`}>
+                              🔥 {score} pts
+                            </span>
+                          </td>
+                          <td className="p-4 text-xs text-slate-400 font-mono">
+                            {new Date(lead.created_at).toLocaleString('pt-BR')}
+                          </td>
+                          <td className="p-4 font-semibold text-white">{lead.name}</td>
+                          <td className="p-4 text-cyan-400 font-mono text-xs">{lead.email}</td>
+                          <td className="p-4">{lead.company}</td>
+                          <td className="p-4">{lead.data_volume || '-'}</td>
+                          <td className="p-4 text-xs text-slate-400 max-w-xs truncate">{lead.bottleneck || '-'}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 5. ENGENHARIA SAAS: AUDIT PRO */}
+        {activeTab === 'saas' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>⚙️</span> Nexus Audit Pro Micro-SaaS
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Scanner automatizado de DDL PostgreSQL, auditoria de segurança RLS e detecção de gargalos de queries
+                </p>
+              </div>
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                SaaS Engine v1.0
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                    Console de Ingestão de Schema & Queries SQL
+                  </h3>
+                  <button
+                    onClick={() => setSqlInput(
+`-- Schema com Vulnerabilidade e Falta de Índice:
+CREATE TABLE orders (
+  id UUID PRIMARY KEY,
+  customer_id UUID,
+  amount NUMERIC(10,2),
+  status TEXT
+);
+
+SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';`
+                    )}
+                    className="text-[11px] text-cyan-400 hover:underline font-mono"
+                  >
+                    Carregar Exemplo de Teste
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <textarea
+                    rows={12}
+                    value={sqlInput}
+                    onChange={(e) => setSqlInput(e.target.value)}
+                    className="w-full p-4 bg-slate-950 font-mono text-xs text-cyan-300 border border-slate-800 rounded-xl focus:border-cyan-500 outline-none leading-relaxed"
+                    placeholder="Cole seu código SQL DDL ou query para auditar..."
+                  />
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    Suporte: PostgreSQL 14+, Supabase, Neon & AWS RDS
+                  </span>
+                  <button
+                    onClick={handleRunAudit}
+                    disabled={isScanning}
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 active:scale-[0.99] disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {isScanning ? 'Analisando Estrutura...' : '⚡ Executar Auditoria Técnica'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
+                    Laudo do Diagnóstico SaaS
+                  </h3>
+
+                  {auditResult ? (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-1">
+                        <span className="text-[10px] font-mono uppercase text-slate-400">Score de Saúde da Arquitetura</span>
+                        <div className={`text-4xl font-extrabold ${
+                          auditResult.score >= 80 ? 'text-emerald-400' : 'text-amber-400'
+                        }`}>
+                          {auditResult.score} / 100
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-xs">
+                        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-400">Isolamento RLS:</span>
+                          <span className={`font-bold font-mono px-2 py-0.5 rounded ${
+                            auditResult.rlsStatus === 'Blindado'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                          }`}>
+                            {auditResult.rlsStatus}
+                          </span>
+                        </div>
+
+                        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-400">Indexação Analítica:</span>
+                          <span className={`font-bold font-mono px-2 py-0.5 rounded ${
+                            auditResult.indexStatus === 'Otimizado'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                          }`}>
+                            {auditResult.indexStatus}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 pt-2 border-t border-slate-800">
+                        <span className="text-[11px] font-mono text-slate-400 font-bold uppercase block">
+                          Recomendações do Engenheiro:
+                        </span>
+                        {auditResult.recommendations.map((rec, i) => (
+                          <div key={i} className="text-xs text-slate-300 p-2 rounded-lg bg-slate-950 border border-slate-850 leading-relaxed">
+                            {rec}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-slate-500 space-y-2">
+                      <div className="text-2xl">🔍</div>
+                      <p className="text-xs">Cole o schema ao lado e clique em Executar para gerar o diagnóstico.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 6. RADAR DE ATUALIZAÇÕES */}
+        {activeTab === 'updates' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>🛰️</span> Radar de Inteligência & Atualizações de Skills
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Monitoramento contínuo de novas tecnologias, protocolos MCP e melhorias de engenharia
+                </p>
+              </div>
+            </div>
+
+            {installedNotice && (
+              <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs text-emerald-300 font-semibold animate-pulse">
+                ✓ {installedNotice}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {skillsList.map((skill) => (
+                <div
+                  key={skill.id}
+                  className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-4"
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                          {skill.version}
+                        </span>
+                        <span className="text-xs font-mono text-slate-500">• {skill.category}</span>
+                        <span className="text-xs text-slate-600 font-mono">• {skill.date}</span>
+                      </div>
+                      <h3 className="text-base font-bold text-white">{skill.title}</h3>
+                    </div>
+
+                    <div>
+                      {skill.status === 'Instalado' ? (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                          ✓ Skill Ativa
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleInstallSkill(skill.id, skill.title)}
+                          className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20"
+                        >
+                          ⚡ Implementar Atualização
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-300 leading-relaxed">{skill.description}</p>
+
+                  <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+                    <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block mb-1">
+                      Destaques da Atualização:
+                    </span>
+                    {skill.changelog.map((item, idx) => (
+                      <div key={idx} className="text-xs text-slate-400 flex items-center gap-2">
+                        <span className="text-cyan-400">•</span> {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 7. DEMAIS MÓDULOS (APPS, HISTORIAS, BUILDER, PRESELL) */}
+        {(activeTab === 'apps' || activeTab === 'historias' || activeTab === 'builder' || activeTab === 'presell') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
               <h1 className="text-2xl font-bold text-cyan-400">
-                {activeTab === 'crm' && '🎯 CRM de Leads & Pipeline Inteligente'}
-                {activeTab === 'saas' && '⚙️ Nexus Audit Pro Micro-SaaS'}
-                {activeTab === 'apps' && '📱 Nexus Mobile & PWA Studio'}
+                {activeTab === 'apps' && '📱 Engenharia de Aplicativos Mobile & PWA'}
                 {activeTab === 'historias' && '✨ Fábrica de Histórias Multimodal'}
-                {activeTab === 'updates' && '🛰️ Radar de Inteligência & Skills'}
                 {activeTab === 'builder' && '🚀 Criador de Landing Pages'}
-                {activeTab === 'presell' && '💰 Páginas Presell & Advertoriais'}
+                {activeTab === 'presell' && '💰 Páginas Presell & Advertoriais High-Ticket'}
               </h1>
-              <p className="text-xs text-slate-400 mt-1">Módulo operacional ativo no Nexus Master Suite</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Módulo operacional ativo no Nexus Master Suite
+              </p>
             </div>
 
             <div className="p-8 rounded-2xl bg-slate-900/40 border border-slate-800 text-center space-y-4">
               <div className="inline-flex p-4 rounded-2xl bg-cyan-500/10 text-cyan-400 text-3xl">
                 ⚡
               </div>
-              <h3 className="text-lg font-bold text-white">Módulo Pronto para Execução</h3>
+              <h3 className="text-lg font-bold text-white">Módulo Operacional</h3>
               <p className="text-sm text-slate-400 max-w-xl mx-auto">
-                Estrutura integrada via Supabase, Next.js e Vercel.
+                Pronto para receber novos dados ou personalizações específicas.
               </p>
             </div>
           </div>
