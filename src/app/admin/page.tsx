@@ -89,19 +89,19 @@ const INITIAL_PROJECTS: ProjectItem[] = [
   },
   {
     id: '7',
+    name: 'Nexus Mobile PWA Studio',
+    module: 'apps',
+    status: 'Deploy Ativo',
+    description: 'Emulador mobile em tempo real, gerador de manifest PWA e simulador de notificações.',
+    tags: ['PWA', 'Mobile', 'Tailwind', 'Standalone']
+  },
+  {
+    id: '8',
     name: 'Post Studio & Social Multiplier',
     module: 'posts-design',
     status: 'Em Criação',
     description: 'Templates e carrosséis para Instagram e LinkedIn com visual sci-fi slate/cyan.',
     tags: ['Social Media', 'Design System', 'Canva/Figma']
-  },
-  {
-    id: '8',
-    name: 'Nexus Mobile Agent App',
-    module: 'apps',
-    status: 'Rascunho',
-    description: 'PWA / App mobile para acompanhamento de métricas e alertas de leads em tempo real.',
-    tags: ['PWA', 'Mobile', 'Tailwind']
   }
 ];
 
@@ -167,6 +167,17 @@ export default function NexusMasterSuite() {
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
+
+  // Estados do Módulo Mobile / PWA
+  const [mobileScreen, setMobileScreen] = useState<'dashboard' | 'leads' | 'scanner'>('dashboard');
+  const [pwaConfig, setPwaConfig] = useState({
+    appName: 'Nexus Mobile Agent',
+    shortName: 'NexusApp',
+    themeColor: '#06b6d4',
+    bgColor: '#020617',
+    display: 'standalone'
+  });
+  const [testNotificationSent, setTestNotificationSent] = useState(false);
 
   // Estados do Módulo SaaS (Audit Pro)
   const [sqlInput, setSqlInput] = useState<string>(
@@ -267,12 +278,11 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
     setTimeout(() => setInstalledNotice(null), 4000);
   };
 
-  // Motor de Execução da Auditoria SaaS
   const handleRunAudit = () => {
     setIsScanning(true);
     setTimeout(() => {
       const lowerSql = sqlInput.toLowerCase();
-      const hasRLS = lowerSql.includes('enable row level security') || lowerSql.includes('alter table') && lowerSql.includes('rls');
+      const hasRLS = lowerSql.includes('enable row level security') || (lowerSql.includes('alter table') && lowerSql.includes('rls'));
       const hasIndex = lowerSql.includes('create index') || lowerSql.includes('btree');
 
       let score = 95;
@@ -287,7 +297,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
 
       if (!hasIndex && (lowerSql.includes('select') || lowerSql.includes('where'))) {
         score -= 20;
-        recs.push('⚡ Gargalo em Query: Filtro por email/chave sem índice B-Tree. Crie: "CREATE INDEX idx_users_email ON users(email);".');
+        recs.push('⚡ Gargalo em Query: Filtro por email sem índice B-Tree. Crie: "CREATE INDEX idx_users_email ON users(email);".');
       } else {
         recs.push('✅ Estrutura de indexação alinhada com as consultas.');
       }
@@ -302,6 +312,11 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
       });
       setIsScanning(false);
     }, 900);
+  };
+
+  const triggerMobileNotification = () => {
+    setTestNotificationSent(true);
+    setTimeout(() => setTestNotificationSent(false), 3500);
   };
 
   const exportCSV = () => {
@@ -476,6 +491,23 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             <div className="pt-3 px-3 py-1 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Módulos de Produção</div>
 
             <button
+              onClick={() => setActiveTab('apps')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+                activeTab === 'apps'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <span>📱</span>
+                <span>Aplicativos Mobile / PWA</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+                PRO
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('saas')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'saas'
@@ -519,18 +551,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             >
               <span>🚀</span>
               <span>Criador de Landing Pages</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('apps')}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
-                activeTab === 'apps'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              <span>📱</span>
-              <span>Aplicativos Mobile / PWA</span>
             </button>
 
             <button
@@ -592,18 +612,18 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v3.5 Architecture
+                    v3.6 Mobile OS
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  Orquestrador de engenharia de dados, micro-saas analítico, geração de histórias e esteira de automações.
+                  Orquestrador de engenharia de software, emulação PWA mobile, micro-saas e esteira de automações.
                 </p>
               </div>
               <button
-                onClick={() => setActiveTab('saas')}
+                onClick={() => setActiveTab('apps')}
                 className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 flex items-center gap-2"
               >
-                <span>⚙️</span> Abrir Nexus Audit SaaS
+                <span>📱</span> Abrir Emulador Mobile PWA
               </button>
             </div>
 
@@ -616,17 +636,19 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Módulos Ativos</div>
                 <div className="text-2xl font-bold text-white mt-1">8 Módulos</div>
-                <div className="text-[11px] text-slate-400 mt-2">SaaS, CRM, Histórias, Presell...</div>
+                <div className="text-[11px] text-slate-400 mt-2">PWA, SaaS, CRM, Histórias...</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Infraestrutura</div>
-                <div className="text-2xl font-bold text-teal-400 mt-1">Edge 100%</div>
-                <div className="text-[11px] text-teal-400 mt-2">Next.js 15 + Vercel + PG</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Infraestrutura Mobile</div>
+                <div className="text-2xl font-bold text-teal-400 mt-1">PWA Standalone</div>
+                <div className="text-[11px] text-teal-400 mt-2">Next.js + Service Worker</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Micro-SaaS Scanner</div>
-                <div className="text-2xl font-bold text-cyan-400 mt-1">Audit Pro</div>
-                <div className="text-[11px] text-cyan-300 mt-2">PostgreSQL & RLS Analyser</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Status de Skills</div>
+                <div className="text-2xl font-bold text-purple-400 mt-1">
+                  {skillsList.filter((s) => s.status === 'Instalado').length} / {skillsList.length}
+                </div>
+                <div className="text-[11px] text-purple-300 mt-2">MCP Router & Calibradores</div>
               </div>
             </div>
 
@@ -687,7 +709,256 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 2. ENGENHARIA SAAS: AUDIT PRO */}
+        {/* 2. MÓDULO APLICATIVOS MOBILE & PWA STUDIO */}
+        {activeTab === 'apps' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>📱</span> Nexus Mobile & PWA Studio
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Ambiente de emulação mobile, gerador de manifesto PWA e simulador de notificações push
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={triggerMobileNotification}
+                  className="px-3 py-1.5 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 rounded-xl text-xs font-bold transition hover:bg-cyan-500 hover:text-slate-950 flex items-center gap-1.5"
+                >
+                  <span>🔔</span> Simular Push Notification
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* EMULADOR SMARTPHONE MOCKUP (4 Colunas) */}
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="w-[320px] h-[640px] bg-slate-950 rounded-[48px] p-3 border-[6px] border-slate-800 shadow-2xl shadow-cyan-950/50 flex flex-col relative overflow-hidden">
+                  
+                  {/* Dynamic Island / Notch */}
+                  <div className="absolute top-4 inset-x-0 flex justify-center z-30">
+                    <div className="w-24 h-4 bg-slate-900 rounded-full flex items-center justify-end px-2">
+                      <span className="w-2 h-2 rounded-full bg-slate-700" />
+                    </div>
+                  </div>
+
+                  {/* Toast Notificação Push Simulada */}
+                  {testNotificationSent && (
+                    <div className="absolute top-12 inset-x-4 bg-slate-900/95 border border-cyan-500/60 p-3 rounded-2xl shadow-xl z-40 animate-fadeIn space-y-1 backdrop-blur-md">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-cyan-400">
+                        <span className="flex items-center gap-1">⚡ <strong>NexusMobile</strong></span>
+                        <span>agora</span>
+                      </div>
+                      <p className="text-xs font-bold text-white">Novo Lead de Alta Prioridade! 🔥</p>
+                      <p className="text-[10px] text-slate-300">Score 90+ detectado no pipeline.</p>
+                    </div>
+                  )}
+
+                  {/* Tela Interna do App */}
+                  <div className="flex-1 bg-slate-900/90 rounded-[36px] overflow-hidden flex flex-col pt-8 pb-4 px-4 justify-between border border-slate-800/60">
+                    
+                    {/* Header do App */}
+                    <div className="space-y-3 pt-2">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-xs font-bold">
+                            ⚡
+                          </div>
+                          <span className="text-xs font-bold text-white">Nexus Data Mobile</span>
+                        </div>
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      </div>
+
+                      {/* Seletor de Telas Internas */}
+                      <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-[10px]">
+                        <button
+                          onClick={() => setMobileScreen('dashboard')}
+                          className={`flex-1 py-1 rounded-lg font-bold transition ${
+                            mobileScreen === 'dashboard' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
+                          }`}
+                        >
+                          Métricas
+                        </button>
+                        <button
+                          onClick={() => setMobileScreen('leads')}
+                          className={`flex-1 py-1 rounded-lg font-bold transition ${
+                            mobileScreen === 'leads' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
+                          }`}
+                        >
+                          Leads
+                        </button>
+                        <button
+                          onClick={() => setMobileScreen('scanner')}
+                          className={`flex-1 py-1 rounded-lg font-bold transition ${
+                            mobileScreen === 'scanner' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
+                          }`}
+                        >
+                          Scan RLS
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Conteúdo Dinâmico da Tela Selecionada */}
+                    <div className="flex-1 my-3 overflow-y-auto space-y-3 pr-1">
+                      {mobileScreen === 'dashboard' && (
+                        <div className="space-y-2.5 animate-fadeIn">
+                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-mono uppercase">Leads Ativos</span>
+                            <div className="text-xl font-bold text-cyan-400 mt-0.5">{leads.length} Contatos</div>
+                          </div>
+                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-mono uppercase">Latência Edge</span>
+                            <div className="text-xl font-bold text-teal-400 mt-0.5">18 ms</div>
+                          </div>
+                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-mono uppercase">Segurança</span>
+                            <div className="text-xl font-bold text-emerald-400 mt-0.5">RLS 100% Ativo</div>
+                          </div>
+                        </div>
+                      )}
+
+                      {mobileScreen === 'leads' && (
+                        <div className="space-y-2 animate-fadeIn">
+                          {leads.slice(0, 3).map((l) => (
+                            <div key={l.id} className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                              <div className="flex justify-between items-center text-[10px]">
+                                <span className="font-bold text-white">{l.name}</span>
+                                <span className="text-cyan-400 font-mono font-bold">
+                                  🔥 {calculateLeadScore(l.data_volume, l.bottleneck)} pts
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate">{l.company}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {mobileScreen === 'scanner' && (
+                        <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-center animate-fadeIn">
+                          <div className="text-2xl">🛡️</div>
+                          <p className="text-xs font-bold text-white">Scanner Portátil</p>
+                          <p className="text-[10px] text-slate-400">PostgreSQL Schema Checker sincronizado via Supabase.</p>
+                          <button className="w-full py-1.5 bg-cyan-500 text-slate-950 font-bold rounded-lg text-[10px]">
+                            Scan Rápido
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Barra de Navegação Inferior Mobile */}
+                    <div className="pt-2 border-t border-slate-800 flex justify-around text-slate-400 text-sm">
+                      <span className="text-cyan-400 cursor-pointer">🏠</span>
+                      <span className="cursor-pointer">⚡</span>
+                      <span className="cursor-pointer">🔔</span>
+                      <span className="cursor-pointer">⚙️</span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              {/* PAINEL DE CONFIGURAÇÃO PWA & MANIFEST (7 Colunas) */}
+              <div className="lg:col-span-7 space-y-6">
+                
+                {/* Configurações do App Standalone */}
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                    1. Parâmetros do Aplicativo PWA
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Nome da Aplicação</label>
+                      <input
+                        type="text"
+                        value={pwaConfig.appName}
+                        onChange={(e) => setPwaConfig({ ...pwaConfig, appName: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Nome Curto (Tela Inicial)</label>
+                      <input
+                        type="text"
+                        value={pwaConfig.shortName}
+                        onChange={(e) => setPwaConfig({ ...pwaConfig, shortName: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Cor do Tema (Status Bar)</label>
+                      <input
+                        type="text"
+                        value={pwaConfig.themeColor}
+                        onChange={(e) => setPwaConfig({ ...pwaConfig, themeColor: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 font-mono outline-none focus:border-cyan-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Modo de Exibição</label>
+                      <select
+                        value={pwaConfig.display}
+                        onChange={(e) => setPwaConfig({ ...pwaConfig, display: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                      >
+                        <option value="standalone">Standalone (Sem barra do navegador)</option>
+                        <option value="fullscreen">Fullscreen (Tela Cheia Imersiva)</option>
+                        <option value="minimal-ui">Minimal UI</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Código do Manifesto PWA Gerado */}
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
+                      2. manifest.json Gerado Automaticamente
+                    </h3>
+                    <button
+                      onClick={() => copyToClipboard(JSON.stringify({
+                        name: pwaConfig.appName,
+                        short_name: pwaConfig.shortName,
+                        start_url: "/",
+                        display: pwaConfig.display,
+                        background_color: pwaConfig.bgColor,
+                        theme_color: pwaConfig.themeColor,
+                        icons: [
+                          { src: "/favicon.ico", sizes: "64x64 32x32 24x24 16x16", type: "image/x-icon" }
+                        ]
+                      }, null, 2), 99)}
+                      className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition"
+                    >
+                      {copiedPromptIndex === 99 ? '✓ Copiado!' : '📋 Copiar Manifest'}
+                    </button>
+                  </div>
+
+                  <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-teal-300 overflow-x-auto leading-relaxed">
+{JSON.stringify({
+  name: pwaConfig.appName,
+  short_name: pwaConfig.shortName,
+  start_url: "/",
+  display: pwaConfig.display,
+  background_color: pwaConfig.bgColor,
+  theme_color: pwaConfig.themeColor,
+  icons: [
+    { src: "/favicon.ico", sizes: "64x64 32x32 24x24 16x16", type: "image/x-icon" }
+  ]
+}, null, 2)}
+                  </pre>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3. ENGENHARIA SAAS: AUDIT PRO */}
         {activeTab === 'saas' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -705,7 +976,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Painel de Entrada de Schema SQL */}
               <div className="lg:col-span-2 space-y-4 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
@@ -753,7 +1023,6 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
                 </div>
               </div>
 
-              {/* Painel Lateral com Laudo do Scanner */}
               <div className="space-y-4">
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
                   <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
@@ -762,7 +1031,6 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
 
                   {auditResult ? (
                     <div className="space-y-4 animate-fadeIn">
-                      {/* Score de Saúde */}
                       <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-1">
                         <span className="text-[10px] font-mono uppercase text-slate-400">Score de Saúde da Arquitetura</span>
                         <div className={`text-4xl font-extrabold ${
@@ -772,7 +1040,6 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
                         </div>
                       </div>
 
-                      {/* Status RLS & Índices */}
                       <div className="space-y-2 text-xs">
                         <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
                           <span className="text-slate-400">Isolamento RLS:</span>
@@ -797,7 +1064,6 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
                         </div>
                       </div>
 
-                      {/* Recomendações Técnicas */}
                       <div className="space-y-2 pt-2 border-t border-slate-800">
                         <span className="text-[11px] font-mono text-slate-400 font-bold uppercase block">
                           Recomendações do Engenheiro:
@@ -821,7 +1087,7 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 3. RADAR DE ATUALIZAÇÕES & SKILLS */}
+        {/* 4. RADAR DE ATUALIZAÇÕES & SKILLS */}
         {activeTab === 'updates' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
@@ -893,7 +1159,7 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 4. CRM COM LEAD SCORING & PIPELINE */}
+        {/* 5. CRM COM LEAD SCORING & PIPELINE */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -992,7 +1258,7 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 5. FÁBRICA DE HISTÓRIAS MULTIMODAL */}
+        {/* 6. FÁBRICA DE HISTÓRIAS MULTIMODAL */}
         {activeTab === 'historias' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
@@ -1230,7 +1496,7 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 6. CRIADOR DE LANDING PAGES */}
+        {/* 7. CRIADOR DE LANDING PAGES */}
         {activeTab === 'builder' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
@@ -1339,12 +1605,11 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 7. DEMAIS MÓDULOS */}
-        {(activeTab === 'apps' || activeTab === 'presell' || activeTab === 'posts') && (
+        {/* 8. POST STUDIO & DEMAIS */}
+        {(activeTab === 'presell' || activeTab === 'posts') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
               <h1 className="text-2xl font-bold text-cyan-400">
-                {activeTab === 'apps' && '📱 Engenharia de Aplicativos Mobile & PWA'}
                 {activeTab === 'presell' && '💰 Páginas Presell & Advertoriais High-Ticket'}
                 {activeTab === 'posts' && '🎨 Post Studio & Design System'}
               </h1>
