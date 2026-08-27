@@ -154,8 +154,6 @@ const ADMIN_ACCESS_KEY = 'nexus2026';
 
 export default function NexusMasterSuite() {
   const [activeTab, setActiveTab] = useState<string>('hub');
-  const [storySubTab, setStorySubTab] = useState<'infantil' | 'religioso'>('religioso');
-  const [targetEngine, setTargetEngine] = useState<'dalle' | 'midjourney' | 'ideogram' | 'gemini'>('dalle');
   const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(null);
 
   const [skillsList, setSkillsList] = useState<SkillUpdate[]>(SKILL_UPDATES);
@@ -168,12 +166,20 @@ export default function NexusMasterSuite() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
 
+  // Estados do Post Studio Studio & AI Research Engine
   const [postStudioSubTab, setPostStudioSubTab] = useState<'generator' | 'brandkit3x3' | 'branding' | 'meta-api'>('generator');
   const [clientNiche, setClientNiche] = useState('Medicina Integrativa & Longevidade');
   const [clientTopic, setClientTopic] = useState('Benefícios da Ozonioterapia e Terapia Neural na Regeneração Celular');
   const [brandHandle, setBrandHandle] = useState('@clinica.integrativa');
   const [isResearching, setIsResearching] = useState(false);
 
+  // Webhook State
+  const [metaWebhookUrl, setMetaWebhookUrl] = useState('https://webhook.site/test-endpoint');
+  const [metaAccessToken, setMetaAccessToken] = useState('');
+  const [isDispatchingWebhook, setIsDispatchingWebhook] = useState(false);
+  const [webhookFeedback, setWebhookFeedback] = useState<{ success: boolean; message: string } | null>(null);
+
+  // Post gerado dinâmico
   const [generatedPost, setGeneratedPost] = useState({
     badge: 'MEDICINA INTEGRATIVA & PERFORMANCE',
     slides: [
@@ -201,6 +207,7 @@ export default function NexusMasterSuite() {
 
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
+  // Estados do Módulo Outreach & Demo Forge
   const [demoType, setDemoType] = useState<'landing' | 'saas' | 'crm'>('saas');
   const [outreachForm, setOutreachForm] = useState({
     recipientName: 'Alexandre Cardoso Figueira',
@@ -210,6 +217,7 @@ export default function NexusMasterSuite() {
     emailTemplate: 'demo'
   });
 
+  // Estados do Módulo Mobile / PWA
   const [mobileScreen, setMobileScreen] = useState<'dashboard' | 'leads' | 'scanner'>('dashboard');
   const [pwaConfig, setPwaConfig] = useState({
     appName: 'Nexus Mobile Agent',
@@ -220,6 +228,7 @@ export default function NexusMasterSuite() {
   });
   const [testNotificationSent, setTestNotificationSent] = useState(false);
 
+  // Estados do Módulo SaaS (Audit Pro)
   const [sqlInput, setSqlInput] = useState<string>(
 `CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -370,6 +379,45 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
     }, 1000);
   };
 
+  const handleDispatchMetaWebhook = async () => {
+    setIsDispatchingWebhook(true);
+    setWebhookFeedback(null);
+
+    try {
+      const res = await fetch('/api/social/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          webhookUrl: metaWebhookUrl,
+          clientNiche,
+          brandHandle,
+          postData: generatedPost
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setWebhookFeedback({
+          success: true,
+          message: '✓ Payload do Carrossel e Legenda enviado com sucesso para o Webhook!'
+        });
+      } else {
+        setWebhookFeedback({
+          success: false,
+          message: `Erro: ${data.error || 'Falha no disparo do webhook'}`
+        });
+      }
+    } catch (err: any) {
+      setWebhookFeedback({
+        success: false,
+        message: `Falha na conexão: ${err.message}`
+      });
+    } finally {
+      setIsDispatchingWebhook(false);
+    }
+  };
+
   const handleRunAudit = () => {
     setIsScanning(true);
     setTimeout(() => {
@@ -434,32 +482,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const getLegoPrompts = (engine: 'dalle' | 'midjourney' | 'ideogram' | 'gemini') => {
-    const baseCena1 = "Lego minifigures diorama scene, two cute toy minifigure builders with helmets holding colorful plastic toy bricks, one building on soft yellow sand by the ocean, the other building on a solid high grey rock cliff, cinematic macro photography, tilt-shift lens effect, realistic plastic brick texture, bright warm sunlight, studio lighting";
-    const baseCena2 = "Macro shot of a Lego diorama storm, dramatic rain made of clear blue acrylic pieces, miniature dramatic lightning, toy plastic waves rushing against the shores, cinematic dark moody lighting with glowing highlights on the colorful plastic bricks, high realism plastic texture";
-    const baseCena3 = "Lego minifigure standing joyfully inside a sturdy colorful toy brick house on top of a solid grey rock, looking out the plastic window after a storm, sunbeams breaking through clouds, glowing warm light, nearby on the beach a collapsed pile of loose toy bricks, inspirational and warm atmosphere, macro photography";
-
-    if (engine === 'midjourney') {
-      return [
-        `${baseCena1} --ar 16:9 --v 6.1 --style raw --c 5 --q 2`,
-        `${baseCena2} --ar 16:9 --v 6.1 --style raw --c 5 --q 2`,
-        `${baseCena3} --ar 16:9 --v 6.1 --style raw --c 5 --q 2`
-      ];
-    } else if (engine === 'ideogram') {
-      return [
-        `Typography banner "A CASA NA ROCHA" in stylized plastic 3D letters above: ${baseCena1}`,
-        `${baseCena2}, hyper-detailed rendered textures`,
-        `Banner "ALICERCE INABALAVEL" with ${baseCena3}`
-      ];
-    } else {
-      return [
-        `${baseCena1}, highly detailed 8k render, aspect ratio 16:9.`,
-        `${baseCena2}, 8k resolution, crisp plastic finish.`,
-        `${baseCena3}, hyper-detailed 8k, photorealistic plastic miniature.`
-      ];
-    }
   };
 
   const generateOutreachEmail = () => {
@@ -538,8 +560,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
       </div>
     );
   }
-
-  const currentLegoPrompts = getLegoPrompts(targetEngine);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
@@ -1194,6 +1214,8 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     <label className="text-xs text-slate-400">Webhook de Publicação (Make / n8n / Zapier)</label>
                     <input
                       type="text"
+                      value={metaWebhookUrl}
+                      onChange={(e) => setMetaWebhookUrl(e.target.value)}
                       placeholder="https://hook.eu1.make.com/sua-chave-aqui"
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none font-mono"
                     />
@@ -1203,6 +1225,8 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     <label className="text-xs text-slate-400">Meta Page Access Token (Opcional)</label>
                     <input
                       type="password"
+                      value={metaAccessToken}
+                      onChange={(e) => setMetaAccessToken(e.target.value)}
                       placeholder="EAAK..."
                       className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none font-mono"
                     />
@@ -1212,18 +1236,27 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed">
                   <span className="text-cyan-400 font-bold block">🚀 Como Funciona a Publicação Automática:</span>
                   <p>1. Você gera o post ou BrandKit com a pesquisa automatizada da IA.</p>
-                  <p>2. Ao clicar no botão abaixo, o backend envia o payload (Slides + Legenda + Tags) para o Webhook oficial da Meta.</p>
-                  <p>3. O post é publicado no Instagram/Facebook do cliente de forma consistente e segura.</p>
+                  <p>2. Ao clicar no botão abaixo, a rota <code>/api/social/publish</code> dispara o payload estruturado (Slides + Legenda + Tags + Metadados).</p>
+                  <p>3. O Make/n8n processa e publica instantaneamente nas contas conectadas do Instagram e Facebook.</p>
                 </div>
+
+                {webhookFeedback && (
+                  <div className={`p-4 rounded-xl text-xs font-semibold ${
+                    webhookFeedback.success
+                      ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
+                      : 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
+                  }`}>
+                    {webhookFeedback.message}
+                  </div>
+                )}
 
                 <div className="flex justify-end">
                   <button
-                    onClick={() => {
-                      alert('Webhook configurado! Disparo de teste registrado no ecossistema.');
-                    }}
-                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/20 hover:from-cyan-400 hover:to-teal-300 transition"
+                    onClick={handleDispatchMetaWebhook}
+                    disabled={isDispatchingWebhook}
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/20 hover:from-cyan-400 hover:to-teal-300 transition cursor-pointer active:scale-95 disabled:opacity-50 flex items-center gap-2"
                   >
-                    🚀 Testar Disparo via Webhook
+                    {isDispatchingWebhook ? 'Transmitindo...' : '🚀 Testar Disparo via Webhook'}
                   </button>
                 </div>
               </div>
