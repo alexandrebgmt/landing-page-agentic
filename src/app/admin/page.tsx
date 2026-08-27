@@ -72,6 +72,14 @@ const INITIAL_PROJECTS: ProjectItem[] = [
   },
   {
     id: '5',
+    name: 'Post Studio & Social Multiplier',
+    module: 'posts-design',
+    status: 'Deploy Ativo',
+    description: 'Design system, gerador de carrosséis técnicos e copy de alta autoridade para LinkedIn e Instagram.',
+    tags: ['Design System', 'LinkedIn Carousels', 'Copywriting', 'Branding']
+  },
+  {
+    id: '6',
     name: 'Nexus Mobile PWA Studio',
     module: 'apps',
     status: 'Deploy Ativo',
@@ -79,7 +87,7 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     tags: ['PWA', 'Mobile', 'Tailwind', 'Standalone']
   },
   {
-    id: '6',
+    id: '7',
     name: 'StoryForge - Módulo Infantil & Bíblico',
     module: 'fabrica-historias',
     status: 'Deploy Ativo',
@@ -87,21 +95,13 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     tags: ['Infantil', 'Storytelling', 'Lego Diorama', 'Multi-Engine']
   },
   {
-    id: '7',
+    id: '8',
     name: 'Presell High-Ticket VSL',
     module: 'presell',
     status: 'Deploy Ativo',
     description: 'Página advertorial de alta conversão com retenção de checkout e gatilhos de autoridade.',
     link: '/presell',
     tags: ['Advertorial', 'Copywriting', 'Direct Response']
-  },
-  {
-    id: '8',
-    name: 'Post Studio & Social Multiplier',
-    module: 'posts-design',
-    status: 'Em Criação',
-    description: 'Templates e carrosséis para Instagram e LinkedIn com visual sci-fi slate/cyan.',
-    tags: ['Social Media', 'Design System', 'Canva/Figma']
   }
 ];
 
@@ -150,6 +150,61 @@ const SKILL_UPDATES: SkillUpdate[] = [
   }
 ];
 
+const CAROUSEL_TEMPLATES = [
+  {
+    id: 'rls-security',
+    title: 'Como Blindar Bancos de Dados com RLS Nativo',
+    badge: 'ARQUITETURA DE DADOS & SEGURANÇA',
+    slides: [
+      {
+        slideNum: 1,
+        headline: 'Vazamentos Multi-Tenant Acontecem Aqui.',
+        subhead: 'Por que a maioria das aplicações falha ao isolar dados de clientes no nível da aplicação.',
+        codeSnippet: `// ❌ Abordagem frágil no backend:\nSELECT * FROM orders WHERE tenant_id = req.user.tenantId;`
+      },
+      {
+        slideNum: 2,
+        headline: 'A Solução: Row Level Security (RLS) no PostgreSQL',
+        subhead: 'O isolamento é delegado ao próprio banco de dados, tornando impossível o vazamento por falha de código.',
+        codeSnippet: `ALTER TABLE orders ENABLE ROW LEVEL SECURITY;\n\nCREATE POLICY tenant_isolation ON orders\n  FOR ALL\n  USING (tenant_id = auth.uid());`
+      },
+      {
+        slideNum: 3,
+        headline: 'Resultado: Segurança Blindada por Padrão',
+        subhead: 'Mesmo com falha na API, o PostgreSQL rejeita qualquer leitura não autorizada.',
+        codeSnippet: `-- Zero vulnerabilidades de IDOR e vazamento lateral.\n-- Auditoria e conformidade automática.`
+      }
+    ],
+    socialCopy: `Você ainda confia que todo desenvolvedor vai lembrar de colocar 'WHERE tenant_id = x' em todas as queries?\n\nEsse é o erro nº 1 que causa vazamentos de dados entre clientes em aplicações modernas.\n\nNa NexusData, implementamos Row Level Security (RLS) nativo direto no PostgreSQL. O banco se torna a fortaleza.\n\n👉 Confira o carrossel técnico acima e comente 'AUDIT' para receber um diagnóstico do seu schema.\n\n#EngenhariaDeDados #PostgreSQL #CyberSecurity #Supabase #SoftwareEngineering #CloudArchitecture`
+  },
+  {
+    id: 'query-performance',
+    title: 'Eliminando Gargalos em Bases de Alta Escala',
+    badge: 'PERFORMANCE & LATÊNCIA',
+    slides: [
+      {
+        slideNum: 1,
+        headline: 'Queries Lentas Estão Drenando Sua Nuvem?',
+        subhead: 'Identificando Sequential Scans e índices ausentes em tabelas volumosas.',
+        codeSnippet: `EXPLAIN ANALYZE \nSELECT * FROM transactions \nWHERE user_id = 'a12b' AND status = 'paid';\n-- Seq Scan: Cost 45000.00 | Time: 1.842s ❌`
+      },
+      {
+        slideNum: 2,
+        headline: 'Indexação Composta & Particionamento',
+        subhead: 'Substituição de buscas lineares por scans pontuais em B-Tree otimizado.',
+        codeSnippet: `CREATE INDEX idx_trans_user_status \nON transactions (user_id, status);\n-- Index Scan: Cost 4.20 | Time: 0.008s ⚡`
+      },
+      {
+        slideNum: 3,
+        headline: '98% de Redução em Tempo de Resposta',
+        subhead: 'Menos consumo de CPU na nuvem, respostas instantâneas para o usuário final.',
+        codeSnippet: `-- Latência reduzida de 1800ms para 8ms.\n-- Economia direta em instâncias de banco.`
+      }
+    ],
+    socialCopy: `1.8 segundos para rodar uma consulta analítica parece pouco? Em uma base de 100 mil requisições diárias, isso derruba seu servidor.\n\nCom a estratégia certa de índices compostos e particionamento no PostgreSQL, reduzimos o tempo de consulta em mais de 98%.\n\nConfira os comandos técnicos no carrossel acima.\n\n#DatabaseOptimization #PostgreSQL #DataEngineering #Performance #DevOps #Backend`
+  }
+];
+
 const ADMIN_ACCESS_KEY = 'nexus2026';
 
 export default function NexusMasterSuite() {
@@ -168,6 +223,11 @@ export default function NexusMasterSuite() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
 
+  // Estados do Post Studio & Design System
+  const [selectedPostTemplate, setSelectedPostTemplate] = useState<number>(0);
+  const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
+  const [brandColor, setBrandColor] = useState<string>('#06b6d4'); // Ciano Padrão
+
   // Estados do Módulo Outreach & Demo Forge
   const [demoType, setDemoType] = useState<'landing' | 'saas' | 'crm'>('saas');
   const [outreachForm, setOutreachForm] = useState({
@@ -175,7 +235,7 @@ export default function NexusMasterSuite() {
     recipientEmail: '',
     companyName: '',
     techBottleneck: 'Bancos de dados lentos e falta de isolamento seguro RLS',
-    emailTemplate: 'demo' // 'cold' | 'demo' | 'proposal'
+    emailTemplate: 'demo'
   });
 
   // Estados do Módulo Mobile / PWA
@@ -380,7 +440,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
     }
   };
 
-  // Gerador dinâmico de e-mails de alta conversão
   const generateOutreachEmail = () => {
     const name = outreachForm.recipientName || 'Gestor de Tecnologia';
     const company = outreachForm.companyName || 'Sua Empresa';
@@ -406,6 +465,9 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
 
   const currentEmail = generateOutreachEmail();
   const mailtoLink = `mailto:${outreachForm.recipientEmail}?subject=${encodeURIComponent(currentEmail.subject)}&body=${encodeURIComponent(currentEmail.body)}`;
+
+  const currentPost = CAROUSEL_TEMPLATES[selectedPostTemplate];
+  const currentSlide = currentPost.slides[activeSlideIndex];
 
   const hasPendingUpdates = skillsList.some((s) => s.status === 'Disponível');
 
@@ -487,6 +549,23 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             >
               <span>📊</span>
               <span>Visão Geral & Projetos</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('posts')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+                activeTab === 'posts'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <span>🎨</span>
+                <span>Post Studio & Design</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+                PRO
+              </span>
             </button>
 
             <button
@@ -613,18 +692,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               <span>💰</span>
               <span>Páginas Presell & VSL</span>
             </button>
-
-            <button
-              onClick={() => setActiveTab('posts')}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
-                activeTab === 'posts'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              <span>🎨</span>
-              <span>Post Studio & Design</span>
-            </button>
           </nav>
         </div>
 
@@ -661,18 +728,18 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v4.0 Enterprise OS
+                    v4.5 Design & Content OS
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  Orquestrador de engenharia de dados, geração de demonstrações comerciais e prospecção B2B integrada.
+                  Design system unificado, gerador de carrosséis técnicos B2B e esteira de automações.
                 </p>
               </div>
               <button
-                onClick={() => setActiveTab('outreach')}
+                onClick={() => setActiveTab('posts')}
                 className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 flex items-center gap-2"
               >
-                <span>✉️</span> Gerar E-mail de Prospecção & Demo
+                <span>🎨</span> Abrir Post Studio & Carrosséis
               </button>
             </div>
 
@@ -683,9 +750,9 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <div className="text-[11px] text-emerald-400 mt-2 font-medium">● Sincronizado via Supabase RLS</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Módulos Ativos</div>
-                <div className="text-2xl font-bold text-white mt-1">8 Módulos</div>
-                <div className="text-[11px] text-slate-400 mt-2">Demos, Outreach, SaaS, CRM...</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Design & Social</div>
+                <div className="text-2xl font-bold text-cyan-400 mt-1">Post Studio</div>
+                <div className="text-[11px] text-cyan-300 mt-2">LinkedIn & Instagram 100%</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Canal de E-mail</div>
@@ -758,7 +825,176 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 2. DEMO FORGE & CLIENT OUTREACH B2B */}
+        {/* 2. POST STUDIO & DESIGN SYSTEM (NOVO MÓDULO) */}
+        {activeTab === 'posts' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>🎨</span> Post Studio & Design System
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Gerador visual de carrosséis técnicos B2B, branding Dark Sci-Fi e copy de alta conversão
+                </p>
+              </div>
+
+              {/* Seletor de Tema do Carrossel */}
+              <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1">
+                {CAROUSEL_TEMPLATES.map((tmpl, idx) => (
+                  <button
+                    key={tmpl.id}
+                    onClick={() => {
+                      setSelectedPostTemplate(idx);
+                      setActiveSlideIndex(0);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                      selectedPostTemplate === idx
+                        ? 'bg-cyan-500 text-slate-950 shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {idx === 0 ? '🛡️ Segurança RLS' : '⚡ Performance SQL'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* CANVAS DO POST / SLIDE DO CARROSSEL (5 Colunas) */}
+              <div className="lg:col-span-6 flex flex-col items-center space-y-4">
+                
+                {/* O Slide Quadrado (1080x1080 Aspect Ratio 1:1) */}
+                <div className="w-full max-w-[440px] aspect-square bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden shadow-2xl shadow-cyan-950/40">
+                  
+                  {/* Fundo Sci-Fi Sutil */}
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 w-40 h-40 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
+
+                  {/* Header do Slide */}
+                  <div className="flex justify-between items-center z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-400 font-bold text-xs">
+                        ⚡
+                      </div>
+                      <span className="text-xs font-bold text-white tracking-wider">NexusData</span>
+                    </div>
+
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                      SLIDE {currentSlide.slideNum} DE {currentPost.slides.length}
+                    </span>
+                  </div>
+
+                  {/* Corpo do Slide */}
+                  <div className="space-y-3 z-10 my-auto">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 font-bold block">
+                      {currentPost.badge}
+                    </span>
+                    <h2 className="text-xl font-extrabold text-white leading-snug">
+                      {currentSlide.headline}
+                    </h2>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {currentSlide.subhead}
+                    </p>
+
+                    {/* Box de Código / Demonstração Técnica */}
+                    <pre className="p-3 bg-slate-900/90 border border-slate-800 rounded-xl font-mono text-[11px] text-teal-300 overflow-x-auto whitespace-pre leading-relaxed shadow-inner">
+                      {currentSlide.codeSnippet}
+                    </pre>
+                  </div>
+
+                  {/* Footer do Slide */}
+                  <div className="flex justify-between items-center z-10 pt-2 border-t border-slate-800/80 text-[10px] text-slate-400 font-mono">
+                    <span>nexusdata.enterprise@gmail.com</span>
+                    <span className="text-cyan-400 font-bold">Arraste para o lado ➔</span>
+                  </div>
+                </div>
+
+                {/* Controles de Navegação entre Slides */}
+                <div className="flex items-center gap-2">
+                  {currentPost.slides.map((_, sIdx) => (
+                    <button
+                      key={sIdx}
+                      onClick={() => setActiveSlideIndex(sIdx)}
+                      className={`h-2.5 rounded-full transition-all ${
+                        activeSlideIndex === sIdx
+                          ? 'w-8 bg-cyan-400'
+                          : 'w-2.5 bg-slate-800 hover:bg-slate-700'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* PAINEL DE COPYWRITING & DESIGN SYSTEM (6 Colunas) */}
+              <div className="lg:col-span-6 space-y-6">
+                
+                {/* Design System & Paleta */}
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                    1. Diretrizes Visuais & Paleta Nexus (Dark Sci-Fi)
+                  </h3>
+
+                  <div className="grid grid-cols-3 gap-3 text-center text-xs">
+                    <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
+                      <div className="w-6 h-6 rounded-full bg-slate-950 border border-cyan-500 mx-auto" />
+                      <span className="block font-bold text-white">Slate 950</span>
+                      <span className="block text-[10px] font-mono text-slate-400">#020617</span>
+                    </div>
+
+                    <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
+                      <div className="w-6 h-6 rounded-full bg-cyan-400 mx-auto shadow-sm shadow-cyan-400" />
+                      <span className="block font-bold text-cyan-300">Cyan Neon</span>
+                      <span className="block text-[10px] font-mono text-slate-400">#06b6d4</span>
+                    </div>
+
+                    <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
+                      <div className="w-6 h-6 rounded-full bg-teal-400 mx-auto shadow-sm shadow-teal-400" />
+                      <span className="block font-bold text-teal-300">Teal Accent</span>
+                      <span className="block text-[10px] font-mono text-slate-400">#2dd4bf</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Copywriting Pronto para Publicar */}
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
+                        2. Legenda / Copy Completa para LinkedIn & Instagram
+                      </h3>
+                      <button
+                        onClick={() => copyToClipboard(currentPost.socialCopy, 201)}
+                        className="text-xs font-bold text-cyan-300 hover:text-white transition flex items-center gap-1"
+                      >
+                        {copiedPromptIndex === 201 ? '✓ Copiado!' : '📋 Copiar Legenda'}
+                      </button>
+                    </div>
+
+                    <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-200 font-sans whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto">
+                      {currentPost.socialCopy}
+                    </pre>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-800 flex justify-between items-center">
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      Formato otimizado com retenção de 1º parágrafo e CTA
+                    </span>
+                    <button
+                      onClick={() => copyToClipboard(JSON.stringify(currentSlide, null, 2), 202)}
+                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                    >
+                      <span>💾</span> Copiar Dados do Slide
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3. DEMO FORGE & CLIENT OUTREACH */}
         {activeTab === 'outreach' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -778,7 +1014,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </div>
             </div>
 
-            {/* SELEÇÃO DE DEMONSTRAÇÃO VISUAL */}
             <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
@@ -846,7 +1081,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </div>
             </div>
 
-            {/* FORMULÁRIO DE PROSPECÇÃO & GERADOR DE E-MAILS */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <div className="lg:col-span-5 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
                 <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
@@ -913,7 +1147,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 </div>
               </div>
 
-              {/* PAINEL DE VISUALIZAÇÃO E DISPARO DO E-MAIL */}
               <div className="lg:col-span-7 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
@@ -956,7 +1189,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 3. CRM COM LEAD SCORING & PIPELINE */}
+        {/* 4. CRM COM LEAD SCORING */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -1055,7 +1288,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 4. ENGENHARIA SAAS: AUDIT PRO */}
+        {/* 5. ENGENHARIA SAAS: AUDIT PRO */}
         {activeTab === 'saas' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -1184,7 +1417,7 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 5. RADAR DE ATUALIZAÇÕES & SKILLS */}
+        {/* 6. RADAR DE ATUALIZAÇÕES */}
         {activeTab === 'updates' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
@@ -1256,202 +1489,18 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 6. MÓDULO APLICATIVOS MOBILE */}
-        {activeTab === 'apps' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-              <div>
-                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
-                  <span>📱</span> Nexus Mobile & PWA Studio
-                </h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  Ambiente de emulação mobile, gerador de manifesto PWA e simulador de notificações push
-                </p>
-              </div>
-              <button
-                onClick={triggerMobileNotification}
-                className="px-3 py-1.5 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 rounded-xl text-xs font-bold transition hover:bg-cyan-500 hover:text-slate-950 flex items-center gap-1.5"
-              >
-                <span>🔔</span> Simular Push Notification
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="w-[320px] h-[640px] bg-slate-950 rounded-[48px] p-3 border-[6px] border-slate-800 shadow-2xl shadow-cyan-950/50 flex flex-col relative overflow-hidden">
-                  <div className="absolute top-4 inset-x-0 flex justify-center z-30">
-                    <div className="w-24 h-4 bg-slate-900 rounded-full flex items-center justify-end px-2">
-                      <span className="w-2 h-2 rounded-full bg-slate-700" />
-                    </div>
-                  </div>
-
-                  {testNotificationSent && (
-                    <div className="absolute top-12 inset-x-4 bg-slate-900/95 border border-cyan-500/60 p-3 rounded-2xl shadow-xl z-40 animate-fadeIn space-y-1 backdrop-blur-md">
-                      <div className="flex items-center justify-between text-[10px] font-mono text-cyan-400">
-                        <span className="flex items-center gap-1">⚡ <strong>NexusMobile</strong></span>
-                        <span>agora</span>
-                      </div>
-                      <p className="text-xs font-bold text-white">Novo Lead de Alta Prioridade! 🔥</p>
-                      <p className="text-[10px] text-slate-300">Score 90+ detectado no pipeline.</p>
-                    </div>
-                  )}
-
-                  <div className="flex-1 bg-slate-900/90 rounded-[36px] overflow-hidden flex flex-col pt-8 pb-4 px-4 justify-between border border-slate-800/60">
-                    <div className="space-y-3 pt-2">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-xs font-bold">
-                            ⚡
-                          </div>
-                          <span className="text-xs font-bold text-white">Nexus Data Mobile</span>
-                        </div>
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      </div>
-
-                      <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-[10px]">
-                        <button
-                          onClick={() => setMobileScreen('dashboard')}
-                          className={`flex-1 py-1 rounded-lg font-bold transition ${
-                            mobileScreen === 'dashboard' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
-                          }`}
-                        >
-                          Métricas
-                        </button>
-                        <button
-                          onClick={() => setMobileScreen('leads')}
-                          className={`flex-1 py-1 rounded-lg font-bold transition ${
-                            mobileScreen === 'leads' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
-                          }`}
-                        >
-                          Leads
-                        </button>
-                        <button
-                          onClick={() => setMobileScreen('scanner')}
-                          className={`flex-1 py-1 rounded-lg font-bold transition ${
-                            mobileScreen === 'scanner' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
-                          }`}
-                        >
-                          Scan RLS
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex-1 my-3 overflow-y-auto space-y-3 pr-1">
-                      {mobileScreen === 'dashboard' && (
-                        <div className="space-y-2.5 animate-fadeIn">
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                            <span className="text-[10px] text-slate-400 font-mono uppercase">Leads Ativos</span>
-                            <div className="text-xl font-bold text-cyan-400 mt-0.5">{leads.length} Contatos</div>
-                          </div>
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                            <span className="text-[10px] text-slate-400 font-mono uppercase">Latência Edge</span>
-                            <div className="text-xl font-bold text-teal-400 mt-0.5">18 ms</div>
-                          </div>
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                            <span className="text-[10px] text-slate-400 font-mono uppercase">Segurança</span>
-                            <div className="text-xl font-bold text-emerald-400 mt-0.5">RLS 100% Ativo</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {mobileScreen === 'leads' && (
-                        <div className="space-y-2 animate-fadeIn">
-                          {leads.slice(0, 3).map((l) => (
-                            <div key={l.id} className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                              <div className="flex justify-between items-center text-[10px]">
-                                <span className="font-bold text-white">{l.name}</span>
-                                <span className="text-cyan-400 font-mono font-bold">
-                                  🔥 {calculateLeadScore(l.data_volume, l.bottleneck)} pts
-                                </span>
-                              </div>
-                              <p className="text-[10px] text-slate-400 truncate">{l.company}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {mobileScreen === 'scanner' && (
-                        <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-center animate-fadeIn">
-                          <div className="text-2xl">🛡️</div>
-                          <p className="text-xs font-bold text-white">Scanner Portátil</p>
-                          <p className="text-[10px] text-slate-400">PostgreSQL Schema Checker sincronizado via Supabase.</p>
-                          <button className="w-full py-1.5 bg-cyan-500 text-slate-950 font-bold rounded-lg text-[10px]">
-                            Scan Rápido
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-800 flex justify-around text-slate-400 text-sm">
-                      <span className="text-cyan-400 cursor-pointer">🏠</span>
-                      <span className="cursor-pointer">⚡</span>
-                      <span className="cursor-pointer">🔔</span>
-                      <span className="cursor-pointer">⚙️</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="lg:col-span-7 space-y-6">
-                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
-                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-                    1. Parâmetros do Aplicativo PWA
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs text-slate-400">Nome da Aplicação</label>
-                      <input
-                        type="text"
-                        value={pwaConfig.appName}
-                        onChange={(e) => setPwaConfig({ ...pwaConfig, appName: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs text-slate-400">Nome Curto (Tela Inicial)</label>
-                      <input
-                        type="text"
-                        value={pwaConfig.shortName}
-                        onChange={(e) => setPwaConfig({ ...pwaConfig, shortName: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-3">
-                  <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
-                    2. manifest.json Standalone
-                  </h3>
-                  <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-teal-300 overflow-x-auto leading-relaxed">
-{JSON.stringify({
-  name: pwaConfig.appName,
-  short_name: pwaConfig.shortName,
-  start_url: "/",
-  display: pwaConfig.display,
-  background_color: pwaConfig.bgColor,
-  theme_color: pwaConfig.themeColor
-}, null, 2)}
-                  </pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 7. DEMAIS MÓDULOS */}
-        {(activeTab === 'historias' || activeTab === 'builder' || activeTab === 'presell' || activeTab === 'posts') && (
+        {/* 7. DEMAIS MÓDULOS (APPS, HISTORIAS, BUILDER, PRESELL) */}
+        {(activeTab === 'apps' || activeTab === 'historias' || activeTab === 'builder' || activeTab === 'presell') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
               <h1 className="text-2xl font-bold text-cyan-400">
+                {activeTab === 'apps' && '📱 Engenharia de Aplicativos Mobile & PWA'}
                 {activeTab === 'historias' && '✨ Fábrica de Histórias Multimodal'}
                 {activeTab === 'builder' && '🚀 Criador de Landing Pages'}
                 {activeTab === 'presell' && '💰 Páginas Presell & Advertoriais High-Ticket'}
-                {activeTab === 'posts' && '🎨 Post Studio & Design System'}
               </h1>
               <p className="text-xs text-slate-400 mt-1">
-                Ambiente integrado de prototipagem rápida e desenvolvimento modular com IA
+                Módulo ativo e integrado ao ecossistema Nexus
               </p>
             </div>
 
@@ -1459,9 +1508,9 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
               <div className="inline-flex p-4 rounded-2xl bg-cyan-500/10 text-cyan-400 text-3xl">
                 ⚡
               </div>
-              <h3 className="text-lg font-bold text-white">Módulo Pronto para Construção Guiada</h3>
+              <h3 className="text-lg font-bold text-white">Módulo Operacional</h3>
               <p className="text-sm text-slate-400 max-w-xl mx-auto">
-                Basta me enviar referências visuais, prints ou diretrizes aqui no chat para desenvolvermos a solução completa.
+                Pronto para receber novos dados ou personalizações específicas.
               </p>
             </div>
           </div>
