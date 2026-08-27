@@ -1448,7 +1448,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     Conectado ao Gmail: Envio em 1 clique
                   </span>
                   <a
-                    href={mailtoLink}
+                    href={`https://mail.google.com/mail/?view=cmhref={mailtoLink}fs=1href={mailtoLink}to=${encodeURIComponent(outreachForm.recipientEmail)}href={mailtoLink}su=${encodeURIComponent(currentEmail.subject)}href={mailtoLink}body=${encodeURIComponent(currentEmail.body)}`}
                     target="_blank"
                     rel="noreferrer"
                     className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 text-center flex items-center justify-center gap-2"
