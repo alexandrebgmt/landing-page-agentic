@@ -12,6 +12,8 @@ interface Lead {
   data_volume: string;
   bottleneck: string;
   status?: string;
+  score?: number;
+  enrichment?: string;
 }
 
 interface ProjectItem {
@@ -30,7 +32,7 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     name: 'NexusData Landing 3D',
     module: 'landing-pages',
     status: 'Deploy Ativo',
-    description: 'Landing page principal com malha neural 3D em Three.js, RLS e captação.',
+    description: 'Landing page principal com malha neural 3D em Three.js, RLS e captação de leads.',
     link: 'https://landing-page-agentic-one.vercel.app',
     tags: ['Next.js', 'Three.js', 'Supabase', 'Vercel']
   },
@@ -44,42 +46,42 @@ const INITIAL_PROJECTS: ProjectItem[] = [
   },
   {
     id: '3',
-    name: 'Nexus Mini-CRM',
+    name: 'Nexus Mini-CRM Agentic',
     module: 'crm',
     status: 'Deploy Ativo',
-    description: 'Gestão de pipeline de diagnósticos com status dinâmico e exportação CSV.',
-    tags: ['CRM', 'Pipeline', 'Realtime']
+    description: 'Gestão de pipeline de diagnósticos com Lead Scoring, status dinâmico e exportação CSV.',
+    tags: ['CRM', 'Pipeline', 'Realtime', 'Lead Scoring']
   },
   {
     id: '4',
     name: 'StoryForge - Módulo Infantil (Trolili)',
     module: 'fabrica-historias',
-    status: 'Em Criação',
-    description: 'Gerador multimodal de narrativas infantis e roteiros com Biscoito, Mimi, Pip e a turma.',
-    tags: ['Infantil', 'Storytelling', 'Personagens 3D']
+    status: 'Deploy Ativo',
+    description: 'Gerador multimodal de narrativas infantis e roteiros 3D com Biscoito, Mimi, Pip e Quack.',
+    tags: ['Infantil', 'Storytelling', 'Personagens 3D', 'Multi-Engine']
   },
   {
     id: '5',
-    name: 'StoryForge - Módulo Reflexivo & Devocional',
+    name: 'StoryForge - Módulo Bíblico em Blocos (Lego)',
     module: 'fabrica-historias',
-    status: 'Em Criação',
-    description: 'Gerador de estudos, histórias reflexivas e parábolas com exegese bíblica e aplicação prática.',
-    tags: ['Religioso', 'Reflexivo', 'Parábolas']
+    status: 'Deploy Ativo',
+    description: 'Narrativas bíblicas e estudos em dioramas de blocos para crianças e adultos com rigor teológico.',
+    tags: ['Religioso', 'Lego Diorama', 'Parábolas', 'Exegese']
   },
   {
     id: '6',
     name: 'Presell High-Ticket VSL',
     module: 'presell',
-    status: 'Rascunho',
+    status: 'Em Criação',
     description: 'Página advertorial de alta conversão com retenção de checkout e gatilhos de autoridade.',
     tags: ['Advertorial', 'Copywriting', 'Direct Response']
   },
   {
     id: '7',
-    name: 'Gerador de Carrosséis & Banners',
+    name: 'Post Studio & Social Multiplier',
     module: 'posts-design',
     status: 'Em Criação',
-    description: 'Templates estruturados para Instagram e LinkedIn com tipografia sci-fi e paleta slate/cyan.',
+    description: 'Templates e carrosséis para Instagram e LinkedIn com visual sci-fi slate/cyan.',
     tags: ['Social Media', 'Design System', 'Canva/Figma']
   },
   {
@@ -88,15 +90,18 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     module: 'apps',
     status: 'Rascunho',
     description: 'PWA / App mobile para acompanhamento de métricas e alertas de leads em tempo real.',
-    tags: ['PWA', 'Mobile', 'React Native / Tailwind']
+    tags: ['PWA', 'Mobile', 'Tailwind']
   }
 ];
 
 const ADMIN_ACCESS_KEY = 'nexus2026';
 
-export default function NexusCommandCenter() {
+export default function NexusMasterSuite() {
   const [activeTab, setActiveTab] = useState<string>('hub');
-  const [storySubTab, setStorySubTab] = useState<'infantil' | 'religioso'>('infantil');
+  const [storySubTab, setStorySubTab] = useState<'infantil' | 'religioso'>('religioso');
+  const [targetEngine, setTargetEngine] = useState<'dalle' | 'midjourney' | 'ideogram' | 'gemini'>('dalle');
+  const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(null);
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -158,13 +163,29 @@ export default function NexusCommandCenter() {
     await supabase.from('leads').update({ status: newStatus }).eq('id', id);
   };
 
+  const calculateLeadScore = (volume: string, bottleneck: string) => {
+    let score = 50;
+    if (volume?.includes('> 1 TB') || volume?.includes('10 TB') || volume?.includes('> 10 TB')) score += 35;
+    else if (volume?.includes('100 GB - 1 TB')) score += 20;
+    
+    if (bottleneck && bottleneck.length > 20) score += 15;
+    return Math.min(score, 99);
+  };
+
+  const copyToClipboard = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedPromptIndex(index);
+    setTimeout(() => setCopiedPromptIndex(null), 2500);
+  };
+
   const exportCSV = () => {
     if (leads.length === 0) return;
-    const headers = ['ID', 'Data', 'Status', 'Nome', 'Email', 'Empresa', 'Volume', 'Desafio'];
+    const headers = ['ID', 'Data', 'Status', 'Score', 'Nome', 'Email', 'Empresa', 'Volume', 'Desafio'];
     const rows = leads.map((l) => [
       l.id,
       new Date(l.created_at).toLocaleString('pt-BR'),
       `"${l.status || 'Novo'}"`,
+      calculateLeadScore(l.data_volume, l.bottleneck),
       `"${l.name}"`,
       `"${l.email}"`,
       `"${l.company}"`,
@@ -182,23 +203,49 @@ export default function NexusCommandCenter() {
     document.body.removeChild(link);
   };
 
+  const getLegoPrompts = (engine: 'dalle' | 'midjourney' | 'ideogram' | 'gemini') => {
+    const baseCena1 = "Lego minifigures diorama scene, two cute toy minifigure builders with helmets holding colorful plastic toy bricks, one building on soft yellow sand by the ocean, the other building on a solid high grey rock cliff, cinematic macro photography, tilt-shift lens effect, realistic plastic brick texture, bright warm sunlight, studio lighting";
+    const baseCena2 = "Macro shot of a Lego diorama storm, dramatic rain made of clear blue acrylic pieces, miniature dramatic lightning, toy plastic waves rushing against the shores, cinematic dark moody lighting with glowing highlights on the colorful plastic bricks, high realism plastic texture";
+    const baseCena3 = "Lego minifigure standing joyfully inside a sturdy colorful toy brick house on top of a solid grey rock, looking out the plastic window after a storm, sunbeams breaking through clouds, glowing warm light, nearby on the beach a collapsed pile of loose toy bricks, inspirational and warm atmosphere, macro photography";
+
+    if (engine === 'midjourney') {
+      return [
+        `${baseCena1} --ar 16:9 --v 6.1 --style raw --c 5 --q 2`,
+        `${baseCena2} --ar 16:9 --v 6.1 --style raw --c 5 --q 2`,
+        `${baseCena3} --ar 16:9 --v 6.1 --style raw --c 5 --q 2`
+      ];
+    } else if (engine === 'ideogram') {
+      return [
+        `Typography banner "A CASA NA ROCHA" in stylized plastic 3D letters above: ${baseCena1}`,
+        `${baseCena2}, hyper-detailed rendered textures`,
+        `Banner "ALICERCE INABALAVEL" with ${baseCena3}`
+      ];
+    } else {
+      return [
+        `${baseCena1}, highly detailed 8k render, aspect ratio 16:9.`,
+        `${baseCena2}, 8k resolution, crisp plastic finish.`,
+        `${baseCena3}, hyper-detailed 8k, photorealistic plastic miniature.`
+      ];
+    }
+  };
+
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.1)_0,transparent_70%)] pointer-events-none" />
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.12)_0,transparent_70%)] pointer-events-none" />
         <form
           onSubmit={handleLogin}
-          className="relative w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-cyan-500/20 rounded-3xl p-8 shadow-2xl shadow-cyan-950/40 space-y-6"
+          className="relative w-full max-w-md bg-slate-900/90 backdrop-blur-2xl border border-cyan-500/30 rounded-3xl p-8 shadow-2xl shadow-cyan-950/50 space-y-6"
         >
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-2xl font-bold">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-2xl font-bold shadow-inner">
               ⚡
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-extrabold bg-gradient-to-r from-white via-slate-100 to-cyan-400 bg-clip-text text-transparent">
               Nexus Master Suite OS
             </h1>
-            <p className="text-xs text-slate-400 font-mono tracking-wide">
-              AUTENTICAÇÃO CENTRAL DE ENGENHARIA & IA
+            <p className="text-xs text-slate-400 font-mono tracking-wider">
+              CENTRAL OPERACIONAL DE ENGENHARIA & IA
             </p>
           </div>
 
@@ -209,7 +256,7 @@ export default function NexusCommandCenter() {
               placeholder="••••••••••••"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+              className="w-full px-4 py-3 bg-slate-950/90 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
               autoFocus
             />
             {errorMsg && <p className="text-xs text-rose-400 font-medium">{errorMsg}</p>}
@@ -217,7 +264,7 @@ export default function NexusCommandCenter() {
 
           <button
             type="submit"
-            className="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 active:scale-[0.99]"
+            className="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/25 active:scale-[0.99]"
           >
             Acessar Centro de Comando
           </button>
@@ -226,11 +273,13 @@ export default function NexusCommandCenter() {
     );
   }
 
+  const currentLegoPrompts = getLegoPrompts(targetEngine);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
       
       {/* SIDEBAR MASTER */}
-      <aside className="w-72 bg-slate-900/80 backdrop-blur-2xl border-r border-slate-800/80 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0 z-30">
+      <aside className="w-72 bg-slate-900/90 backdrop-blur-2xl border-r border-slate-800/80 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0 z-30">
         <div className="space-y-6">
           <div className="px-3 py-2 flex items-center justify-between border-b border-slate-800 pb-4">
             <div className="flex items-center space-x-3">
@@ -252,7 +301,7 @@ export default function NexusCommandCenter() {
               onClick={() => setActiveTab('hub')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'hub'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -264,7 +313,7 @@ export default function NexusCommandCenter() {
               onClick={() => setActiveTab('crm')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'crm'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -272,7 +321,7 @@ export default function NexusCommandCenter() {
                 <span>🎯</span>
                 <span>CRM & Pipeline Leads</span>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 font-bold">
                 {leads.length}
               </span>
             </button>
@@ -280,10 +329,27 @@ export default function NexusCommandCenter() {
             <div className="pt-3 px-3 py-1 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Módulos de Produção</div>
 
             <button
+              onClick={() => setActiveTab('historias')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+                activeTab === 'historias'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <span>✨</span>
+                <span>Fábrica de Histórias</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                PRO
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('builder')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'builder'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -295,7 +361,7 @@ export default function NexusCommandCenter() {
               onClick={() => setActiveTab('saas')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'saas'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -307,7 +373,7 @@ export default function NexusCommandCenter() {
               onClick={() => setActiveTab('apps')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'apps'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -319,7 +385,7 @@ export default function NexusCommandCenter() {
               onClick={() => setActiveTab('presell')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'presell'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -328,22 +394,10 @@ export default function NexusCommandCenter() {
             </button>
 
             <button
-              onClick={() => setActiveTab('historias')}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
-                activeTab === 'historias'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              <span>✨</span>
-              <span>Fábrica de Histórias</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('posts')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'posts'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -361,7 +415,7 @@ export default function NexusCommandCenter() {
               </div>
               <div className="text-xs">
                 <p className="font-semibold text-white">Alexandre</p>
-                <p className="text-[10px] text-slate-400">Chief Engineer</p>
+                <p className="text-[10px] text-slate-400">Chief Architect</p>
               </div>
             </div>
             <button
@@ -385,18 +439,18 @@ export default function NexusCommandCenter() {
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v2.5 Architecture
+                    v2.8 Architecture
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  Orquestrador de engenharia de software, pipelines de dados, geração de histórias e campanhas.
+                  Orquestrador de engenharia de dados, geração multimodal de histórias e esteira de automações.
                 </p>
               </div>
               <button
-                onClick={() => setActiveTab('builder')}
+                onClick={() => setActiveTab('historias')}
                 className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20"
               >
-                + Iniciar Novo Projeto
+                ✨ Abrir Fábrica de Histórias
               </button>
             </div>
 
@@ -408,7 +462,7 @@ export default function NexusCommandCenter() {
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Módulos Ativos</div>
-                <div className="text-2xl font-bold text-white mt-1">7 Módulos</div>
+                <div className="text-2xl font-bold text-white mt-1">8 Módulos</div>
                 <div className="text-[11px] text-slate-400 mt-2">Landing, SaaS, CRM, Histórias...</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
@@ -417,16 +471,16 @@ export default function NexusCommandCenter() {
                 <div className="text-[11px] text-teal-400 mt-2">Next.js 15 + Vercel + PG</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Ambiente de IA</div>
-                <div className="text-2xl font-bold text-purple-400 mt-1">PhD Multi-Agent</div>
-                <div className="text-[11px] text-purple-400 mt-2">Copiloto Ativo & Calibrado</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Motor de Imagem</div>
+                <div className="text-2xl font-bold text-purple-400 mt-1">Multi-Engine</div>
+                <div className="text-[11px] text-purple-400 mt-2">DALL-E 3, Midjourney, Gemini</div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-bold text-white">Ecossistema de Soluções</h2>
-                <span className="text-xs text-slate-400">Clique em qualquer módulo no menu lateral para editar</span>
+                <span className="text-xs text-slate-400">Clique em qualquer módulo no menu lateral para operar</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -484,8 +538,10 @@ export default function NexusCommandCenter() {
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
               <div>
-                <h1 className="text-2xl font-bold text-cyan-400">CRM de Leads & Diagnósticos</h1>
-                <p className="text-xs text-slate-400 mt-1">Gerencie contatos capturados, altere status e exporte relatórios</p>
+                <h1 className="text-2xl font-bold text-cyan-400">CRM de Leads & Pipeline Inteligente</h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Gestão em tempo real com Lead Scoring automático e dados sincronizados via PostgreSQL
+                </p>
               </div>
               <div className="flex gap-2">
                 <button
@@ -507,7 +563,7 @@ export default function NexusCommandCenter() {
               <div className="text-center py-16 text-slate-500 font-mono text-sm">Carregando leads do Supabase...</div>
             ) : leads.length === 0 ? (
               <div className="text-center py-16 text-slate-500 rounded-2xl border border-slate-800 bg-slate-900/30">
-                Nenhum lead registrado ainda. Envie o link da sua Landing Page para começar a receber contatos.
+                Nenhum lead registrado ainda. Envie o link da sua Landing Page para começar a receber diagnósticos.
               </div>
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl">
@@ -515,17 +571,19 @@ export default function NexusCommandCenter() {
                   <thead className="bg-slate-800/80 text-xs uppercase tracking-wider text-slate-400 font-mono">
                     <tr>
                       <th className="p-4">Status</th>
+                      <th className="p-4">Score</th>
                       <th className="p-4">Data</th>
                       <th className="p-4">Nome</th>
                       <th className="p-4">Email</th>
                       <th className="p-4">Empresa</th>
                       <th className="p-4">Volume</th>
-                      <th className="p-4">Gargalo / Desafio</th>
+                      <th className="p-4">Gargalo Relatado</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80">
                     {leads.map((lead) => {
                       const currentStatus = lead.status || 'Novo';
+                      const score = calculateLeadScore(lead.data_volume, lead.bottleneck);
                       return (
                         <tr key={lead.id} className="hover:bg-slate-800/40 transition">
                           <td className="p-4">
@@ -545,6 +603,17 @@ export default function NexusCommandCenter() {
                               <option value="Fechado" className="bg-slate-900 text-emerald-300">🟢 Fechado</option>
                             </select>
                           </td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border ${
+                              score >= 80
+                                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                                : score >= 60
+                                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                                : 'bg-slate-800 text-slate-400 border-slate-700'
+                            }`}>
+                              🔥 {score} pts
+                            </span>
+                          </td>
                           <td className="p-4 text-xs text-slate-400 font-mono">
                             {new Date(lead.created_at).toLocaleString('pt-BR')}
                           </td>
@@ -558,6 +627,243 @@ export default function NexusCommandCenter() {
                     })}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'historias' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400">Fábrica de Histórias Multimodal (StoryForge)</h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Geração estruturada com orquestrador de prompts calibrados para cada motor de IA
+                </p>
+              </div>
+
+              <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1">
+                <button
+                  onClick={() => setStorySubTab('religioso')}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                    storySubTab === 'religioso'
+                      ? 'bg-cyan-500 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  🧱 Módulo Bíblico (Lego Dioramas)
+                </button>
+                <button
+                  onClick={() => setStorySubTab('infantil')}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                    storySubTab === 'infantil'
+                      ? 'bg-cyan-500 text-slate-950 shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  🧸 Módulo Infantil (Trolili & Kids)
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono uppercase text-slate-400 font-bold">Motor de Destino:</span>
+                <span className="text-xs text-slate-500">Adapta os prompts com os parâmetros específicos</span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setTargetEngine('dalle')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                    targetEngine === 'dalle'
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  <span>🟢</span> DALL-E 3 (Bing Grátis)
+                </button>
+
+                <button
+                  onClick={() => setTargetEngine('midjourney')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                    targetEngine === 'midjourney'
+                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-sm'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  <span>🟣</span> Midjourney (v6.1 RAW)
+                </button>
+
+                <button
+                  onClick={() => setTargetEngine('ideogram')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                    targetEngine === 'ideogram'
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  <span>🟡</span> Ideogram (Tipografia 3D)
+                </button>
+
+                <button
+                  onClick={() => setTargetEngine('gemini')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                    targetEngine === 'gemini'
+                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-sm'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  <span>⚡</span> Gemini (Nano Banana Pro)
+                </button>
+              </div>
+            </div>
+
+            {storySubTab === 'religioso' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                          Série Parábolas em Blocos
+                        </span>
+                        <h2 className="text-xl font-bold text-white mt-1">A Parábola da Casa na Rocha (Mateus 7:24-27)</h2>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed">
+                      <p className="font-semibold text-cyan-300">📖 Conceito e Rigor Exegético:</p>
+                      <p>
+                        Apresenta o contraste entre construir na areia (*decisões convenientes e superficiais*) e na rocha (*princípios inegociáveis de Deus*), utilizando dioramas de miniaturas plásticas que encantam crianças e tocam profundamente adultos.
+                      </p>
+                    </div>
+
+                    <div className="space-y-4 pt-2">
+                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-xs font-bold text-white font-mono">CENA 1: Os Dois Construtores no Vale</h4>
+                          <button
+                            onClick={() => copyToClipboard(currentLegoPrompts[0], 0)}
+                            className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
+                          >
+                            {copiedPromptIndex === 0 ? '✓ Copiado!' : '📋 Copiar Prompt'}
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          Dois pequenos bonecos recebem o mesmo mapa e começam a construir: um na areia macia e outro na colina de rocha cinzenta.
+                        </p>
+                        <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
+                          {currentLegoPrompts[0]}
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-xs font-bold text-white font-mono">CENA 2: A Tempestade e as Ondas de Acrílico</h4>
+                          <button
+                            onClick={() => copyToClipboard(currentLegoPrompts[1], 1)}
+                            className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
+                          >
+                            {copiedPromptIndex === 1 ? '✓ Copiado!' : '📋 Copiar Prompt'}
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          As nuvens escuras e a chuva de peças azuis transbordam os rios. O teste dos alicerces começa para ambas as estruturas.
+                        </p>
+                        <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
+                          {currentLegoPrompts[1]}
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-xs font-bold text-white font-mono">CENA 3: A Casa Inabalável na Rocha</h4>
+                          <button
+                            onClick={() => copyToClipboard(currentLegoPrompts[2], 2)}
+                            className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
+                          >
+                            {copiedPromptIndex === 2 ? '✓ Copiado!' : '📋 Copiar Prompt'}
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          A casa da areia se desfaz em peças soltas, enquanto a casa na rocha resiste firme aos ventos e à tempestade.
+                        </p>
+                        <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
+                          {currentLegoPrompts[2]}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h3 className="font-bold text-cyan-400 text-xs uppercase font-mono tracking-wider">
+                      Instruções de Produção
+                    </h3>
+                    <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
+                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                        <strong className="text-white block mb-1">1. DALL-E 3 (Bing / Copilot):</strong>
+                        Gere gratuitamente no <em>bing.com/images/create</em>. Excelente para diorama de Lego fiel.
+                      </div>
+                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                        <strong className="text-white block mb-1">2. Midjourney (v6.1):</strong>
+                        Gera a melhor iluminação de estúdio macro. O prompt já inclui as tags <code className="text-purple-300">--v 6.1 --style raw</code>.
+                      </div>
+                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                        <strong className="text-white block mb-1">3. Refinamento:</strong>
+                        Mande a imagem aqui no chat caso queira calibrar qualquer ângulo sem alterar a identidade.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {storySubTab === 'infantil' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                        Universo Trolili 3D
+                      </span>
+                      <h2 className="text-xl font-bold text-white mt-1">Biscoito e a Ponte das Frutas Luminosas</h2>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                    <p className="font-semibold text-cyan-300">🐾 Personagens Protagonistas:</p>
+                    <p>• <strong>Biscoito:</strong> Cãozinho Beagle curioso com mochila ciano.</p>
+                    <p>• <strong>Mimi:</strong> Gatinha persa branca com laço brilhante.</p>
+                    <p>• <strong>Pip & Quack:</strong> O passarinho azul e o patinho de óculos de aviador.</p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-xs font-bold text-white font-mono">PROMPT 3D DISNEY/PIXAR RENDER</h4>
+                      <button
+                        onClick={() => copyToClipboard("Full 3D Disney Pixar style render, a cheerful little Beagle puppy named Biscoito wearing a small teal backpack, holding a glowing golden star-fruit, beside a fluffy cute white kitten named Mimi with a cyan ribbon, sunbeams filtering through magical enchanted forest trees, cinematic soft lighting, volumetric atmosphere, ultra-detailed fur, 8k resolution, vibrant pastel palette --ar 16:9", 10)}
+                        className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
+                      >
+                        {copiedPromptIndex === 10 ? '✓ Copiado!' : '📋 Copiar Prompt'}
+                      </button>
+                    </div>
+                    <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
+                      Full 3D Disney Pixar style render, a cheerful little Beagle puppy named Biscoito wearing a small teal backpack, holding a glowing golden star-fruit, beside a fluffy cute white kitten named Mimi with a cyan ribbon, sunbeams filtering through magical enchanted forest trees, cinematic soft lighting, volumetric atmosphere, ultra-detailed fur, 8k resolution, vibrant pastel palette --ar 16:9
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
+                  <h3 className="font-bold text-cyan-400 text-xs uppercase font-mono">Música Educativa</h3>
+                  <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 italic space-y-2">
+                    <p>"Um pedaço para você, um pedaço para mim!"</p>
+                    <p>"Dividir com os amigos é gostoso assim!"</p>
+                    <p>"Se a ponte balançar, dou a mão pra te ajudar!" 🎶</p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -668,150 +974,6 @@ export default function NexusCommandCenter() {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {activeTab === 'historias' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-cyan-400">Fábrica de Histórias Multimodal</h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  Gerador inteligente de narrativas, roteiros, livros ilustrados e estudos bíblicos
-                </p>
-              </div>
-
-              <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1">
-                <button
-                  onClick={() => setStorySubTab('infantil')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
-                    storySubTab === 'infantil'
-                      ? 'bg-cyan-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  🧸 Módulo Infantil (Trolili & Kids)
-                </button>
-                <button
-                  onClick={() => setStorySubTab('religioso')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
-                    storySubTab === 'religioso'
-                      ? 'bg-cyan-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  📖 Módulo Religioso & Parábolas
-                </button>
-              </div>
-            </div>
-
-            {storySubTab === 'infantil' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <h3 className="font-bold text-white text-sm uppercase font-mono">Gerador de Roteiros e Livros Infantis</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs text-slate-400">Personagem Principal</label>
-                      <input
-                        type="text"
-                        defaultValue="Biscoito (o cãozinho curioso)"
-                        className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-slate-400">Faixa Etária</label>
-                      <select className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                        <option>3 a 5 anos (Lúdico & Canções)</option>
-                        <option>6 a 8 anos (Aventura & Valores)</option>
-                        <option>9 a 12 anos (Mistério & Criatividade)</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs text-slate-400">Moral da História / Tema Central</label>
-                    <input
-                      type="text"
-                      defaultValue="A importância de compartilhar os brinquedos e a amizade na floresta encantada"
-                      className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-                    />
-                  </div>
-                  <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                    <p className="font-semibold text-cyan-400">✨ Estrutura Pronta de Produção:</p>
-                    <p>• <strong>Cena 1:</strong> Apresentação de Biscoito e Mimi em 3D brilhante.</p>
-                    <p>• <strong>Cena 2:</strong> O pequeno desafio com Pip e Quack na ponte mágica.</p>
-                    <p>• <strong>Cena 3:</strong> Solução com lição prática e canção de encerramento.</p>
-                  </div>
-                </div>
-
-                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-3">
-                  <h3 className="font-bold text-cyan-400 text-xs uppercase font-mono">Personagens Cadastrados</h3>
-                  <div className="space-y-2 text-xs">
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-                      <span className="font-semibold text-white">🐶 Biscoito</span>
-                      <span className="text-[10px] text-cyan-400">3D Lead</span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-                      <span className="font-semibold text-white">🐱 Mimi</span>
-                      <span className="text-[10px] text-cyan-400">3D Sidekick</span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-                      <span className="font-semibold text-white">🐦 Pip & 🦆 Quack</span>
-                      <span className="text-[10px] text-cyan-400">Duo Musical</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {storySubTab === 'religioso' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <h3 className="font-bold text-white text-sm uppercase font-mono">Gerador de Histórias Bíblicas & Devocionais</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs text-slate-400">Passagem / Tema Bíblico</label>
-                      <input
-                        type="text"
-                        defaultValue="Parábola do Filho Pródigo (Lucas 15)"
-                        className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-slate-400">Tom da Mensagem</label>
-                      <select className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white">
-                        <option>Devocional Inspiracional</option>
-                        <option>Estudo Exegético & Histórico</option>
-                        <option>História Ilustrada para Família</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs text-slate-400">Aplicação Prática / Vida Diária</label>
-                    <input
-                      type="text"
-                      defaultValue="Restauração familiar, perdão incondicional e acolhimento"
-                      className="w-full mt-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-                    />
-                  </div>
-                  <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                    <p className="font-semibold text-cyan-400">📜 Estrutura Teológica:</p>
-                    <p>• <strong>Contexto Histórico:</strong> A cultura oriental da época e o significado da herança.</p>
-                    <p>• <strong>O Coração do Pai:</strong> Graça abundante em vez de julgamento.</p>
-                    <p>• <strong>Oração Final:</strong> Oração guiada para reflexão pessoal.</p>
-                  </div>
-                </div>
-
-                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-3">
-                  <h3 className="font-bold text-cyan-400 text-xs uppercase font-mono">Recursos Teológicos</h3>
-                  <p className="text-xs text-slate-400">
-                    A IA aplica rigor exegético e referências cruzadas para gerar mensagens profundas e respeitosas.
-                  </p>
-                  <div className="p-3 bg-cyan-950/30 border border-cyan-800/50 rounded-xl text-xs text-cyan-300">
-                    Pronto para exportar em formato de post, carrossel de 10 lâminas ou e-book devocional.
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
