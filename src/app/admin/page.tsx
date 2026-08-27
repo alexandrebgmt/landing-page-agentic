@@ -62,7 +62,6 @@ export default function AdminPage() {
     setLoading(false);
   }
 
-  // Atualizar status no Supabase e na tela em tempo real
   const handleStatusChange = async (id: number, newStatus: string) => {
     setLeads((prev) =>
       prev.map((lead) =>
