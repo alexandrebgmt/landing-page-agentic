@@ -64,36 +64,36 @@ const INITIAL_PROJECTS: ProjectItem[] = [
   },
   {
     id: '4',
-    name: 'StoryForge - Módulo Infantil (Trolili)',
-    module: 'fabrica-historias',
+    name: 'Demo Forge & Client Outreach',
+    module: 'outreach',
     status: 'Deploy Ativo',
-    description: 'Gerador multimodal de narrativas infantis e roteiros 3D com Biscoito, Mimi, Pip e Quack.',
-    tags: ['Infantil', 'Storytelling', 'Personagens 3D', 'Multi-Engine']
+    description: 'Gerador de demonstrações comerciais protegidas e disparador de e-mails corporativos B2B.',
+    tags: ['Demos', 'Outreach', 'Gmail', 'Vendas B2B']
   },
   {
     id: '5',
-    name: 'StoryForge - Módulo Bíblico em Blocos (Lego)',
-    module: 'fabrica-historias',
+    name: 'Nexus Mobile PWA Studio',
+    module: 'apps',
     status: 'Deploy Ativo',
-    description: 'Narrativas bíblicas e estudos em dioramas de blocos para crianças e adultos com rigor teológico.',
-    tags: ['Religioso', 'Lego Diorama', 'Parábolas', 'Exegese']
+    description: 'Emulador mobile em tempo real, gerador de manifest PWA e simulador de notificações.',
+    tags: ['PWA', 'Mobile', 'Tailwind', 'Standalone']
   },
   {
     id: '6',
+    name: 'StoryForge - Módulo Infantil & Bíblico',
+    module: 'fabrica-historias',
+    status: 'Deploy Ativo',
+    description: 'Gerador multimodal de narrativas infantis e roteiros bíblicos em blocos de Lego.',
+    tags: ['Infantil', 'Storytelling', 'Lego Diorama', 'Multi-Engine']
+  },
+  {
+    id: '7',
     name: 'Presell High-Ticket VSL',
     module: 'presell',
     status: 'Deploy Ativo',
     description: 'Página advertorial de alta conversão com retenção de checkout e gatilhos de autoridade.',
     link: '/presell',
     tags: ['Advertorial', 'Copywriting', 'Direct Response']
-  },
-  {
-    id: '7',
-    name: 'Nexus Mobile PWA Studio',
-    module: 'apps',
-    status: 'Deploy Ativo',
-    description: 'Emulador mobile em tempo real, gerador de manifest PWA e simulador de notificações.',
-    tags: ['PWA', 'Mobile', 'Tailwind', 'Standalone']
   },
   {
     id: '8',
@@ -167,6 +167,16 @@ export default function NexusMasterSuite() {
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
+
+  // Estados do Módulo Outreach & Demo Forge
+  const [demoType, setDemoType] = useState<'landing' | 'saas' | 'crm'>('saas');
+  const [outreachForm, setOutreachForm] = useState({
+    recipientName: '',
+    recipientEmail: '',
+    companyName: '',
+    techBottleneck: 'Bancos de dados lentos e falta de isolamento seguro RLS',
+    emailTemplate: 'demo' // 'cold' | 'demo' | 'proposal'
+  });
 
   // Estados do Módulo Mobile / PWA
   const [mobileScreen, setMobileScreen] = useState<'dashboard' | 'leads' | 'scanner'>('dashboard');
@@ -370,6 +380,33 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
     }
   };
 
+  // Gerador dinâmico de e-mails de alta conversão
+  const generateOutreachEmail = () => {
+    const name = outreachForm.recipientName || 'Gestor de Tecnologia';
+    const company = outreachForm.companyName || 'Sua Empresa';
+    const bottleneck = outreachForm.techBottleneck || 'otimização de consultas e isolamento de banco de dados';
+
+    if (outreachForm.emailTemplate === 'cold') {
+      return {
+        subject: `[NexusData] Oportunidade de ganho de performance na arquitetura da ${company}`,
+        body: `Olá, ${name}.\n\nAcompanhando o crescimento da ${company}, notei que arquiteturas em expansão frequentemente enfrentam desafios com ${bottleneck}.\n\nNa NexusData, implementamos infraestruturas modernas em PostgreSQL com Row Level Security (RLS) nativo e latência ultra baixa, reduzindo em até 70% o custo de nuvem e eliminando vulnerabilidades de segurança.\n\nPreparamos uma demonstração interativa da nossa solução adaptada para o seu cenário. Teria 10 minutos esta semana para avaliarmos juntos?\n\nAtenciosamente,\nAlexandre Figueira\nChief Architect | NexusData Enterprise\nhttps://landing-page-agentic-one.vercel.app`
+      };
+    } else if (outreachForm.emailTemplate === 'demo') {
+      return {
+        subject: `[Demonstração Exclusiva] Arquitetura & Diagnóstico Interativo para ${company}`,
+        body: `Olá, ${name}.\n\nConforme prometido, liberei um ambiente demonstrativo exclusivo para você e seu time técnico testarem na prática:\n\n🔗 Link da Demonstração: https://landing-page-agentic-one.vercel.app/presell\n\nNesta versão interativa você poderá validar:\n1. Scanner de schema SQL e cálculo automático de vulnerabilidades\n2. Pipeline de dados reativo com isolamento multi-tenant seguro (RLS)\n3. Painel de comando com decisões em tempo real\n\nFico à disposição para calibrarmos as regras e integrarmos diretamente à base de vocês.\n\nUm abraço,\nAlexandre Figueira\nChief Architect | NexusData Enterprise`
+      };
+    } else {
+      return {
+        subject: `[Proposta Técnica] Implementação da Arquitetura Nexus na ${company}`,
+        body: `Prezado(a) ${name},\n\nApós a validação da demonstração técnica, elaborei o plano de implementação da arquitetura para a ${company}.\n\n🎯 Escopo Principal:\n- Auditoria e saneamento de schema PostgreSQL\n- Ativação de políticas granulares de Row Level Security (RLS)\n- Configuração do pipeline em Edge com integração segura via Supabase\n- Painel de Gestão & Alertas em tempo real\n\nPodemos agendar uma rápida chamada amanhã para alinhar o cronograma de deploy?\n\nAtenciosamente,\nAlexandre Figueira\nNexusData Enterprise`
+      };
+    }
+  };
+
+  const currentEmail = generateOutreachEmail();
+  const mailtoLink = `mailto:${outreachForm.recipientEmail}?subject=${encodeURIComponent(currentEmail.subject)}&body=${encodeURIComponent(currentEmail.body)}`;
+
   const hasPendingUpdates = skillsList.some((s) => s.status === 'Disponível');
 
   if (!isAuthenticated) {
@@ -453,22 +490,20 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
             </button>
 
             <button
-              onClick={() => setActiveTab('updates')}
+              onClick={() => setActiveTab('outreach')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
-                activeTab === 'updates'
+                activeTab === 'outreach'
                   ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
               <div className="flex items-center space-x-3">
-                <span>🛰️</span>
-                <span>Radar & Atualizações</span>
+                <span>✉️</span>
+                <span>Demo Forge & Outreach</span>
               </div>
-              {hasPendingUpdates && (
-                <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
-                  UPDATE
-                </span>
-              )}
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
+                B2B
+              </span>
             </button>
 
             <button
@@ -488,24 +523,26 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </span>
             </button>
 
-            <div className="pt-3 px-3 py-1 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Módulos de Produção</div>
-
             <button
-              onClick={() => setActiveTab('apps')}
+              onClick={() => setActiveTab('updates')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
-                activeTab === 'apps'
+                activeTab === 'updates'
                   ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
               <div className="flex items-center space-x-3">
-                <span>📱</span>
-                <span>Aplicativos Mobile / PWA</span>
+                <span>🛰️</span>
+                <span>Radar & Atualizações</span>
               </div>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
-                PRO
-              </span>
+              {hasPendingUpdates && (
+                <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
+                  UPDATE
+                </span>
+              )}
             </button>
+
+            <div className="pt-3 px-3 py-1 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Módulos de Produção</div>
 
             <button
               onClick={() => setActiveTab('saas')}
@@ -522,6 +559,18 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
                 PRO
               </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('apps')}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
+                activeTab === 'apps'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <span>📱</span>
+              <span>Aplicativos Mobile / PWA</span>
             </button>
 
             <button
@@ -612,18 +661,18 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v3.6 Mobile OS
+                    v4.0 Enterprise OS
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  Orquestrador de engenharia de software, emulação PWA mobile, micro-saas e esteira de automações.
+                  Orquestrador de engenharia de dados, geração de demonstrações comerciais e prospecção B2B integrada.
                 </p>
               </div>
               <button
-                onClick={() => setActiveTab('apps')}
+                onClick={() => setActiveTab('outreach')}
                 className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 flex items-center gap-2"
               >
-                <span>📱</span> Abrir Emulador Mobile PWA
+                <span>✉️</span> Gerar E-mail de Prospecção & Demo
               </button>
             </div>
 
@@ -636,12 +685,12 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Módulos Ativos</div>
                 <div className="text-2xl font-bold text-white mt-1">8 Módulos</div>
-                <div className="text-[11px] text-slate-400 mt-2">PWA, SaaS, CRM, Histórias...</div>
+                <div className="text-[11px] text-slate-400 mt-2">Demos, Outreach, SaaS, CRM...</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Infraestrutura Mobile</div>
-                <div className="text-2xl font-bold text-teal-400 mt-1">PWA Standalone</div>
-                <div className="text-[11px] text-teal-400 mt-2">Next.js + Service Worker</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Canal de E-mail</div>
+                <div className="text-2xl font-bold text-teal-400 mt-1">Gmail Ready</div>
+                <div className="text-[11px] text-teal-400 mt-2">nexusenterprise@gmail.com</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Status de Skills</div>
@@ -709,256 +758,304 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 2. MÓDULO APLICATIVOS MOBILE & PWA STUDIO */}
-        {activeTab === 'apps' && (
+        {/* 2. DEMO FORGE & CLIENT OUTREACH B2B */}
+        {activeTab === 'outreach' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
               <div>
                 <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
-                  <span>📱</span> Nexus Mobile & PWA Studio
+                  <span>✉️</span> Demo Forge & Cold Outreach Hub
                 </h1>
                 <p className="text-xs text-slate-400 mt-1">
-                  Ambiente de emulação mobile, gerador de manifesto PWA e simulador de notificações push
+                  Gerador de demonstrações comerciais com proteção de escopo e redação técnica de e-mails corporativos
                 </p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={triggerMobileNotification}
-                  className="px-3 py-1.5 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 rounded-xl text-xs font-bold transition hover:bg-cyan-500 hover:text-slate-950 flex items-center gap-1.5"
-                >
-                  <span>🔔</span> Simular Push Notification
-                </button>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono text-slate-400">Canal:</span>
+                <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800">
+                  nexusenterprise@gmail.com
+                </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              
-              {/* EMULADOR SMARTPHONE MOCKUP (4 Colunas) */}
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="w-[320px] h-[640px] bg-slate-950 rounded-[48px] p-3 border-[6px] border-slate-800 shadow-2xl shadow-cyan-950/50 flex flex-col relative overflow-hidden">
-                  
-                  {/* Dynamic Island / Notch */}
-                  <div className="absolute top-4 inset-x-0 flex justify-center z-30">
-                    <div className="w-24 h-4 bg-slate-900 rounded-full flex items-center justify-end px-2">
-                      <span className="w-2 h-2 rounded-full bg-slate-700" />
-                    </div>
+            {/* SELEÇÃO DE DEMONSTRAÇÃO VISUAL */}
+            <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                  1. Selecione a Demonstração para Apresentar ao Cliente
+                </h3>
+                <span className="text-[11px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                  🔒 Modo Trava Comercial Ativo
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                  onClick={() => setDemoType('saas')}
+                  className={`p-4 rounded-xl border cursor-pointer transition ${
+                    demoType === 'saas'
+                      ? 'bg-cyan-500/15 border-cyan-500 text-white shadow-md shadow-cyan-500/10'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-lg">⚙️</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300">Micro-SaaS</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-white">Demo: Audit Pro Scanner</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Permite ao cliente testar 1 scan de schema SQL real com laudo travado para proposta.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => setDemoType('crm')}
+                  className={`p-4 rounded-xl border cursor-pointer transition ${
+                    demoType === 'crm'
+                      ? 'bg-cyan-500/15 border-cyan-500 text-white shadow-md shadow-cyan-500/10'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-lg">🎯</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300">CRM Agentic</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-white">Demo: Mini-CRM & Pipeline</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Exibe tabela de leads com cálculo de pontuação simulada e botão para contratação.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => setDemoType('landing')}
+                  className={`p-4 rounded-xl border cursor-pointer transition ${
+                    demoType === 'landing'
+                      ? 'bg-cyan-500/15 border-cyan-500 text-white shadow-md shadow-cyan-500/10'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-lg">🚀</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300">Landing Page</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-white">Demo: Landing 3D & VSL</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Navegação completa com tarja de pré-visualização e formulário apontado para o seu bot.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* FORMULÁRIO DE PROSPECÇÃO & GERADOR DE E-MAILS */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-5 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                  2. Dados do Decisor / Cliente
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <label className="text-xs text-slate-400">Nome do Decisor (CTO / Diretor / Gestor)</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Carlos Silva"
+                      value={outreachForm.recipientName}
+                      onChange={(e) => setOutreachForm({ ...outreachForm, recipientName: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none"
+                    />
                   </div>
 
-                  {/* Toast Notificação Push Simulada */}
-                  {testNotificationSent && (
-                    <div className="absolute top-12 inset-x-4 bg-slate-900/95 border border-cyan-500/60 p-3 rounded-2xl shadow-xl z-40 animate-fadeIn space-y-1 backdrop-blur-md">
-                      <div className="flex items-center justify-between text-[10px] font-mono text-cyan-400">
-                        <span className="flex items-center gap-1">⚡ <strong>NexusMobile</strong></span>
-                        <span>agora</span>
-                      </div>
-                      <p className="text-xs font-bold text-white">Novo Lead de Alta Prioridade! 🔥</p>
-                      <p className="text-[10px] text-slate-300">Score 90+ detectado no pipeline.</p>
-                    </div>
-                  )}
+                  <div className="space-y-1">
+                    <label className="text-xs text-slate-400">E-mail do Cliente</label>
+                    <input
+                      type="email"
+                      placeholder="carlos@empresa.com"
+                      value={outreachForm.recipientEmail}
+                      onChange={(e) => setOutreachForm({ ...outreachForm, recipientEmail: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none"
+                    />
+                  </div>
 
-                  {/* Tela Interna do App */}
-                  <div className="flex-1 bg-slate-900/90 rounded-[36px] overflow-hidden flex flex-col pt-8 pb-4 px-4 justify-between border border-slate-800/60">
-                    
-                    {/* Header do App */}
-                    <div className="space-y-3 pt-2">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-xs font-bold">
-                            ⚡
-                          </div>
-                          <span className="text-xs font-bold text-white">Nexus Data Mobile</span>
-                        </div>
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-slate-400">Nome da Empresa</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: TechLog Logística"
+                      value={outreachForm.companyName}
+                      onChange={(e) => setOutreachForm({ ...outreachForm, companyName: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none"
+                    />
+                  </div>
 
-                      {/* Seletor de Telas Internas */}
-                      <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-[10px]">
-                        <button
-                          onClick={() => setMobileScreen('dashboard')}
-                          className={`flex-1 py-1 rounded-lg font-bold transition ${
-                            mobileScreen === 'dashboard' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
-                          }`}
-                        >
-                          Métricas
-                        </button>
-                        <button
-                          onClick={() => setMobileScreen('leads')}
-                          className={`flex-1 py-1 rounded-lg font-bold transition ${
-                            mobileScreen === 'leads' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
-                          }`}
-                        >
-                          Leads
-                        </button>
-                        <button
-                          onClick={() => setMobileScreen('scanner')}
-                          className={`flex-1 py-1 rounded-lg font-bold transition ${
-                            mobileScreen === 'scanner' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
-                          }`}
-                        >
-                          Scan RLS
-                        </button>
-                      </div>
-                    </div>
+                  <div className="space-y-1">
+                    <label className="text-xs text-slate-400">Gargalo Técnico Identificado</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Lentidão em queries analíticas e falta de RLS"
+                      value={outreachForm.techBottleneck}
+                      onChange={(e) => setOutreachForm({ ...outreachForm, techBottleneck: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none"
+                    />
+                  </div>
 
-                    {/* Conteúdo Dinâmico da Tela Selecionada */}
-                    <div className="flex-1 my-3 overflow-y-auto space-y-3 pr-1">
-                      {mobileScreen === 'dashboard' && (
-                        <div className="space-y-2.5 animate-fadeIn">
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                            <span className="text-[10px] text-slate-400 font-mono uppercase">Leads Ativos</span>
-                            <div className="text-xl font-bold text-cyan-400 mt-0.5">{leads.length} Contatos</div>
-                          </div>
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                            <span className="text-[10px] text-slate-400 font-mono uppercase">Latência Edge</span>
-                            <div className="text-xl font-bold text-teal-400 mt-0.5">18 ms</div>
-                          </div>
-                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                            <span className="text-[10px] text-slate-400 font-mono uppercase">Segurança</span>
-                            <div className="text-xl font-bold text-emerald-400 mt-0.5">RLS 100% Ativo</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {mobileScreen === 'leads' && (
-                        <div className="space-y-2 animate-fadeIn">
-                          {leads.slice(0, 3).map((l) => (
-                            <div key={l.id} className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                              <div className="flex justify-between items-center text-[10px]">
-                                <span className="font-bold text-white">{l.name}</span>
-                                <span className="text-cyan-400 font-mono font-bold">
-                                  🔥 {calculateLeadScore(l.data_volume, l.bottleneck)} pts
-                                </span>
-                              </div>
-                              <p className="text-[10px] text-slate-400 truncate">{l.company}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {mobileScreen === 'scanner' && (
-                        <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-center animate-fadeIn">
-                          <div className="text-2xl">🛡️</div>
-                          <p className="text-xs font-bold text-white">Scanner Portátil</p>
-                          <p className="text-[10px] text-slate-400">PostgreSQL Schema Checker sincronizado via Supabase.</p>
-                          <button className="w-full py-1.5 bg-cyan-500 text-slate-950 font-bold rounded-lg text-[10px]">
-                            Scan Rápido
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Barra de Navegação Inferior Mobile */}
-                    <div className="pt-2 border-t border-slate-800 flex justify-around text-slate-400 text-sm">
-                      <span className="text-cyan-400 cursor-pointer">🏠</span>
-                      <span className="cursor-pointer">⚡</span>
-                      <span className="cursor-pointer">🔔</span>
-                      <span className="cursor-pointer">⚙️</span>
-                    </div>
-
+                  <div className="space-y-1">
+                    <label className="text-xs text-slate-400">Objetivo do E-mail</label>
+                    <select
+                      value={outreachForm.emailTemplate}
+                      onChange={(e) => setOutreachForm({ ...outreachForm, emailTemplate: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:border-cyan-500 outline-none"
+                    >
+                      <option value="demo">Enviar Demonstração Interativa Liberada</option>
+                      <option value="cold">Prospecção Fria (Cold Outreach B2B)</option>
+                      <option value="proposal">Apresentar Proposta Comercial de Implementação</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              {/* PAINEL DE CONFIGURAÇÃO PWA & MANIFEST (7 Colunas) */}
-              <div className="lg:col-span-7 space-y-6">
-                
-                {/* Configurações do App Standalone */}
-                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
-                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-                    1. Parâmetros do Aplicativo PWA
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs text-slate-400">Nome da Aplicação</label>
-                      <input
-                        type="text"
-                        value={pwaConfig.appName}
-                        onChange={(e) => setPwaConfig({ ...pwaConfig, appName: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs text-slate-400">Nome Curto (Tela Inicial)</label>
-                      <input
-                        type="text"
-                        value={pwaConfig.shortName}
-                        onChange={(e) => setPwaConfig({ ...pwaConfig, shortName: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs text-slate-400">Cor do Tema (Status Bar)</label>
-                      <input
-                        type="text"
-                        value={pwaConfig.themeColor}
-                        onChange={(e) => setPwaConfig({ ...pwaConfig, themeColor: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 font-mono outline-none focus:border-cyan-500"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs text-slate-400">Modo de Exibição</label>
-                      <select
-                        value={pwaConfig.display}
-                        onChange={(e) => setPwaConfig({ ...pwaConfig, display: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
-                      >
-                        <option value="standalone">Standalone (Sem barra do navegador)</option>
-                        <option value="fullscreen">Fullscreen (Tela Cheia Imersiva)</option>
-                        <option value="minimal-ui">Minimal UI</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Código do Manifesto PWA Gerado */}
-                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-3">
+              {/* PAINEL DE VISUALIZAÇÃO E DISPARO DO E-MAIL */}
+              <div className="lg:col-span-7 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
-                      2. manifest.json Gerado Automaticamente
+                      3. E-mail Formatado & Calibrado
                     </h3>
                     <button
-                      onClick={() => copyToClipboard(JSON.stringify({
-                        name: pwaConfig.appName,
-                        short_name: pwaConfig.shortName,
-                        start_url: "/",
-                        display: pwaConfig.display,
-                        background_color: pwaConfig.bgColor,
-                        theme_color: pwaConfig.themeColor,
-                        icons: [
-                          { src: "/favicon.ico", sizes: "64x64 32x32 24x24 16x16", type: "image/x-icon" }
-                        ]
-                      }, null, 2), 99)}
-                      className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition"
+                      onClick={() => copyToClipboard(`Assunto: ${currentEmail.subject}\n\n${currentEmail.body}`, 101)}
+                      className="text-xs font-bold text-cyan-300 hover:text-white transition flex items-center gap-1"
                     >
-                      {copiedPromptIndex === 99 ? '✓ Copiado!' : '📋 Copiar Manifest'}
+                      {copiedPromptIndex === 101 ? '✓ Copiado!' : '📋 Copiar Texto'}
                     </button>
                   </div>
 
-                  <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-teal-300 overflow-x-auto leading-relaxed">
-{JSON.stringify({
-  name: pwaConfig.appName,
-  short_name: pwaConfig.shortName,
-  start_url: "/",
-  display: pwaConfig.display,
-  background_color: pwaConfig.bgColor,
-  theme_color: pwaConfig.themeColor,
-  icons: [
-    { src: "/favicon.ico", sizes: "64x64 32x32 24x24 16x16", type: "image/x-icon" }
-  ]
-}, null, 2)}
+                  <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 font-mono space-y-1">
+                    <div className="text-slate-500"><strong>Para:</strong> {outreachForm.recipientEmail || 'cliente@empresa.com'}</div>
+                    <div className="text-cyan-400"><strong>Assunto:</strong> {currentEmail.subject}</div>
+                  </div>
+
+                  <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-200 font-sans whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto">
+                    {currentEmail.body}
                   </pre>
                 </div>
 
+                <div className="pt-3 border-t border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    Conectado ao Gmail: Envio em 1 clique
+                  </span>
+                  <a
+                    href={mailtoLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 text-center flex items-center justify-center gap-2"
+                  >
+                    <span>🚀</span> Abrir Rascunho no Gmail ↗
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 3. ENGENHARIA SAAS: AUDIT PRO */}
+        {/* 3. CRM COM LEAD SCORING & PIPELINE */}
+        {activeTab === 'crm' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400">CRM de Leads & Pipeline Inteligente</h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Gestão em tempo real com Lead Scoring automático e dados sincronizados via PostgreSQL
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={fetchLeads}
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition"
+                >
+                  🔄 Atualizar
+                </button>
+                <button
+                  onClick={exportCSV}
+                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition"
+                >
+                  📥 Exportar CSV
+                </button>
+              </div>
+            </div>
+
+            {loadingLeads ? (
+              <div className="text-center py-16 text-slate-500 font-mono text-sm">Carregando leads do Supabase...</div>
+            ) : leads.length === 0 ? (
+              <div className="text-center py-16 text-slate-500 rounded-2xl border border-slate-800 bg-slate-900/30">
+                Nenhum lead registrado ainda. Envie o link da sua Landing Page para começar a receber diagnósticos.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl">
+                <table className="w-full text-left text-sm text-slate-300">
+                  <thead className="bg-slate-800/80 text-xs uppercase tracking-wider text-slate-400 font-mono">
+                    <tr>
+                      <th className="p-4">Status</th>
+                      <th className="p-4">Score</th>
+                      <th className="p-4">Data</th>
+                      <th className="p-4">Nome</th>
+                      <th className="p-4">Email</th>
+                      <th className="p-4">Empresa</th>
+                      <th className="p-4">Volume</th>
+                      <th className="p-4">Gargalo Relatado</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80">
+                    {leads.map((lead) => {
+                      const currentStatus = lead.status || 'Novo';
+                      const score = calculateLeadScore(lead.data_volume, lead.bottleneck);
+                      return (
+                        <tr key={lead.id} className="hover:bg-slate-800/40 transition">
+                          <td className="p-4">
+                            <select
+                              value={currentStatus}
+                              onChange={(e) => handleStatusChange(lead.id, e.target.value)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border outline-none ${
+                                currentStatus === 'Novo'
+                                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                  : currentStatus === 'Em Contato'
+                                  ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              }`}
+                            >
+                              <option value="Novo" className="bg-slate-900 text-amber-300">🟡 Novo</option>
+                              <option value="Em Contato" className="bg-slate-900 text-cyan-300">🔵 Em Contato</option>
+                              <option value="Fechado" className="bg-slate-900 text-emerald-300">🟢 Fechado</option>
+                            </select>
+                          </td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border ${
+                              score >= 80
+                                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                                : score >= 60
+                                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+                                : 'bg-slate-800 text-slate-400 border-slate-700'
+                            }`}>
+                              🔥 {score} pts
+                            </span>
+                          </td>
+                          <td className="p-4 text-xs text-slate-400 font-mono">
+                            {new Date(lead.created_at).toLocaleString('pt-BR')}
+                          </td>
+                          <td className="p-4 font-semibold text-white">{lead.name}</td>
+                          <td className="p-4 text-cyan-400 font-mono text-xs">{lead.email}</td>
+                          <td className="p-4">{lead.company}</td>
+                          <td className="p-4">{lead.data_volume || '-'}</td>
+                          <td className="p-4 text-xs text-slate-400 max-w-xs truncate">{lead.bottleneck || '-'}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 4. ENGENHARIA SAAS: AUDIT PRO */}
         {activeTab === 'saas' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -1087,7 +1184,7 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 4. RADAR DE ATUALIZAÇÕES & SKILLS */}
+        {/* 5. RADAR DE ATUALIZAÇÕES & SKILLS */}
         {activeTab === 'updates' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
@@ -1159,457 +1256,197 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 5. CRM COM LEAD SCORING & PIPELINE */}
-        {activeTab === 'crm' && (
+        {/* 6. MÓDULO APLICATIVOS MOBILE */}
+        {activeTab === 'apps' && (
           <div className="space-y-6 animate-fadeIn">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
               <div>
-                <h1 className="text-2xl font-bold text-cyan-400">CRM de Leads & Pipeline Inteligente</h1>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>📱</span> Nexus Mobile & PWA Studio
+                </h1>
                 <p className="text-xs text-slate-400 mt-1">
-                  Gestão em tempo real com Lead Scoring automático e dados sincronizados via PostgreSQL
+                  Ambiente de emulação mobile, gerador de manifesto PWA e simulador de notificações push
                 </p>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={fetchLeads}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition"
-                >
-                  🔄 Atualizar
-                </button>
-                <button
-                  onClick={exportCSV}
-                  className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition"
-                >
-                  📥 Exportar CSV
-                </button>
-              </div>
+              <button
+                onClick={triggerMobileNotification}
+                className="px-3 py-1.5 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 rounded-xl text-xs font-bold transition hover:bg-cyan-500 hover:text-slate-950 flex items-center gap-1.5"
+              >
+                <span>🔔</span> Simular Push Notification
+              </button>
             </div>
 
-            {loadingLeads ? (
-              <div className="text-center py-16 text-slate-500 font-mono text-sm">Carregando leads do Supabase...</div>
-            ) : leads.length === 0 ? (
-              <div className="text-center py-16 text-slate-500 rounded-2xl border border-slate-800 bg-slate-900/30">
-                Nenhum lead registrado ainda. Envie o link da sua Landing Page para começar a receber diagnósticos.
-              </div>
-            ) : (
-              <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl">
-                <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="bg-slate-800/80 text-xs uppercase tracking-wider text-slate-400 font-mono">
-                    <tr>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Score</th>
-                      <th className="p-4">Data</th>
-                      <th className="p-4">Nome</th>
-                      <th className="p-4">Email</th>
-                      <th className="p-4">Empresa</th>
-                      <th className="p-4">Volume</th>
-                      <th className="p-4">Gargalo Relatado</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/80">
-                    {leads.map((lead) => {
-                      const currentStatus = lead.status || 'Novo';
-                      const score = calculateLeadScore(lead.data_volume, lead.bottleneck);
-                      return (
-                        <tr key={lead.id} className="hover:bg-slate-800/40 transition">
-                          <td className="p-4">
-                            <select
-                              value={currentStatus}
-                              onChange={(e) => handleStatusChange(lead.id, e.target.value)}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border outline-none ${
-                                currentStatus === 'Novo'
-                                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                                  : currentStatus === 'Em Contato'
-                                  ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
-                                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                              }`}
-                            >
-                              <option value="Novo" className="bg-slate-900 text-amber-300">🟡 Novo</option>
-                              <option value="Em Contato" className="bg-slate-900 text-cyan-300">🔵 Em Contato</option>
-                              <option value="Fechado" className="bg-slate-900 text-emerald-300">🟢 Fechado</option>
-                            </select>
-                          </td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border ${
-                              score >= 80
-                                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                                : score >= 60
-                                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
-                                : 'bg-slate-800 text-slate-400 border-slate-700'
-                            }`}>
-                              🔥 {score} pts
-                            </span>
-                          </td>
-                          <td className="p-4 text-xs text-slate-400 font-mono">
-                            {new Date(lead.created_at).toLocaleString('pt-BR')}
-                          </td>
-                          <td className="p-4 font-semibold text-white">{lead.name}</td>
-                          <td className="p-4 text-cyan-400 font-mono text-xs">{lead.email}</td>
-                          <td className="p-4">{lead.company}</td>
-                          <td className="p-4">{lead.data_volume || '-'}</td>
-                          <td className="p-4 text-xs text-slate-400 max-w-xs truncate">{lead.bottleneck || '-'}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="w-[320px] h-[640px] bg-slate-950 rounded-[48px] p-3 border-[6px] border-slate-800 shadow-2xl shadow-cyan-950/50 flex flex-col relative overflow-hidden">
+                  <div className="absolute top-4 inset-x-0 flex justify-center z-30">
+                    <div className="w-24 h-4 bg-slate-900 rounded-full flex items-center justify-end px-2">
+                      <span className="w-2 h-2 rounded-full bg-slate-700" />
+                    </div>
+                  </div>
 
-        {/* 6. FÁBRICA DE HISTÓRIAS MULTIMODAL */}
-        {activeTab === 'historias' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-cyan-400">Fábrica de Histórias Multimodal (StoryForge)</h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  Geração estruturada com orquestrador de prompts calibrados para cada motor de IA
-                </p>
-              </div>
+                  {testNotificationSent && (
+                    <div className="absolute top-12 inset-x-4 bg-slate-900/95 border border-cyan-500/60 p-3 rounded-2xl shadow-xl z-40 animate-fadeIn space-y-1 backdrop-blur-md">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-cyan-400">
+                        <span className="flex items-center gap-1">⚡ <strong>NexusMobile</strong></span>
+                        <span>agora</span>
+                      </div>
+                      <p className="text-xs font-bold text-white">Novo Lead de Alta Prioridade! 🔥</p>
+                      <p className="text-[10px] text-slate-300">Score 90+ detectado no pipeline.</p>
+                    </div>
+                  )}
 
-              <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1">
-                <button
-                  onClick={() => setStorySubTab('religioso')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
-                    storySubTab === 'religioso'
-                      ? 'bg-cyan-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  🧱 Módulo Bíblico (Lego Dioramas)
-                </button>
-                <button
-                  onClick={() => setStorySubTab('infantil')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
-                    storySubTab === 'infantil'
-                      ? 'bg-cyan-500 text-slate-950 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  🧸 Módulo Infantil (Trolili & Kids)
-                </button>
-              </div>
-            </div>
+                  <div className="flex-1 bg-slate-900/90 rounded-[36px] overflow-hidden flex flex-col pt-8 pb-4 px-4 justify-between border border-slate-800/60">
+                    <div className="space-y-3 pt-2">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-xs font-bold">
+                            ⚡
+                          </div>
+                          <span className="text-xs font-bold text-white">Nexus Data Mobile</span>
+                        </div>
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      </div>
 
-            <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-2xl flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono uppercase text-slate-400 font-bold">Motor de Destino:</span>
-                <span className="text-xs text-slate-500">Adapta os prompts com os parâmetros específicos</span>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setTargetEngine('dalle')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
-                    targetEngine === 'dalle'
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
-                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                  }`}
-                >
-                  <span>🟢</span> DALL-E 3 (Bing Grátis)
-                </button>
-
-                <button
-                  onClick={() => setTargetEngine('midjourney')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
-                    targetEngine === 'midjourney'
-                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-sm'
-                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                  }`}
-                >
-                  <span>🟣</span> Midjourney (v6.1 RAW)
-                </button>
-
-                <button
-                  onClick={() => setTargetEngine('ideogram')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
-                    targetEngine === 'ideogram'
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
-                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                  }`}
-                >
-                  <span>🟡</span> Ideogram (Tipografia 3D)
-                </button>
-
-                <button
-                  onClick={() => setTargetEngine('gemini')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
-                    targetEngine === 'gemini'
-                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-sm'
-                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                  }`}
-                >
-                  <span>⚡</span> Gemini (Nano Banana Pro)
-                </button>
-              </div>
-            </div>
-
-            {storySubTab === 'religioso' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                          Série Parábolas em Blocos
-                        </span>
-                        <h2 className="text-xl font-bold text-white mt-1">A Parábola da Casa na Rocha (Mateus 7:24-27)</h2>
+                      <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-[10px]">
+                        <button
+                          onClick={() => setMobileScreen('dashboard')}
+                          className={`flex-1 py-1 rounded-lg font-bold transition ${
+                            mobileScreen === 'dashboard' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
+                          }`}
+                        >
+                          Métricas
+                        </button>
+                        <button
+                          onClick={() => setMobileScreen('leads')}
+                          className={`flex-1 py-1 rounded-lg font-bold transition ${
+                            mobileScreen === 'leads' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
+                          }`}
+                        >
+                          Leads
+                        </button>
+                        <button
+                          onClick={() => setMobileScreen('scanner')}
+                          className={`flex-1 py-1 rounded-lg font-bold transition ${
+                            mobileScreen === 'scanner' ? 'bg-cyan-500 text-slate-950' : 'text-slate-400'
+                          }`}
+                        >
+                          Scan RLS
+                        </button>
                       </div>
                     </div>
 
-                    <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2 leading-relaxed">
-                      <p className="font-semibold text-cyan-300">📖 Conceito e Rigor Exegético:</p>
-                      <p>
-                        Apresenta o contraste entre construir na areia (*decisões convenientes e superficiais*) e na rocha (*princípios inegociáveis de Deus*), utilizando dioramas de miniaturas plásticas que encantam crianças e tocam profundamente adultos.
-                      </p>
-                    </div>
+                    <div className="flex-1 my-3 overflow-y-auto space-y-3 pr-1">
+                      {mobileScreen === 'dashboard' && (
+                        <div className="space-y-2.5 animate-fadeIn">
+                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-mono uppercase">Leads Ativos</span>
+                            <div className="text-xl font-bold text-cyan-400 mt-0.5">{leads.length} Contatos</div>
+                          </div>
+                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-mono uppercase">Latência Edge</span>
+                            <div className="text-xl font-bold text-teal-400 mt-0.5">18 ms</div>
+                          </div>
+                          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                            <span className="text-[10px] text-slate-400 font-mono uppercase">Segurança</span>
+                            <div className="text-xl font-bold text-emerald-400 mt-0.5">RLS 100% Ativo</div>
+                          </div>
+                        </div>
+                      )}
 
-                    <div className="space-y-4 pt-2">
-                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-xs font-bold text-white font-mono">CENA 1: Os Dois Construtores no Vale</h4>
-                          <button
-                            onClick={() => copyToClipboard(currentLegoPrompts[0], 0)}
-                            className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
-                          >
-                            {copiedPromptIndex === 0 ? '✓ Copiado!' : '📋 Copiar Prompt'}
+                      {mobileScreen === 'leads' && (
+                        <div className="space-y-2 animate-fadeIn">
+                          {leads.slice(0, 3).map((l) => (
+                            <div key={l.id} className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                              <div className="flex justify-between items-center text-[10px]">
+                                <span className="font-bold text-white">{l.name}</span>
+                                <span className="text-cyan-400 font-mono font-bold">
+                                  🔥 {calculateLeadScore(l.data_volume, l.bottleneck)} pts
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate">{l.company}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {mobileScreen === 'scanner' && (
+                        <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-center animate-fadeIn">
+                          <div className="text-2xl">🛡️</div>
+                          <p className="text-xs font-bold text-white">Scanner Portátil</p>
+                          <p className="text-[10px] text-slate-400">PostgreSQL Schema Checker sincronizado via Supabase.</p>
+                          <button className="w-full py-1.5 bg-cyan-500 text-slate-950 font-bold rounded-lg text-[10px]">
+                            Scan Rápido
                           </button>
                         </div>
-                        <p className="text-xs text-slate-400">
-                          Dois pequenos bonecos recebem o mesmo mapa e começam a construir: um na areia macia e outro na colina de rocha cinzenta.
-                        </p>
-                        <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
-                          {currentLegoPrompts[0]}
-                        </div>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-xs font-bold text-white font-mono">CENA 2: A Tempestade e as Ondas de Acrílico</h4>
-                          <button
-                            onClick={() => copyToClipboard(currentLegoPrompts[1], 1)}
-                            className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
-                          >
-                            {copiedPromptIndex === 1 ? '✓ Copiado!' : '📋 Copiar Prompt'}
-                          </button>
-                        </div>
-                        <p className="text-xs text-slate-400">
-                          As nuvens escuras e a chuva de peças azuis transbordam os rios. O teste dos alicerces começa para ambas as estruturas.
-                        </p>
-                        <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
-                          {currentLegoPrompts[1]}
-                        </div>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-xs font-bold text-white font-mono">CENA 3: A Casa Inabalável na Rocha</h4>
-                          <button
-                            onClick={() => copyToClipboard(currentLegoPrompts[2], 2)}
-                            className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
-                          >
-                            {copiedPromptIndex === 2 ? '✓ Copiado!' : '📋 Copiar Prompt'}
-                          </button>
-                        </div>
-                        <p className="text-xs text-slate-400">
-                          A casa da areia se desfaz em peças soltas, enquanto a casa na rocha resiste firme aos ventos e à tempestade.
-                        </p>
-                        <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
-                          {currentLegoPrompts[2]}
-                        </div>
-                      </div>
+                      )}
                     </div>
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-                    <h3 className="font-bold text-cyan-400 text-xs uppercase font-mono tracking-wider">
-                      Instruções de Produção
-                    </h3>
-                    <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
-                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                        <strong className="text-white block mb-1">1. DALL-E 3 (Bing / Copilot):</strong>
-                        Gere gratuitamente no <em>bing.com/images/create</em>. Excelente para diorama de Lego fiel.
-                      </div>
-                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                        <strong className="text-white block mb-1">2. Midjourney (v6.1):</strong>
-                        Gera a melhor iluminação de estúdio macro. O prompt já inclui as tags <code className="text-purple-300">--v 6.1 --style raw</code>.
-                      </div>
-                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                        <strong className="text-white block mb-1">3. Refinamento:</strong>
-                        Mande a imagem aqui no chat caso queira calibrar qualquer ângulo sem alterar a identidade.
-                      </div>
+                    <div className="pt-2 border-t border-slate-800 flex justify-around text-slate-400 text-sm">
+                      <span className="text-cyan-400 cursor-pointer">🏠</span>
+                      <span className="cursor-pointer">⚡</span>
+                      <span className="cursor-pointer">🔔</span>
+                      <span className="cursor-pointer">⚙️</span>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
 
-            {storySubTab === 'infantil' && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                        Universo Trolili 3D
-                      </span>
-                      <h2 className="text-xl font-bold text-white mt-1">Biscoito e a Ponte das Frutas Luminosas</h2>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                    <p className="font-semibold text-cyan-300">🐾 Personagens Protagonistas:</p>
-                    <p>• <strong>Biscoito:</strong> Cãozinho Beagle curioso com mochila ciano.</p>
-                    <p>• <strong>Mimi:</strong> Gatinha persa branca com laço brilhante.</p>
-                    <p>• <strong>Pip & Quack:</strong> O passarinho azul e o patinho de óculos de aviador.</p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-xs font-bold text-white font-mono">PROMPT 3D DISNEY/PIXAR RENDER</h4>
-                      <button
-                        onClick={() => copyToClipboard("Full 3D Disney Pixar style render, a cheerful little Beagle puppy named Biscoito wearing a small teal backpack, holding a glowing golden star-fruit, beside a fluffy cute white kitten named Mimi with a cyan ribbon, sunbeams filtering through magical enchanted forest trees, cinematic soft lighting, volumetric atmosphere, ultra-detailed fur, 8k resolution, vibrant pastel palette --ar 16:9", 10)}
-                        className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition flex items-center gap-1"
-                      >
-                        {copiedPromptIndex === 10 ? '✓ Copiado!' : '📋 Copiar Prompt'}
-                      </button>
-                    </div>
-                    <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[11px] text-cyan-300 break-words">
-                      Full 3D Disney Pixar style render, a cheerful little Beagle puppy named Biscoito wearing a small teal backpack, holding a glowing golden star-fruit, beside a fluffy cute white kitten named Mimi with a cyan ribbon, sunbeams filtering through magical enchanted forest trees, cinematic soft lighting, volumetric atmosphere, ultra-detailed fur, 8k resolution, vibrant pastel palette --ar 16:9
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
-                  <h3 className="font-bold text-cyan-400 text-xs uppercase font-mono">Música Educativa</h3>
-                  <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 italic space-y-2">
-                    <p>"Um pedaço para você, um pedaço para mim!"</p>
-                    <p>"Dividir com os amigos é gostoso assim!"</p>
-                    <p>"Se a ponte balançar, dou a mão pra te ajudar!" 🎶</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 7. CRIADOR DE LANDING PAGES */}
-        {activeTab === 'builder' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="border-b border-slate-800 pb-4">
-              <h1 className="text-2xl font-bold text-cyan-400">Criador Guiado de Landing Pages</h1>
-              <p className="text-xs text-slate-400 mt-1">
-                Defina os parâmetros visuais, envie as referências e monte sua página com suporte da IA
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-4 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl">
-                <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
-                  1. Especificações da Nova Página
-                </h3>
-
-                <div className="space-y-2">
-                  <label className="text-xs text-slate-400">Nome do Projeto / Título da Página</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Landing Page Imersão IA ou Presell Produto X"
-                    value={pageConcept.title}
-                    onChange={(e) => setPageConcept({ ...pageConcept, title: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-cyan-500 outline-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-xs text-slate-400">Modelo / Categoria</label>
-                    <select
-                      value={pageConcept.type}
-                      onChange={(e) => setPageConcept({ ...pageConcept, type: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-cyan-500 outline-none"
-                    >
-                      <option value="Landing Page Comercial 3D">Landing Page 3D Futurista</option>
-                      <option value="Página de Captura Minimalista">Página de Captura Minimalista</option>
-                      <option value="Presell Advertorial de Alta Conversão">Presell Advertorial / VSL</option>
-                      <option value="Portal Institucional & Serviços">Portal Institucional & Serviços</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs text-slate-400">Paleta Visual & Tema</label>
-                    <select
-                      value={pageConcept.palette}
-                      onChange={(e) => setPageConcept({ ...pageConcept, palette: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-cyan-500 outline-none"
-                    >
-                      <option value="Dark Sci-Fi (Cyan/Slate)">Dark Sci-Fi (Slate 950 + Ciano Neon)</option>
-                      <option value="Emerald Cyber (Green/Dark)">Emerald Cyber (Verde Esmeralda + Dark)</option>
-                      <option value="Clean Tech White">Clean Tech (Branco Puro + Azul Marinho)</option>
-                      <option value="Luxury Gold & Black">Luxury (Dourado + Preto Fosco)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs text-slate-400">Objetivo da Copy & Público-Alvo</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Ex: Atrair gestores de TI e empresas que precisam blindar seus bancos de dados e acelerar queries analíticas..."
-                    value={pageConcept.copyObjective}
-                    onChange={(e) => setPageConcept({ ...pageConcept, copyObjective: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-cyan-500 outline-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs text-slate-400">Elementos & Seções Desejadas</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Hero com malha 3D, Comparativo de Planos, Depoimentos, Formulário Supabase..."
-                    value={pageConcept.elements}
-                    onChange={(e) => setPageConcept({ ...pageConcept, elements: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-cyan-500 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
-                <div className="space-y-3">
-                  <h3 className="text-sm font-bold text-cyan-400 uppercase font-mono tracking-wider">
-                    2. Fluxo Guiado com a IA
+              <div className="lg:col-span-7 space-y-6">
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                    1. Parâmetros do Aplicativo PWA
                   </h3>
-                  <p className="text-xs text-slate-400">
-                    Ao definir os campos ao lado, você pode mandar prints, referências e solicitar ajustes finos aqui mesmo.
-                  </p>
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-cyan-400 font-bold">Passo 1:</span> Estruturação do Wireframe & Copy
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Nome da Aplicação</label>
+                      <input
+                        type="text"
+                        value={pwaConfig.appName}
+                        onChange={(e) => setPwaConfig({ ...pwaConfig, appName: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                      />
                     </div>
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-cyan-400 font-bold">Passo 2:</span> Modelagem 3D / Componentes Visuais
-                    </div>
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-cyan-400 font-bold">Passo 3:</span> Conexão Supabase + Deploy Vercel
+                    <div className="space-y-1">
+                      <label className="text-xs text-slate-400">Nome Curto (Tela Inicial)</label>
+                      <input
+                        type="text"
+                        value={pwaConfig.shortName}
+                        onChange={(e) => setPwaConfig({ ...pwaConfig, shortName: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                      />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-cyan-950/40 border border-cyan-800/60 rounded-xl text-xs text-cyan-300">
-                  💡 <strong>Dica Pro:</strong> Basta enviar a foto/print da referência no chat que a IA transforma em código Next.js na hora.
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-3">
+                  <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
+                    2. manifest.json Standalone
+                  </h3>
+                  <pre className="p-4 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-teal-300 overflow-x-auto leading-relaxed">
+{JSON.stringify({
+  name: pwaConfig.appName,
+  short_name: pwaConfig.shortName,
+  start_url: "/",
+  display: pwaConfig.display,
+  background_color: pwaConfig.bgColor,
+  theme_color: pwaConfig.themeColor
+}, null, 2)}
+                  </pre>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 8. POST STUDIO & DEMAIS */}
-        {(activeTab === 'presell' || activeTab === 'posts') && (
+        {/* 7. DEMAIS MÓDULOS */}
+        {(activeTab === 'historias' || activeTab === 'builder' || activeTab === 'presell' || activeTab === 'posts') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
               <h1 className="text-2xl font-bold text-cyan-400">
+                {activeTab === 'historias' && '✨ Fábrica de Histórias Multimodal'}
+                {activeTab === 'builder' && '🚀 Criador de Landing Pages'}
                 {activeTab === 'presell' && '💰 Páginas Presell & Advertoriais High-Ticket'}
                 {activeTab === 'posts' && '🎨 Post Studio & Design System'}
               </h1>
