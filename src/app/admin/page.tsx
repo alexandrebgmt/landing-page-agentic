@@ -11,9 +11,9 @@ interface Lead {
   company: string;
   data_volume: string;
   bottleneck: string;
+  status?: string;
 }
 
-// Senha padrão de acesso (você pode alterar para a que preferir)
 const ADMIN_ACCESS_KEY = "nexus2026";
 
 export default function AdminPage() {
@@ -24,7 +24,6 @@ export default function AdminPage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    // Verifica se já fez login na sessão atual do navegador
     const sessionAuth = sessionStorage.getItem("nexus_admin_auth");
     if (sessionAuth === "true") {
       setIsAuthenticated(true);
@@ -63,11 +62,23 @@ export default function AdminPage() {
     setLoading(false);
   }
 
+  // Atualizar status no Supabase e na tela em tempo real
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    setLeads((prev) =>
+      prev.map((lead) =>
+        lead.id === id ? { ...lead, status: newStatus } : lead,
+      ),
+    );
+
+    await supabase.from("leads").update({ status: newStatus }).eq("id", id);
+  };
+
   const exportCSV = () => {
     if (leads.length === 0) return;
     const headers = [
       "ID",
       "Data",
+      "Status",
       "Nome",
       "Email",
       "Empresa",
@@ -77,6 +88,7 @@ export default function AdminPage() {
     const rows = leads.map((l) => [
       l.id,
       new Date(l.created_at).toLocaleString("pt-BR"),
+      `"${l.status || "Novo"}"`,
       `"${l.name}"`,
       `"${l.email}"`,
       `"${l.company}"`,
@@ -141,14 +153,14 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
           <div>
             <h1 className="text-2xl font-bold text-cyan-400">
-              Painel de Leads NexusData
+              Pipeline de Leads NexusData
             </h1>
             <p className="text-sm text-slate-400">
-              Acompanhamento e exportação em tempo real
+              CRM de acompanhamento e gestão de diagnósticos
             </p>
           </div>
           <div className="flex gap-3">
@@ -180,6 +192,7 @@ export default function AdminPage() {
             <table className="w-full text-left text-sm text-slate-300">
               <thead className="bg-slate-800 text-xs uppercase tracking-wider text-slate-400">
                 <tr>
+                  <th className="p-4">Status</th>
                   <th className="p-4">Data</th>
                   <th className="p-4">Nome</th>
                   <th className="p-4">Email</th>
@@ -189,23 +202,62 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
-                {leads.map((lead) => (
-                  <tr
-                    key={lead.id}
-                    className="hover:bg-slate-800/40 transition"
-                  >
-                    <td className="p-4 text-xs text-slate-400">
-                      {new Date(lead.created_at).toLocaleString("pt-BR")}
-                    </td>
-                    <td className="p-4 font-medium text-white">{lead.name}</td>
-                    <td className="p-4 text-cyan-400">{lead.email}</td>
-                    <td className="p-4">{lead.company}</td>
-                    <td className="p-4">{lead.data_volume || "-"}</td>
-                    <td className="p-4 text-xs text-slate-400 max-w-xs truncate">
-                      {lead.bottleneck || "-"}
-                    </td>
-                  </tr>
-                ))}
+                {leads.map((lead) => {
+                  const currentStatus = lead.status || "Novo";
+                  return (
+                    <tr
+                      key={lead.id}
+                      className="hover:bg-slate-800/40 transition"
+                    >
+                      <td className="p-4">
+                        <select
+                          value={currentStatus}
+                          onChange={(e) =>
+                            handleStatusChange(lead.id, e.target.value)
+                          }
+                          className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer border outline-none ${
+                            currentStatus === "Novo"
+                              ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                              : currentStatus === "Em Contato"
+                                ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
+                                : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                          }`}
+                        >
+                          <option
+                            value="Novo"
+                            className="bg-slate-900 text-amber-300"
+                          >
+                            🟡 Novo
+                          </option>
+                          <option
+                            value="Em Contato"
+                            className="bg-slate-900 text-cyan-300"
+                          >
+                            🔵 Em Contato
+                          </option>
+                          <option
+                            value="Fechado"
+                            className="bg-slate-900 text-emerald-300"
+                          >
+                            🟢 Fechado
+                          </option>
+                        </select>
+                      </td>
+                      <td className="p-4 text-xs text-slate-400">
+                        {new Date(lead.created_at).toLocaleString("pt-BR")}
+                      </td>
+                      <td className="p-4 font-medium text-white">
+                        {lead.name}
+                      </td>
+                      <td className="p-4 text-cyan-400">{lead.email}</td>
+                      <td className="p-4">{lead.company}</td>
+                      <td className="p-4">{lead.data_volume || "-"}</td>
+                      <td className="p-4 text-xs text-slate-400 max-w-xs truncate">
+                        {lead.bottleneck || "-"}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
