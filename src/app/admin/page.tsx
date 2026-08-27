@@ -174,7 +174,7 @@ export default function NexusMasterSuite() {
   const [isResearching, setIsResearching] = useState(false);
 
   // Webhook State
-  const [metaWebhookUrl, setMetaWebhookUrl] = useState('https://webhook.site/test-endpoint');
+  const [metaWebhookUrl, setMetaWebhookUrl] = useState('https://webhook.site/78fac972-6519-4b5b-b946-0f15b0694943');
   const [metaAccessToken, setMetaAccessToken] = useState('');
   const [isDispatchingWebhook, setIsDispatchingWebhook] = useState(false);
   const [webhookFeedback, setWebhookFeedback] = useState<{ success: boolean; message: string } | null>(null);
