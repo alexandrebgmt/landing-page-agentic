@@ -168,14 +168,12 @@ export default function NexusMasterSuite() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
 
-  // Estados do Post Studio Studio & AI Research Engine
   const [postStudioSubTab, setPostStudioSubTab] = useState<'generator' | 'brandkit3x3' | 'branding' | 'meta-api'>('generator');
   const [clientNiche, setClientNiche] = useState('Medicina Integrativa & Longevidade');
   const [clientTopic, setClientTopic] = useState('Benefícios da Ozonioterapia e Terapia Neural na Regeneração Celular');
   const [brandHandle, setBrandHandle] = useState('@clinica.integrativa');
   const [isResearching, setIsResearching] = useState(false);
 
-  // Post gerado dinâmico
   const [generatedPost, setGeneratedPost] = useState({
     badge: 'MEDICINA INTEGRATIVA & PERFORMANCE',
     slides: [
@@ -203,17 +201,15 @@ export default function NexusMasterSuite() {
 
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
-  // Estados do Módulo Outreach & Demo Forge
   const [demoType, setDemoType] = useState<'landing' | 'saas' | 'crm'>('saas');
   const [outreachForm, setOutreachForm] = useState({
-    recipientName: '',
-    recipientEmail: '',
-    companyName: '',
+    recipientName: 'Alexandre Cardoso Figueira',
+    recipientEmail: 'alexandrebgmt@hotmail.com',
+    companyName: 'Medicina integrativa',
     techBottleneck: 'Bancos de dados lentos e falta de isolamento seguro RLS',
     emailTemplate: 'demo'
   });
 
-  // Estados do Módulo Mobile / PWA
   const [mobileScreen, setMobileScreen] = useState<'dashboard' | 'leads' | 'scanner'>('dashboard');
   const [pwaConfig, setPwaConfig] = useState({
     appName: 'Nexus Mobile Agent',
@@ -224,7 +220,6 @@ export default function NexusMasterSuite() {
   });
   const [testNotificationSent, setTestNotificationSent] = useState(false);
 
-  // Estados do Módulo SaaS (Audit Pro)
   const [sqlInput, setSqlInput] = useState<string>(
 `CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -314,7 +309,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
     setTimeout(() => setInstalledNotice(null), 4000);
   };
 
-  // Motor de Pesquisa e Geração com IA para o Post Studio
   const handleGenerateCustomPost = () => {
     setIsResearching(true);
     setTimeout(() => {
@@ -492,7 +486,11 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
   };
 
   const currentEmail = generateOutreachEmail();
-  const mailtoLink = `mailto:${outreachForm.recipientEmail}?subject=${encodeURIComponent(currentEmail.subject)}&body=${encodeURIComponent(currentEmail.body)}`;
+
+  const handleOpenGmailCompose = () => {
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(outreachForm.recipientEmail)}&su=${encodeURIComponent(currentEmail.subject)}&body=${encodeURIComponent(currentEmail.body)}`;
+    window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const currentSlide = generatedPost.slides[activeSlideIndex] || generatedPost.slides[0];
   const hasPendingUpdates = skillsList.some((s) => s.status === 'Disponível');
@@ -546,7 +544,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
       
-      {/* SIDEBAR MASTER */}
       <aside className="w-72 bg-slate-900/90 backdrop-blur-2xl border-r border-slate-800/80 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0 z-30">
         <div className="space-y-6">
           <div className="px-3 py-2 flex items-center justify-between border-b border-slate-800 pb-4">
@@ -743,10 +740,8 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
       <main className="flex-1 ml-72 p-8 max-w-7xl">
 
-        {/* 1. VISÃO GERAL */}
         {activeTab === 'hub' && (
           <div className="space-y-8 animate-fadeIn">
             <div className="flex justify-between items-end border-b border-slate-800 pb-6">
@@ -851,7 +846,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 2. POST STUDIO, BRANDKIT 3X3 & AGENCY ENGINE */}
         {activeTab === 'posts' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -864,7 +858,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 </p>
               </div>
 
-              {/* Sub-abas do Estúdio */}
               <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1">
                 <button
                   onClick={() => setPostStudioSubTab('generator')}
@@ -901,11 +894,8 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </div>
             </div>
 
-            {/* ABA 1: GERADOR DINÂMICO DE POST COM PESQUISA DE IA */}
             {postStudioSubTab === 'generator' && (
               <div className="space-y-6">
-                
-                {/* Console de Pesquisa do Tema do Cliente */}
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
                   <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2">
                     <span>🔍</span> Motor de Pesquisa e Geração Automática para o Cliente
@@ -957,16 +947,12 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                   </div>
                 </div>
 
-                {/* VISUALIZADOR DE SLIDES & COPY GERADA */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                  
-                  {/* CANVAS DO CARROSSEL (1080x1080) */}
                   <div className="lg:col-span-6 flex flex-col items-center space-y-4">
                     <div className="w-full max-w-[440px] aspect-square bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden shadow-2xl shadow-cyan-950/40">
                       <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
                       <div className="absolute bottom-0 left-0 w-40 h-40 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
 
-                      {/* Header */}
                       <div className="flex justify-between items-center z-10">
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-400 font-bold text-xs">
@@ -980,7 +966,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                         </span>
                       </div>
 
-                      {/* Corpo do Slide */}
                       <div className="space-y-3 z-10 my-auto">
                         <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 font-bold block">
                           {generatedPost.badge}
@@ -997,14 +982,12 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                         </pre>
                       </div>
 
-                      {/* Footer */}
                       <div className="flex justify-between items-center z-10 pt-2 border-t border-slate-800/80 text-[10px] text-slate-400 font-mono">
                         <span>Nexus Creative Studio</span>
                         <span className="text-cyan-400 font-bold">Arraste para o lado ➔</span>
                       </div>
                     </div>
 
-                    {/* Navegação dos Slides */}
                     <div className="flex items-center gap-2">
                       {generatedPost.slides.map((_, sIdx) => (
                         <button
@@ -1018,7 +1001,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     </div>
                   </div>
 
-                  {/* PAINEL DE LEGENDA & PROMPT VISUAL */}
                   <div className="lg:col-span-6 space-y-4">
                     <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4 flex flex-col justify-between">
                       <div className="space-y-3">
@@ -1053,11 +1035,9 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     </div>
                   </div>
                 </div>
-
               </div>
             )}
 
-            {/* ABA 2: BRANDKIT 3X3 GRID BOARD (PADRÃO PENTAGRAM / LINEAR) */}
             {postStudioSubTab === 'brandkit3x3' && (
               <div className="space-y-6 animate-fadeIn">
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
@@ -1076,10 +1056,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                     </button>
                   </div>
 
-                  {/* GRID 3X3 VISUAL */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-                    
-                    {/* Painel 1: Logo Cover */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">1. Logo Cover</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850">
@@ -1088,7 +1065,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Wordmark de alto impacto com espaço negativo deliberado.</p>
                     </div>
 
-                    {/* Painel 2: Logo Construction */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">2. Geometria & Construção</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 font-mono text-[10px] text-teal-300">
@@ -1097,7 +1073,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Métricas de precisão e redução de vetor sem ruídos.</p>
                     </div>
 
-                    {/* Painel 3: Digital Application */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">3. Aplicação Web / UI</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex flex-col justify-center px-3 border border-slate-850 space-y-1">
@@ -1112,7 +1087,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Browser bar, terminal frame e componentes nativos.</p>
                     </div>
 
-                    {/* Painel 4: Brand Essence */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">4. Essência & Tagline</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 p-2 text-center">
@@ -1121,7 +1095,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Frase concisa sem clichês de autoajuda ou falsas promessas.</p>
                     </div>
 
-                    {/* Painel 5: Color System */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">5. Paleta Disciplinada</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-around px-2 border border-slate-850">
@@ -1132,7 +1105,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">1 tom base escuro, 1 acento saturado e 1 suporte neutro.</p>
                     </div>
 
-                    {/* Painel 6: Typography Specimen */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">6. Tipografia Editorial</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex flex-col justify-center px-3 border border-slate-850">
@@ -1142,7 +1114,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Emparelhamento de alta legibilidade para telas e impressos.</p>
                     </div>
 
-                    {/* Painel 7: Physical Application */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">7. Aplicação Física / Papel</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 font-mono text-[10px] text-slate-300">
@@ -1151,7 +1122,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Texturas táteis com acabamento de alto valor percebido.</p>
                     </div>
 
-                    {/* Painel 8: Image Direction */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">8. Direção de Imagem</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 text-[10px] font-mono text-cyan-300">
@@ -1160,7 +1130,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       <p className="text-[10px] text-slate-400">Fotografia de estúdio autoral sem bancos de imagens óbvios.</p>
                     </div>
 
-                    {/* Painel 9: System Details */}
                     <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <span className="text-[9px] font-mono uppercase text-cyan-400 font-bold">9. Detalhes de Sistema</span>
                       <div className="h-20 bg-slate-900/80 rounded-lg flex items-center justify-center border border-slate-850 font-mono text-[9px] text-slate-400">
@@ -1168,13 +1137,11 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                       </div>
                       <p className="text-[10px] text-slate-400">Guias de alinhamento, badges e ícones do design system.</p>
                     </div>
-
                   </div>
                 </div>
               </div>
             )}
 
-            {/* ABA 3: BRAND KIT & BIO DE ALTA CONVERSÃO */}
             {postStudioSubTab === 'branding' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeIn">
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
@@ -1213,7 +1180,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               </div>
             )}
 
-            {/* ABA 4: INTEGRAÇÃO META GRAPH API & WEBHOOK */}
             {postStudioSubTab === 'meta-api' && (
               <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-6 animate-fadeIn">
                 <div className="border-b border-slate-800 pb-4">
@@ -1262,11 +1228,9 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                 </div>
               </div>
             )}
-
           </div>
         )}
 
-        {/* 3. DEMO FORGE & CLIENT OUTREACH */}
         {activeTab === 'outreach' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -1447,21 +1411,18 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
                   <span className="text-[11px] text-slate-400 font-mono">
                     Conectado ao Gmail: Envio em 1 clique
                   </span>
-                  <a
-                    href={`https://mail.google.com/mail/?view=cmhref={mailtoLink}fs=1href={mailtoLink}to=${encodeURIComponent(outreachForm.recipientEmail)}href={mailtoLink}su=${encodeURIComponent(currentEmail.subject)}href={mailtoLink}body=${encodeURIComponent(currentEmail.body)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 text-center flex items-center justify-center gap-2"
+                  <button
+                    onClick={handleOpenGmailCompose}
+                    className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 text-center flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                   >
                     <span>🚀</span> Abrir Rascunho no Gmail ↗
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 4. CRM COM LEAD SCORING */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -1560,7 +1521,6 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
           </div>
         )}
 
-        {/* 5. ENGENHARIA SAAS: AUDIT PRO */}
         {activeTab === 'saas' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
@@ -1689,7 +1649,6 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 6. RADAR DE ATUALIZAÇÕES */}
         {activeTab === 'updates' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
@@ -1761,7 +1720,6 @@ SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
           </div>
         )}
 
-        {/* 7. DEMAIS MÓDULOS (APPS, HISTORIAS, BUILDER, PRESELL) */}
         {(activeTab === 'apps' || activeTab === 'historias' || activeTab === 'builder' || activeTab === 'presell') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
