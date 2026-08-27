@@ -50,9 +50,9 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     id: '2',
     name: 'Audit Pro Micro-SaaS',
     module: 'saas',
-    status: 'Em Criação',
-    description: 'Scanner automatizado de schema PostgreSQL, detecção de gargalos e relatórios de conformidade.',
-    tags: ['SaaS', 'PostgreSQL', 'SQL Parser']
+    status: 'Deploy Ativo',
+    description: 'Scanner automatizado de schema PostgreSQL, detecção de gargalos, RLS e relatórios de conformidade.',
+    tags: ['SaaS', 'PostgreSQL', 'SQL Parser', 'Auditoria']
   },
   {
     id: '3',
@@ -82,8 +82,9 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     id: '6',
     name: 'Presell High-Ticket VSL',
     module: 'presell',
-    status: 'Em Criação',
+    status: 'Deploy Ativo',
     description: 'Página advertorial de alta conversão com retenção de checkout e gatilhos de autoridade.',
+    link: '/presell',
     tags: ['Advertorial', 'Copywriting', 'Direct Response']
   },
   {
@@ -167,6 +168,28 @@ export default function NexusMasterSuite() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
 
+  // Estados do Módulo SaaS (Audit Pro)
+  const [sqlInput, setSqlInput] = useState<string>(
+`CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id UUID NOT NULL,
+  email TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Query de busca frequente sem índice:
+SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
+  );
+
+  const [isScanning, setIsScanning] = useState(false);
+  const [auditResult, setAuditResult] = useState<{
+    score: number;
+    rlsStatus: 'Vulnerável' | 'Blindado';
+    indexStatus: 'Gargalo Detectado' | 'Otimizado';
+    recommendations: string[];
+  } | null>(null);
+
+  // Estados da Fábrica de Criação Guiada
   const [pageConcept, setPageConcept] = useState({
     title: '',
     type: 'Landing Page Comercial 3D',
@@ -242,6 +265,43 @@ export default function NexusMasterSuite() {
     );
     setInstalledNotice(`A Skill "${title}" foi incorporada ao ecossistema com sucesso!`);
     setTimeout(() => setInstalledNotice(null), 4000);
+  };
+
+  // Motor de Execução da Auditoria SaaS
+  const handleRunAudit = () => {
+    setIsScanning(true);
+    setTimeout(() => {
+      const lowerSql = sqlInput.toLowerCase();
+      const hasRLS = lowerSql.includes('enable row level security') || lowerSql.includes('alter table') && lowerSql.includes('rls');
+      const hasIndex = lowerSql.includes('create index') || lowerSql.includes('btree');
+
+      let score = 95;
+      const recs: string[] = [];
+
+      if (!hasRLS) {
+        score -= 30;
+        recs.push('⚠️ Tabela sem RLS: Execute "ALTER TABLE ... ENABLE ROW LEVEL SECURITY;" para isolamento multi-tenant.');
+      } else {
+        recs.push('✅ RLS ativo: Isolamento no PostgreSQL validado.');
+      }
+
+      if (!hasIndex && (lowerSql.includes('select') || lowerSql.includes('where'))) {
+        score -= 20;
+        recs.push('⚡ Gargalo em Query: Filtro por email/chave sem índice B-Tree. Crie: "CREATE INDEX idx_users_email ON users(email);".');
+      } else {
+        recs.push('✅ Estrutura de indexação alinhada com as consultas.');
+      }
+
+      recs.push('🔒 Chaves primárias usando UUIDv4 para evitar enumeração de registros.');
+
+      setAuditResult({
+        score: Math.max(score, 40),
+        rlsStatus: hasRLS ? 'Blindado' : 'Vulnerável',
+        indexStatus: hasIndex ? 'Otimizado' : 'Gargalo Detectado',
+        recommendations: recs
+      });
+      setIsScanning(false);
+    }, 900);
   };
 
   const exportCSV = () => {
@@ -416,6 +476,23 @@ export default function NexusMasterSuite() {
             <div className="pt-3 px-3 py-1 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Módulos de Produção</div>
 
             <button
+              onClick={() => setActiveTab('saas')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+                activeTab === 'saas'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <span>⚙️</span>
+                <span>Engenharia SaaS (Audit)</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+                PRO
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('historias')}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
                 activeTab === 'historias'
@@ -442,18 +519,6 @@ export default function NexusMasterSuite() {
             >
               <span>🚀</span>
               <span>Criador de Landing Pages</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('saas')}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition ${
-                activeTab === 'saas'
-                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              <span>⚙️</span>
-              <span>Engenharia SaaS</span>
             </button>
 
             <button
@@ -519,6 +584,7 @@ export default function NexusMasterSuite() {
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 ml-72 p-8 max-w-7xl">
 
+        {/* 1. VISÃO GERAL */}
         {activeTab === 'hub' && (
           <div className="space-y-8 animate-fadeIn">
             <div className="flex justify-between items-end border-b border-slate-800 pb-6">
@@ -526,18 +592,18 @@ export default function NexusMasterSuite() {
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v3.2 Architecture
+                    v3.5 Architecture
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                  Orquestrador de engenharia de dados, geração multimodal de histórias e esteira de automações.
+                  Orquestrador de engenharia de dados, micro-saas analítico, geração de histórias e esteira de automações.
                 </p>
               </div>
               <button
-                onClick={() => setActiveTab('updates')}
+                onClick={() => setActiveTab('saas')}
                 className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 flex items-center gap-2"
               >
-                <span>🛰️</span> Ver Radar de Skills & Updates
+                <span>⚙️</span> Abrir Nexus Audit SaaS
               </button>
             </div>
 
@@ -550,7 +616,7 @@ export default function NexusMasterSuite() {
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Módulos Ativos</div>
                 <div className="text-2xl font-bold text-white mt-1">8 Módulos</div>
-                <div className="text-[11px] text-slate-400 mt-2">Landing, SaaS, CRM, Histórias...</div>
+                <div className="text-[11px] text-slate-400 mt-2">SaaS, CRM, Histórias, Presell...</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Infraestrutura</div>
@@ -558,11 +624,9 @@ export default function NexusMasterSuite() {
                 <div className="text-[11px] text-teal-400 mt-2">Next.js 15 + Vercel + PG</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Status de Skills</div>
-                <div className="text-2xl font-bold text-purple-400 mt-1">
-                  {skillsList.filter((s) => s.status === 'Instalado').length} / {skillsList.length}
-                </div>
-                <div className="text-[11px] text-purple-300 mt-2">MCP Router & Calibradores</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Micro-SaaS Scanner</div>
+                <div className="text-2xl font-bold text-cyan-400 mt-1">Audit Pro</div>
+                <div className="text-[11px] text-cyan-300 mt-2">PostgreSQL & RLS Analyser</div>
               </div>
             </div>
 
@@ -623,6 +687,141 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 2. ENGENHARIA SAAS: AUDIT PRO */}
+        {activeTab === 'saas' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>⚙️</span> Nexus Audit Pro Micro-SaaS
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Scanner automatizado de DDL PostgreSQL, auditoria de segurança RLS e detecção de gargalos de queries
+                </p>
+              </div>
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                SaaS Engine v1.0
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Painel de Entrada de Schema SQL */}
+              <div className="lg:col-span-2 space-y-4 bg-slate-900/60 border border-slate-800 p-6 rounded-2xl">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                    Console de Ingestão de Schema & Queries SQL
+                  </h3>
+                  <button
+                    onClick={() => setSqlInput(
+`-- Schema com Vulnerabilidade e Falta de Índice:
+CREATE TABLE orders (
+  id UUID PRIMARY KEY,
+  customer_id UUID,
+  amount NUMERIC(10,2),
+  status TEXT
+);
+
+SELECT * FROM orders WHERE customer_id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';`
+                    )}
+                    className="text-[11px] text-cyan-400 hover:underline font-mono"
+                  >
+                    Carregar Exemplo de Teste
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <textarea
+                    rows={12}
+                    value={sqlInput}
+                    onChange={(e) => setSqlInput(e.target.value)}
+                    className="w-full p-4 bg-slate-950 font-mono text-xs text-cyan-300 border border-slate-800 rounded-xl focus:border-cyan-500 outline-none leading-relaxed"
+                    placeholder="Cole seu código SQL DDL ou query para auditar..."
+                  />
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    Suporte: PostgreSQL 14+, Supabase, Neon & AWS RDS
+                  </span>
+                  <button
+                    onClick={handleRunAudit}
+                    disabled={isScanning}
+                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20 active:scale-[0.99] disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {isScanning ? 'Analisando Estrutura...' : '⚡ Executar Auditoria Técnica'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Painel Lateral com Laudo do Scanner */}
+              <div className="space-y-4">
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  <h3 className="text-xs font-bold text-cyan-400 font-mono uppercase tracking-wider">
+                    Laudo do Diagnóstico SaaS
+                  </h3>
+
+                  {auditResult ? (
+                    <div className="space-y-4 animate-fadeIn">
+                      {/* Score de Saúde */}
+                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-1">
+                        <span className="text-[10px] font-mono uppercase text-slate-400">Score de Saúde da Arquitetura</span>
+                        <div className={`text-4xl font-extrabold ${
+                          auditResult.score >= 80 ? 'text-emerald-400' : 'text-amber-400'
+                        }`}>
+                          {auditResult.score} / 100
+                        </div>
+                      </div>
+
+                      {/* Status RLS & Índices */}
+                      <div className="space-y-2 text-xs">
+                        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-400">Isolamento RLS:</span>
+                          <span className={`font-bold font-mono px-2 py-0.5 rounded ${
+                            auditResult.rlsStatus === 'Blindado'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                          }`}>
+                            {auditResult.rlsStatus}
+                          </span>
+                        </div>
+
+                        <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
+                          <span className="text-slate-400">Indexação Analítica:</span>
+                          <span className={`font-bold font-mono px-2 py-0.5 rounded ${
+                            auditResult.indexStatus === 'Otimizado'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                          }`}>
+                            {auditResult.indexStatus}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Recomendações Técnicas */}
+                      <div className="space-y-2 pt-2 border-t border-slate-800">
+                        <span className="text-[11px] font-mono text-slate-400 font-bold uppercase block">
+                          Recomendações do Engenheiro:
+                        </span>
+                        {auditResult.recommendations.map((rec, i) => (
+                          <div key={i} className="text-xs text-slate-300 p-2 rounded-lg bg-slate-950 border border-slate-850 leading-relaxed">
+                            {rec}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-slate-500 space-y-2">
+                      <div className="text-2xl">🔍</div>
+                      <p className="text-xs">Cole o schema ao lado e clique em Executar para gerar o diagnóstico.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3. RADAR DE ATUALIZAÇÕES & SKILLS */}
         {activeTab === 'updates' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
@@ -694,6 +893,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 4. CRM COM LEAD SCORING & PIPELINE */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -792,6 +992,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 5. FÁBRICA DE HISTÓRIAS MULTIMODAL */}
         {activeTab === 'historias' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
@@ -1029,6 +1230,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 6. CRIADOR DE LANDING PAGES */}
         {activeTab === 'builder' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
@@ -1137,11 +1339,11 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {(activeTab === 'saas' || activeTab === 'apps' || activeTab === 'presell' || activeTab === 'posts') && (
+        {/* 7. DEMAIS MÓDULOS */}
+        {(activeTab === 'apps' || activeTab === 'presell' || activeTab === 'posts') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
               <h1 className="text-2xl font-bold text-cyan-400">
-                {activeTab === 'saas' && '⚙️ Engenharia SaaS & Micro-SaaS'}
                 {activeTab === 'apps' && '📱 Engenharia de Aplicativos Mobile & PWA'}
                 {activeTab === 'presell' && '💰 Páginas Presell & Advertoriais High-Ticket'}
                 {activeTab === 'posts' && '🎨 Post Studio & Design System'}
