@@ -519,7 +519,6 @@ export default function NexusMasterSuite() {
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 ml-72 p-8 max-w-7xl">
 
-        {/* 1. VISÃO GERAL */}
         {activeTab === 'hub' && (
           <div className="space-y-8 animate-fadeIn">
             <div className="flex justify-between items-end border-b border-slate-800 pb-6">
@@ -624,7 +623,6 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* 2. RADAR DE ATUALIZAÇÕES & SKILLS */}
         {activeTab === 'updates' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
@@ -696,7 +694,6 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* 3. CRM COM LEAD SCORING & PIPELINE */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -795,7 +792,6 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* 4. FÁBRICA DE HISTÓRIAS MULTIMODAL */}
         {activeTab === 'historias' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
@@ -1033,7 +1029,6 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* 5. CRIADOR DE LANDING PAGES */}
         {activeTab === 'builder' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
@@ -1142,7 +1137,6 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* 6. DEMAIS MÓDULOS */}
         {(activeTab === 'saas' || activeTab === 'apps' || activeTab === 'presell' || activeTab === 'posts') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
