@@ -13,24 +13,55 @@ interface Lead {
   bottleneck: string;
 }
 
+// Senha padrão de acesso (você pode alterar para a que preferir)
+const ADMIN_ACCESS_KEY = "nexus2026";
+
 export default function AdminPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    async function fetchLeads() {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (!error && data) {
-        setLeads(data);
-      }
-      setLoading(false);
+    // Verifica se já fez login na sessão atual do navegador
+    const sessionAuth = sessionStorage.getItem("nexus_admin_auth");
+    if (sessionAuth === "true") {
+      setIsAuthenticated(true);
+      fetchLeads();
     }
-    fetchLeads();
   }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === ADMIN_ACCESS_KEY) {
+      sessionStorage.setItem("nexus_admin_auth", "true");
+      setIsAuthenticated(true);
+      fetchLeads();
+      setErrorMsg("");
+    } else {
+      setErrorMsg("Chave de acesso incorreta.");
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("nexus_admin_auth");
+    setIsAuthenticated(false);
+    setPasswordInput("");
+  };
+
+  async function fetchLeads() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setLeads(data);
+    }
+    setLoading(false);
+  }
 
   const exportCSV = () => {
     if (leads.length === 0) return;
@@ -69,6 +100,45 @@ export default function AdminPage() {
     document.body.removeChild(link);
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
+        <form
+          onSubmit={handleLogin}
+          className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4"
+        >
+          <div className="text-center">
+            <h1 className="text-xl font-bold text-cyan-400">Acesso Restrito</h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Informe a chave mestra para ver os leads
+            </p>
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Digite a chave de acesso"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-cyan-500 transition"
+              autoFocus
+            />
+            {errorMsg && (
+              <p className="text-xs text-rose-400 mt-2">{errorMsg}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-lg text-sm transition"
+          >
+            Entrar no Painel
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-8 font-sans">
       <div className="max-w-6xl mx-auto">
@@ -81,12 +151,20 @@ export default function AdminPage() {
               Acompanhamento e exportação em tempo real
             </p>
           </div>
-          <button
-            onClick={exportCSV}
-            className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-lg text-sm transition"
-          >
-            Exportar CSV
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={exportCSV}
+              className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-lg text-sm transition"
+            >
+              Exportar CSV
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition"
+            >
+              Sair
+            </button>
+          </div>
         </div>
 
         {loading ? (
