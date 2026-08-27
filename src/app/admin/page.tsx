@@ -690,7 +690,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Canal de E-mail</div>
                 <div className="text-2xl font-bold text-teal-400 mt-1">Gmail Ready</div>
-                <div className="text-[11px] text-teal-400 mt-2">nexusenterprise@gmail.com</div>
+                <div className="text-[11px] text-teal-400 mt-2">nexusdata.enterprise@gmail.com</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
                 <div className="text-slate-400 text-xs font-mono uppercase">Status de Skills</div>
@@ -773,7 +773,7 @@ SELECT * FROM users WHERE email = 'cliente@exemplo.com';`
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-slate-400">Canal:</span>
                 <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800">
-                  nexusenterprise@gmail.com
+                  nexusdata.enterprise@gmail.com
                 </span>
               </div>
             </div>
