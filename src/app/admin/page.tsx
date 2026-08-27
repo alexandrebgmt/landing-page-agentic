@@ -13,7 +13,6 @@ interface Lead {
   bottleneck: string;
   status?: string;
   score?: number;
-  enrichment?: string;
 }
 
 interface ProjectItem {
@@ -24,6 +23,17 @@ interface ProjectItem {
   description: string;
   link?: string;
   tags: string[];
+}
+
+interface SkillUpdate {
+  id: string;
+  version: string;
+  title: string;
+  category: 'IA Agentic' | 'Pipeline Dados' | 'Engenharia 3D' | 'Segurança RLS';
+  description: string;
+  date: string;
+  status: 'Instalado' | 'Disponível';
+  changelog: string[];
 }
 
 const INITIAL_PROJECTS: ProjectItem[] = [
@@ -41,7 +51,7 @@ const INITIAL_PROJECTS: ProjectItem[] = [
     name: 'Audit Pro Micro-SaaS',
     module: 'saas',
     status: 'Em Criação',
-    description: 'Scanner automatizado de schema PostgreSQL, detecção de gargalos e geração de relatórios de conformidade.',
+    description: 'Scanner automatizado de schema PostgreSQL, detecção de gargalos e relatórios de conformidade.',
     tags: ['SaaS', 'PostgreSQL', 'SQL Parser']
   },
   {
@@ -94,6 +104,51 @@ const INITIAL_PROJECTS: ProjectItem[] = [
   }
 ];
 
+const SKILL_UPDATES: SkillUpdate[] = [
+  {
+    id: 'up-1',
+    version: 'v3.2 Protocol',
+    title: 'Model Context Protocol (MCP) & Agentic Router',
+    category: 'IA Agentic',
+    description: 'Permite conectar ferramentas externas, bancos de dados locais e scripts diretamente ao fluxo de raciocínio da IA.',
+    date: '27/08/2026',
+    status: 'Disponível',
+    changelog: [
+      'Orquestração de prompts multi-engine desacoplada',
+      'Execução de código direto para análise de leads',
+      'Segurança de credenciais em túnel isolado'
+    ]
+  },
+  {
+    id: 'up-2',
+    version: 'v2.8 Engine',
+    title: 'Multi-Engine Visual Calibrator (DALL-E 3, MJ 6.1, Ideogram)',
+    category: 'Engenharia 3D',
+    description: 'Formatador dinâmico de tags de iluminação volumétrica, aspecto de imagem e dioramas plásticos.',
+    date: '27/08/2026',
+    status: 'Instalado',
+    changelog: [
+      'Geração de dioramas Lego e animação 3D infantil',
+      'Suporte a cópia de prompts com um clique',
+      'Presets de render 8k e lentes tilt-shift'
+    ]
+  },
+  {
+    id: 'up-3',
+    version: 'v2.5 Security',
+    title: 'PostgreSQL Row Level Security (RLS) Blindado',
+    category: 'Segurança RLS',
+    description: 'Políticas granulares de isolamento no Supabase para proteção contra extração de dados públicos.',
+    date: '26/08/2026',
+    status: 'Instalado',
+    changelog: [
+      'Acesso anônimo restrito a inserção controlada',
+      'Autenticação de sessão no painel administrativo',
+      'Prevenção de escalada de privilégios'
+    ]
+  }
+];
+
 const ADMIN_ACCESS_KEY = 'nexus2026';
 
 export default function NexusMasterSuite() {
@@ -101,6 +156,9 @@ export default function NexusMasterSuite() {
   const [storySubTab, setStorySubTab] = useState<'infantil' | 'religioso'>('religioso');
   const [targetEngine, setTargetEngine] = useState<'dalle' | 'midjourney' | 'ideogram' | 'gemini'>('dalle');
   const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(null);
+
+  const [skillsList, setSkillsList] = useState<SkillUpdate[]>(SKILL_UPDATES);
+  const [installedNotice, setInstalledNotice] = useState<string | null>(null);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
@@ -178,6 +236,14 @@ export default function NexusMasterSuite() {
     setTimeout(() => setCopiedPromptIndex(null), 2500);
   };
 
+  const handleInstallSkill = (id: string, title: string) => {
+    setSkillsList((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, status: 'Instalado' } : s))
+    );
+    setInstalledNotice(`A Skill "${title}" foi incorporada ao ecossistema com sucesso!`);
+    setTimeout(() => setInstalledNotice(null), 4000);
+  };
+
   const exportCSV = () => {
     if (leads.length === 0) return;
     const headers = ['ID', 'Data', 'Status', 'Score', 'Nome', 'Email', 'Empresa', 'Volume', 'Desafio'];
@@ -228,6 +294,8 @@ export default function NexusMasterSuite() {
       ];
     }
   };
+
+  const hasPendingUpdates = skillsList.some((s) => s.status === 'Disponível');
 
   if (!isAuthenticated) {
     return (
@@ -307,6 +375,25 @@ export default function NexusMasterSuite() {
             >
               <span>📊</span>
               <span>Visão Geral & Projetos</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('updates')}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+                activeTab === 'updates'
+                  ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <span>🛰️</span>
+                <span>Radar & Atualizações</span>
+              </div>
+              {hasPendingUpdates && (
+                <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
+                  UPDATE
+                </span>
+              )}
             </button>
 
             <button
@@ -432,6 +519,7 @@ export default function NexusMasterSuite() {
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 ml-72 p-8 max-w-7xl">
 
+        {/* 1. VISÃO GERAL */}
         {activeTab === 'hub' && (
           <div className="space-y-8 animate-fadeIn">
             <div className="flex justify-between items-end border-b border-slate-800 pb-6">
@@ -439,7 +527,7 @@ export default function NexusMasterSuite() {
                 <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
-                    v2.8 Architecture
+                    v3.2 Architecture
                   </span>
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
@@ -447,10 +535,10 @@ export default function NexusMasterSuite() {
                 </p>
               </div>
               <button
-                onClick={() => setActiveTab('historias')}
-                className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20"
+                onClick={() => setActiveTab('updates')}
+                className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 flex items-center gap-2"
               >
-                ✨ Abrir Fábrica de Histórias
+                <span>🛰️</span> Ver Radar de Skills & Updates
               </button>
             </div>
 
@@ -471,9 +559,11 @@ export default function NexusMasterSuite() {
                 <div className="text-[11px] text-teal-400 mt-2">Next.js 15 + Vercel + PG</div>
               </div>
               <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="text-slate-400 text-xs font-mono uppercase">Motor de Imagem</div>
-                <div className="text-2xl font-bold text-purple-400 mt-1">Multi-Engine</div>
-                <div className="text-[11px] text-purple-400 mt-2">DALL-E 3, Midjourney, Gemini</div>
+                <div className="text-slate-400 text-xs font-mono uppercase">Status de Skills</div>
+                <div className="text-2xl font-bold text-purple-400 mt-1">
+                  {skillsList.filter((s) => s.status === 'Instalado').length} / {skillsList.length}
+                </div>
+                <div className="text-[11px] text-purple-300 mt-2">MCP Router & Calibradores</div>
               </div>
             </div>
 
@@ -534,6 +624,79 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 2. RADAR DE ATUALIZAÇÕES & SKILLS */}
+        {activeTab === 'updates' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="border-b border-slate-800 pb-4 flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-bold text-cyan-400 flex items-center gap-2">
+                  <span>🛰️</span> Radar de Inteligência & Atualizações de Skills
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">
+                  Monitoramento contínuo de novas tecnologias, protocolos MCP e melhorias de engenharia
+                </p>
+              </div>
+            </div>
+
+            {installedNotice && (
+              <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs text-emerald-300 font-semibold animate-pulse">
+                ✓ {installedNotice}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {skillsList.map((skill) => (
+                <div
+                  key={skill.id}
+                  className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-4"
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                          {skill.version}
+                        </span>
+                        <span className="text-xs font-mono text-slate-500">• {skill.category}</span>
+                        <span className="text-xs text-slate-600 font-mono">• {skill.date}</span>
+                      </div>
+                      <h3 className="text-base font-bold text-white">{skill.title}</h3>
+                    </div>
+
+                    <div>
+                      {skill.status === 'Instalado' ? (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                          ✓ Skill Ativa
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleInstallSkill(skill.id, skill.title)}
+                          className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20"
+                        >
+                          ⚡ Implementar Atualização
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-300 leading-relaxed">{skill.description}</p>
+
+                  <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+                    <span className="text-[10px] font-mono uppercase text-slate-500 font-bold block mb-1">
+                      Destaques da Atualização:
+                    </span>
+                    {skill.changelog.map((item, idx) => (
+                      <div key={idx} className="text-xs text-slate-400 flex items-center gap-2">
+                        <span className="text-cyan-400">•</span> {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 3. CRM COM LEAD SCORING & PIPELINE */}
         {activeTab === 'crm' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -632,6 +795,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 4. FÁBRICA DE HISTÓRIAS MULTIMODAL */}
         {activeTab === 'historias' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
@@ -869,6 +1033,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 5. CRIADOR DE LANDING PAGES */}
         {activeTab === 'builder' && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
@@ -977,6 +1142,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
+        {/* 6. DEMAIS MÓDULOS */}
         {(activeTab === 'saas' || activeTab === 'apps' || activeTab === 'presell' || activeTab === 'posts') && (
           <div className="space-y-6 animate-fadeIn">
             <div className="border-b border-slate-800 pb-4">
