@@ -23,10 +23,27 @@ export default function NexusMasterSuite() {
   const [errorMsg, setErrorMsg] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
 
-  // StoryForge States
+  // 1. STORYFORGE (Fábrica de Histórias Interativa)
   const [videoTargetModel, setVideoTargetModel] = useState<'runway-gen3' | 'kling' | 'luma' | 'sora'>('runway-gen3');
-  const [selectedShot, setSelectedShot] = useState<number>(0);
-  const [activeAudioTab, setActiveAudioTab] = useState<'video' | 'voice' | 'music' | 'sfx'>('video');
+  const [characterDesc, setCharacterDesc] = useState('Mini-Builder Lego (Yellow hardhat, blue overalls, subtle dust marks)');
+  const [sceneDesc, setSceneDesc] = useState('Solid granite stone cliff against a stormy ocean, macro diorama');
+  const [lightingStyle, setLightingStyle] = useState('Cinematic Golden Hour with moody blue fill');
+  const [voiceTone, setVoiceTone] = useState<'solemne' | 'dramatico' | 'inspirador'>('solemne');
+  const [scriptText, setScriptText] = useState('Aquele que ouve estas palavras e as pratica... é como o homem sábio que construiu a sua casa sobre a rocha.');
+  const [generatedPrompt, setGeneratedPrompt] = useState('');
+  const [generatedSfx, setGeneratedSfx] = useState('');
+
+  // 2. POST STUDIO 3x3 INTERATIVO
+  const [postBriefing, setPostBriefing] = useState('Como empresas perdem 30% do orçamento com queries lentas e PostgreSQL desorganizado.');
+  const [postStyle, setPostStyle] = useState<'linear-dark' | 'tech-neon' | 'clean-white'>('linear-dark');
+  const [slide1Hook, setSlide1Hook] = useState('O Custo Invisível de um Banco Mal Indexado');
+  const [slide2Body, setSlide2Body] = useState('Tabelas com mais de 500k linhas sem Foreign Key Index travam os relatórios e elevam os custos de nuvem.');
+  const [slide3Cta, setSlide3Cta] = useState('Solicite o Diagnóstico Técnico Nexus em 48 horas.');
+
+  // 3. PRESELL BUILDER INTERATIVO
+  const [presellProduct, setPresellProduct] = useState('NexusData Enterprise Engine');
+  const [presellAngle, setPresellAngle] = useState<'investigativo' | 'estudo-caso' | 'urgencia'>('investigativo');
+  const [presellHeadline, setPresellHeadline] = useState('Descoberta Técnica Revela Como Empresas Reduzem 40% dos Custos de Infraestrutura');
 
   // SaaS Audit State
   const [sqlSchema, setSqlSchema] = useState(`CREATE TABLE users (
@@ -42,50 +59,6 @@ CREATE TABLE transactions (
   status TEXT
 );`);
   const [auditResult, setAuditResult] = useState<string | null>(null);
-
-  const biblicScenes = [
-    {
-      shotId: 'TAKE-01',
-      title: 'A Casa na Rocha — O Alicerce Inabalável',
-      duration: '5s',
-      cameraIntent: 'Cinematic slow push-in, shallow depth of field, tilt-shift macro photography',
-      agnosticPrompt: 'Lego minifigure builder carefully snapping the final yellow plastic roof brick on a solid granite stone cliff, warm golden hour sunlight, ocean breeze moving tiny plastic foliage, 8k cinematic macro.',
-      motionLock: 'Minifigure arm moves steadily down; stone cliff and house remain 100% rigid; ocean ripples subtly in background.',
-      continuity: 'Character ID: Builder-01 (Yellow hardhat, blue overalls); Prop ID: Master Brick (Red 2x4).',
-      elevenLabsVoice: 'Adam (Narrador Solene / Épico)',
-      voiceScript: 'Todo aquele, pois, que ouve estas minhas palavras e as pratica... será comparado a um homem prudente, que edificou a sua casa sobre a rocha.',
-      musicPrompt: 'Cinematic orchestral, warm French horns, gentle woodwinds, hopeful string ostinato, Hans Zimmer style, acoustic warmth, 80 BPM',
-      sfxLayer: 'Sharp plastic Lego snap, faint distant ocean waves, gentle wind breeze.'
-    },
-    {
-      shotId: 'TAKE-02',
-      title: 'A Tempestade — Ventos e Águas Acrílicas',
-      duration: '5s',
-      cameraIntent: 'Low-angle tracking shot with subtle dramatic camera shake',
-      agnosticPrompt: 'Lego diorama massive storm, transparent blue acrylic rain pieces falling rapidly, miniature lightning flashing reflection across glossy plastic bricks, violent wind blowing loose bricks on wet sand below.',
-      motionLock: 'House on granite rock stays perfectly locked and unmoving; loose debris on sand scatters outward.',
-      continuity: 'Lighting shift: Dramatic slate blue with high-contrast lightning flashes.',
-      elevenLabsVoice: 'Antoni (Dramático / Tensão)',
-      voiceScript: 'E caiu a chuva, transbordaram os rios, e sopraram os ventos contra aquela casa...',
-      musicPrompt: 'Epic hybrid orchestral, heavy taiko drums, rising brass crescendo, aggressive staccato cellos, dramatic tension, sound design braams, 110 BPM',
-      sfxLayer: 'Deep sub-bass thunder rumble, howling wind gust, heavy plastic rain tap on rock.'
-    },
-    {
-      shotId: 'TAKE-03',
-      title: 'A Firmeza Triunfal — Vitória da Estrutura',
-      duration: '5s',
-      cameraIntent: 'Wide cinematic crane shot pulling up, revealing sunlight breaking clouds',
-      agnosticPrompt: 'Lego diorama after the storm, golden sun rays piercing dark clouds onto the intact Lego house on the cliff, water droplets glistening on plastic, calm horizon.',
-      motionLock: 'Sunbeams slowly shift angle; clouds drift away; structure stands completely firm.',
-      continuity: 'Lighting shift: Golden hour rim light, high dynamic range bloom.',
-      elevenLabsVoice: 'George (Confiante / Conclusão)',
-      voiceScript: 'E ela não caiu... porque estava edificada sobre a rocha.',
-      musicPrompt: 'Triumphant cinematic anthem, full choir harmonies, soaring brass fanfare, resolved minor to major key, majestic resolution, 85 BPM',
-      sfxLayer: 'Calm ocean lap, birds chirping in distance, triumphant choir swell.'
-    }
-  ];
-
-  const currentScene = biblicScenes[selectedShot];
 
   useEffect(() => {
     const sessionAuth = sessionStorage.getItem('nexus_admin_auth');
@@ -121,6 +94,14 @@ CREATE TABLE transactions (
       console.error(err);
     }
   }
+
+  // Gera prompts em tempo real com base no input do usuário
+  const generateStoryPrompts = () => {
+    const prompt = `[MODEL: ${videoTargetModel.toUpperCase()}] Cinematic macro shot of ${characterDesc}, standing on ${sceneDesc}. Lighting: ${lightingStyle}. Highly detailed plastic brick texture, volumetric atmosphere, 8k resolution. Motion: Subtle camera push-in, rigid lock on main structure.`;
+    const sfx = `FOLEY: Crisp plastic snaps, subtle distant ocean wind, cinematic low-frequency sub bass impact.`;
+    setGeneratedPrompt(prompt);
+    setGeneratedSfx(sfx);
+  };
 
   const runAuditScan = () => {
     setAuditResult('🔍 Analisando Schema SQL...\n✓ RLS: Não detectado na tabela transactions (Risco Alto)\n✓ Índices: transaction.user_id sem Foreign Key Index (Gargalo em Join)\n✓ Conformidade de Tipos: NUMERIC(10,2) validado com sucesso.');
@@ -191,7 +172,7 @@ CREATE TABLE transactions (
               }`}
             >
               <span className="flex items-center gap-2.5"><span>🎨</span> Post Studio & BrandKit</span>
-              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">STUDIO 3x3</span>
+              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">3x3</span>
             </button>
 
             <button
@@ -214,7 +195,7 @@ CREATE TABLE transactions (
                 activeTab === 'historias' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <span className="flex items-center gap-2.5"><span>✨</span> Fábrica de Histórias (Vídeo + Áudio)</span>
+              <span className="flex items-center gap-2.5"><span>✨</span> Fábrica de Histórias (Vídeo)</span>
               <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300">PRO</span>
             </button>
 
@@ -251,7 +232,7 @@ CREATE TABLE transactions (
         </div>
       </aside>
 
-      {/* Conteúdo Central */}
+      {/* Área de Trabalho */}
       <main className="flex-1 ml-72 p-8 max-w-7xl space-y-8">
         
         {/* VISÃO GERAL */}
@@ -260,10 +241,10 @@ CREATE TABLE transactions (
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
               <div>
                 <h1 className="text-2xl font-black text-white">Centro de Controle Nexus <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">v5.2 High-Agency OS</span></h1>
-                <p className="text-xs text-slate-400 mt-1">Estúdio Audiovisual Completo (Vídeo + Voz + Foley), Engenharia de Dados e Prospecção B2B.</p>
+                <p className="text-xs text-slate-400 mt-1">Estúdio Criativo com Controle Total de Personagens, Roteiros e Design Systems.</p>
               </div>
               <button onClick={() => setActiveTab('historias')} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs hover:opacity-90">
-                ✨ Abrir Fábrica de Histórias
+                ✨ Abrir Fábrica de Criação
               </button>
             </div>
 
@@ -279,9 +260,9 @@ CREATE TABLE transactions (
                 <span className="text-[10px] text-slate-400">Anti-Slop Protocol Ativo</span>
               </div>
               <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-mono text-slate-400 uppercase">Áudio Engine</span>
-                <p className="text-lg font-bold text-teal-400 mt-1">ElevenLabs v2</p>
-                <span className="text-[10px] text-slate-400 font-mono">Foley + Suno Synced</span>
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Controle de Criação</span>
+                <p className="text-lg font-bold text-teal-400 mt-1">100% Interativo</p>
+                <span className="text-[10px] text-slate-400 font-mono">Custom Inputs Enabled</span>
               </div>
               <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl">
                 <span className="text-[10px] font-mono text-slate-400 uppercase">Status de Skills</span>
@@ -289,216 +270,243 @@ CREATE TABLE transactions (
                 <span className="text-[10px] text-cyan-400">BrandKit, MCP & RLS</span>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div onClick={() => setActiveTab('historias')} className="p-6 bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 rounded-2xl cursor-pointer transition-all">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-white text-base">Fábrica de Histórias & Audiovisual</h4>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">Deploy Ativo</span>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">Vídeo Prompts consistentes, Scripts de Voz ElevenLabs, Trilha Orquestral e Foley plástico.</p>
-              </div>
-
-              <div onClick={() => setActiveTab('saas')} className="p-6 bg-slate-900/60 border border-slate-800 hover:border-cyan-500/50 rounded-2xl cursor-pointer transition-all">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-white text-base">Audit Pro Micro-SaaS</h4>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">Deploy Ativo</span>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">Scanner automatizado de schema PostgreSQL, detecção de gargalos, RLS e relatórios.</p>
-              </div>
-            </div>
           </div>
         )}
 
-        {/* FÁBRICA DE HISTÓRIAS (VÍDEO + VOZ ELEVENLABS + TRILHA + FOLEY) */}
+        {/* 1. FÁBRICA DE HISTÓRIAS INTERATIVA */}
         {activeTab === 'historias' && (
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
               <div>
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <span>✨</span> Fábrica de Histórias — AudioVisual Engine
+                  <span>✨</span> Fábrica de Histórias — Estúdio do Diretor
                 </h2>
-                <p className="text-xs text-slate-400">Geração sincronizada de Takes de Vídeo, Narração ElevenLabs, Trilha Sonora e Foley.</p>
+                <p className="text-xs text-slate-400">Defina os parâmetros do personagem, cenário e narração para gerar prompts prontos para IA de vídeo e áudio.</p>
               </div>
-              <div className="flex items-center gap-2">
-                {(['runway-gen3', 'kling', 'luma', 'sora'] as const).map((model) => (
-                  <button
-                    key={model}
-                    onClick={() => setVideoTargetModel(model)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase transition-all ${
-                      videoTargetModel === model ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'
-                    }`}
-                  >
-                    {model}
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={generateStoryPrompts}
+                className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs hover:scale-105 transition-all shadow-md shadow-cyan-500/20"
+              >
+                🎬 Gerar Prompts da Cena
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Seletor de Cenas */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-400 uppercase font-mono">Linha do Tempo (Takes)</span>
-                {biblicScenes.map((scene, idx) => (
-                  <div
-                    key={scene.shotId}
-                    onClick={() => setSelectedShot(idx)}
-                    className={`p-4 rounded-2xl cursor-pointer border transition-all ${
-                      selectedShot === idx ? 'bg-slate-900 border-cyan-500 text-white shadow-lg shadow-cyan-500/10' : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-mono text-cyan-400">{scene.shotId}</span>
-                      <span className="text-[10px] font-mono bg-slate-950 px-2 py-0.5 rounded text-slate-400">{scene.duration}</span>
-                    </div>
-                    <h4 className="text-xs font-bold mt-1.5 line-clamp-1">{scene.title}</h4>
-                  </div>
-                ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Controles de Entrada */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Parâmetros Criativos (Direção)</h3>
 
-                {/* Bíblia de Consistência Fixa */}
-                <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl space-y-2">
-                  <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">Bíblia de Consistência</span>
-                  <p className="text-[11px] text-slate-300"><strong>Personagem:</strong> Mini-Builder (Yellow hardhat, blue overalls)</p>
-                  <p className="text-[11px] text-slate-300"><strong>Cenário:</strong> Solid granite cliff diorama with ocean</p>
-                  <p className="text-[11px] text-slate-300"><strong>Negative:</strong> Real human skin, blurred plastic, photoreal faces</p>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Modelo de Vídeo Alvo</label>
+                  <div className="flex gap-2">
+                    {(['runway-gen3', 'kling', 'luma', 'sora'] as const).map((model) => (
+                      <button
+                        key={model}
+                        onClick={() => setVideoTargetModel(model)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
+                          videoTargetModel === model ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-950 text-slate-400 border border-slate-800'
+                        }`}
+                      >
+                        {model}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Descrição do Personagem (Consistência)</label>
+                  <input
+                    type="text"
+                    value={characterDesc}
+                    onChange={(e) => setCharacterDesc(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 outline-none focus:border-cyan-500 font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Cenário & Ambiente</label>
+                  <input
+                    type="text"
+                    value={sceneDesc}
+                    onChange={(e) => setSceneDesc(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Iluminação & Clima Visual</label>
+                  <input
+                    type="text"
+                    value={lightingStyle}
+                    onChange={(e) => setLightingStyle(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Script de Narração (ElevenLabs)</label>
+                  <textarea
+                    value={scriptText}
+                    onChange={(e) => setScriptText(e.target.value)}
+                    rows={3}
+                    className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-teal-300 font-serif italic outline-none focus:border-cyan-500"
+                  />
                 </div>
               </div>
 
-              {/* Detalhes do Take */}
-              <div className="md:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
-                <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 border-b border-slate-800 pb-3">
-                  <div>
-                    <h3 className="text-sm font-bold text-white">{currentScene.title}</h3>
-                    <p className="text-xs text-slate-400">Tempo de Take: {currentScene.duration}</p>
+              {/* Saída de Prompts Gerados */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Prompt Formatado (Copiar com 1 Clique)</h3>
+                  
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-mono text-cyan-400 uppercase">Prompt Cinematográfico Gerado</label>
+                    <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed min-h-[140px]">
+                      {generatedPrompt || 'Clique em "Gerar Prompts da Cena" para montar o prompt com base nas suas diretrizes.'}
+                    </pre>
                   </div>
 
-                  {/* Sub-abas de Áudio e Vídeo */}
-                  <div className="flex gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-                    <button
-                      onClick={() => setActiveAudioTab('video')}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${activeAudioTab === 'video' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400'}`}
-                    >
-                      🎬 Vídeo
-                    </button>
-                    <button
-                      onClick={() => setActiveAudioTab('voice')}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${activeAudioTab === 'voice' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400'}`}
-                    >
-                      🎙️ Voz
-                    </button>
-                    <button
-                      onClick={() => setActiveAudioTab('music')}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${activeAudioTab === 'music' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400'}`}
-                    >
-                      🎵 Trilha
-                    </button>
-                    <button
-                      onClick={() => setActiveAudioTab('sfx')}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${activeAudioTab === 'sfx' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400'}`}
-                    >
-                      🔊 Foley
-                    </button>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-mono text-indigo-400 uppercase">Camada de Áudio & Foley</label>
+                    <pre className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-indigo-300 font-mono whitespace-pre-wrap">
+                      {generatedSfx || 'Aguardando geração do áudio sincronizado.'}
+                    </pre>
                   </div>
                 </div>
 
-                {/* VISUALIZAÇÃO DA ABA ATIVA */}
-                {activeAudioTab === 'video' && (
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400 uppercase">Prompt Cinematográfico ({videoTargetModel})</label>
-                      <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed">
-                        {currentScene.agnosticPrompt}
-                      </pre>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                        <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">Câmera & Movimento</span>
-                        <p className="text-xs text-slate-300 mt-1">{currentScene.cameraIntent}</p>
-                      </div>
-                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                        <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">Motion Lock</span>
-                        <p className="text-xs text-slate-300 mt-1">{currentScene.motionLock}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeAudioTab === 'voice' && (
-                  <div className="space-y-4">
-                    <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-mono text-teal-400 uppercase font-bold">Configuração ElevenLabs</span>
-                        <span className="text-xs font-mono text-white bg-slate-900 px-2 py-0.5 rounded border border-slate-800">{currentScene.elevenLabsVoice}</span>
-                      </div>
-                      <p className="text-xs text-slate-400">Stability: 0.45 | Similarity: 0.80 | Style Exaggeration: 0.15</p>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400 uppercase">Script de Narração / Locução</label>
-                      <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-teal-300 font-serif italic leading-relaxed">
-                        "{currentScene.voiceScript}"
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeAudioTab === 'music' && (
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400 uppercase">Prompt para Suno AI / Udio (Trilha Épica)</label>
-                      <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-amber-300 font-mono whitespace-pre-wrap leading-relaxed">
-                        {currentScene.musicPrompt}
-                      </pre>
-                    </div>
-                    <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300">
-                      <strong>Mixagem:</strong> Trilha em volume constante a -20 dB com ducking de -4 dB durante a fala do narrador.
-                    </div>
-                  </div>
-                )}
-
-                {activeAudioTab === 'sfx' && (
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-mono text-slate-400 uppercase">Camada de Foley & Efeitos Sonoros (SFX)</label>
-                      <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-indigo-300 font-mono whitespace-pre-wrap leading-relaxed">
-                        {currentScene.sfxLayer}
-                      </pre>
-                    </div>
-                    <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300">
-                      <strong>Impacto Foley:</strong> Encaixes de peças plásticas em 0 dB com reverberação seca de estúdio.
-                    </div>
-                  </div>
-                )}
+                <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-400">
+                  💡 <strong>Dica de Direção:</strong> Copie o prompt acima e cole diretamente na interface do Runway Gen-3 ou Kling para gerar o vídeo sem perder a consistência do boneco.
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* POST STUDIO */}
+        {/* 2. POST STUDIO 3x3 INTERATIVO */}
         {activeTab === 'posts' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Post Studio & BrandKit 3x3</h2>
-                <p className="text-xs text-slate-400">Matriz de Conteúdo 3x3 com Direção de Arte Anti-Slop (Linear / Vercel style).</p>
+                <h2 className="text-xl font-bold text-white">Post Studio 3x3 — Editor de Conteúdo</h2>
+                <p className="text-xs text-slate-400">Digite sua ideia bruta, ajuste o estilo visual e edite cada slide do carrossel na hora.</p>
+              </div>
+              <div className="flex gap-2">
+                {(['linear-dark', 'tech-neon', 'clean-white'] as const).map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setPostStyle(st)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
+                      postStyle === st ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
               </div>
             </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+              <label className="text-xs font-semibold text-slate-300">Sua Ideia / Briefing Bruto</label>
+              <textarea
+                value={postBriefing}
+                onChange={(e) => setPostBriefing(e.target.value)}
+                rows={2}
+                className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-2">
-                <span className="text-xs font-bold text-cyan-400">Topo de Funil</span>
-                <h4 className="text-sm font-semibold text-white">O Custo Oculto de Dados Desorganizados</h4>
-                <p className="text-xs text-slate-400">Carrossel 5 slides com diagnóstico visual.</p>
+              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+                <span className="text-xs font-bold text-cyan-400 uppercase font-mono">Slide 1: Gancho (Hook)</span>
+                <input
+                  type="text"
+                  value={slide1Hook}
+                  onChange={(e) => setSlide1Hook(e.target.value)}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-bold outline-none"
+                />
+                <p className="text-[11px] text-slate-400">Capa do carrossel com alto contraste e chamada forte.</p>
               </div>
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-2">
-                <span className="text-xs font-bold text-teal-400">Meio de Funil</span>
-                <h4 className="text-sm font-semibold text-white">Auditoria de Segurança: Supabase & RLS</h4>
-                <p className="text-xs text-slate-400">Post técnico com código e regras de blindagem.</p>
+
+              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+                <span className="text-xs font-bold text-teal-400 uppercase font-mono">Slide 2: Problema & Diagnóstico</span>
+                <textarea
+                  value={slide2Body}
+                  onChange={(e) => setSlide2Body(e.target.value)}
+                  rows={3}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none"
+                />
+                <p className="text-[11px] text-slate-400">Explicação técnica clara sem termos vazios (anti-slop).</p>
               </div>
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-2">
-                <span className="text-xs font-bold text-indigo-400">Fundo de Funil</span>
-                <h4 className="text-sm font-semibold text-white">Diagnóstico Nexus em 48h</h4>
-                <p className="text-xs text-slate-400">Card de alta conversão para fechamento B2B.</p>
+
+              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+                <span className="text-xs font-bold text-indigo-400 uppercase font-mono">Slide 3: Chamada para Ação</span>
+                <textarea
+                  value={slide3Cta}
+                  onChange={(e) => setSlide3Cta(e.target.value)}
+                  rows={3}
+                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none"
+                />
+                <p className="text-[11px] text-slate-400">Conversão direta para o WhatsApp ou formulário de contato.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3. PÁGINAS PRESELL & VSL INTERATIVO */}
+        {activeTab === 'presell' && (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-xl font-bold text-white">Criador de Páginas Presell & Retenção VSL</h2>
+                <p className="text-xs text-slate-400">Configure os elementos da sua oferta e gere o layout de alta conversão.</p>
+              </div>
+              <div className="flex gap-2">
+                {(['investigativo', 'estudo-caso', 'urgencia'] as const).map((angle) => (
+                  <button
+                    key={angle}
+                    onClick={() => setPresellAngle(angle)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
+                      presellAngle === angle ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'
+                    }`}
+                  >
+                    {angle}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Parâmetros da Oferta</h3>
+                
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Nome do Produto / Serviço</label>
+                  <input
+                    type="text"
+                    value={presellProduct}
+                    onChange={(e) => setPresellProduct(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Headline Principal (Promessa)</label>
+                  <textarea
+                    value={presellHeadline}
+                    onChange={(e) => setPresellHeadline(e.target.value)}
+                    rows={3}
+                    className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
+                <span className="text-xs font-mono text-teal-400 uppercase font-bold">Pré-visualização do Advertorial</span>
+                <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                  <span className="text-[10px] font-mono text-slate-400 uppercase">Ângulo: {presellAngle}</span>
+                  <h4 className="text-sm font-bold text-white leading-tight">{presellHeadline}</h4>
+                  <p className="text-xs text-slate-300 pt-2">Oferta customizada para o produto: <strong className="text-cyan-300">{presellProduct}</strong>.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -509,12 +517,15 @@ CREATE TABLE transactions (
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Pipeline de Diagnósticos & Leads ({leads.length})</h2>
-                <p className="text-xs text-slate-400">Leads capturados através da sua infraestrutura privada e diagnósticos solicitados.</p>
+                <h2 className="text-xl font-bold text-white">Pipeline de Leads ({leads.length})</h2>
+                <p className="text-xs text-slate-400">Dados integrados com Supabase.</p>
               </div>
+              <button onClick={fetchLeads} className="px-4 py-2 bg-slate-900 border border-slate-800 text-cyan-400 font-bold rounded-xl text-xs">
+                🔄 Atualizar
+              </button>
             </div>
             <div className="p-8 bg-slate-900 border border-slate-800 rounded-2xl text-center text-xs text-slate-400">
-              Sincronizado em tempo real com o banco de dados Supabase via RLS.
+              Conexão em tempo real ativa.
             </div>
           </div>
         )}
@@ -524,8 +535,8 @@ CREATE TABLE transactions (
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Engenharia SaaS — PostgreSQL & RLS Auditor</h2>
-                <p className="text-xs text-slate-400">Scanner de arquitetura de dados, concorrência e conformidade de índices.</p>
+                <h2 className="text-xl font-bold text-white">Engenharia SaaS — PostgreSQL Auditor</h2>
+                <p className="text-xs text-slate-400">Scanner de arquitetura e conformidade de índices.</p>
               </div>
               <button onClick={runAuditScan} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs">
                 ▶ Executar Auditoria SQL
@@ -541,19 +552,6 @@ CREATE TABLE transactions (
               <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl font-mono text-xs text-teal-300 whitespace-pre-wrap">
                 {auditResult || 'Clique em "Executar Auditoria SQL" acima.'}
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* PRESELL */}
-        {activeTab === 'presell' && (
-          <div className="space-y-6">
-            <div className="border-b border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-white">Criador de Páginas Presell & Retenção VSL</h2>
-              <p className="text-xs text-slate-400">Estruturas de alta conversão e recuperação de checkout.</p>
-            </div>
-            <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl text-xs text-slate-300">
-              Templates dinâmicos de advertoriais e scripts de retenção integrados.
             </div>
           </div>
         )}
