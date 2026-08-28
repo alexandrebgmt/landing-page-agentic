@@ -359,7 +359,8 @@ export default function NexusMasterSuite() {
                     onClick={() => setActiveTab('historias')}
                     onMouseEnter={() => setHoveredZone('historias')}
                     onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-purple-500/40 hover:border-purple-300 hover:bg-purple-600/30 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/4                  >
+                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-purple-500/40 hover:border-purple-300 hover:bg-purple-600/30 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
+                  >
                     <span className="text-[10px] font-mono text-purple-300 block">🎬 VÍDEO</span>
                     <span className="text-xs font-black text-white">FÁBRICA</span>
                   </button>
@@ -370,12 +371,12 @@ export default function NexusMasterSuite() {
 
             {/* Badges de Métricas */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hen group hover:border-purple-500/50 transition-all">
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
                 <span className="text-[10px] font-mono text-slate-400 uppercase">Total de Leads</span>
                 <p className="text-3xl font-black text-white mt-1">{leads.length}</p>
                 <span className="text-[10px] text-cyan-400">● Supabase RLS Synced</span>
               </div>
-              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-al>
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
                 <span className="text-[10px] font-mono text-slate-400 uppercase">Padrão de Design</span>
                 <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mt-1">BrandKit 3×3</p>
                 <span className="text-[10px] text-slate-400">Anti-Slop Protocol</span>
@@ -386,7 +387,7 @@ export default function NexusMasterSuite() {
                 <span className="text-[10px] text-slate-400 font-mono">nexusenterprise.br@gmail.com</span>
               </div>
               <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
-                n className="text-[10px] font-mono text-slate-400 uppercase">Skills Ativas</span>
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Skills Ativas</span>
                 <p className="text-3xl font-black text-cyan-400 mt-1">3 / 3</p>
                 <span className="text-[10px] text-purple-300">MCP, Agentic & Three.js</span>
               </div>
@@ -397,7 +398,7 @@ export default function NexusMasterSuite() {
         {/* FÁBRICA DE HISTÓRIAS */}
         {activeTab === 'historias' && (
           <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center jtify-between gap-4 border-b border-slate-800/80 pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
               <div>
                 <h2 className="text-xl font-black text-white flex items-center gap-2">
                   <span>✨</span> StoryForge — Estúdio de Vídeo & Roteiro
@@ -406,7 +407,7 @@ export default function NexusMasterSuite() {
               </div>
               <button
                 onClick={generateStoryPrompts}
-                classNapx-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all"
+                className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all"
               >
                 🎬 Gerar Prompts da Cena
               </button>
@@ -414,7 +415,7 @@ export default function NexusMasterSuite() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4">
-                <div className="space-y-1"
+                <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-slate-300">Modelo de Vídeo</label>
                   <div className="flex gap-2">
                     {(['runway-gen3', 'kling', 'luma', 'sora'] as const).map((model) => (
@@ -422,7 +423,7 @@ export default function NexusMasterSuite() {
                         key={model}
                         onClick={() => setVideoTargetModel(model)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
-                          videoTargetModel === m? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold' : 'bg-[#050508] text-slate-400 border border-slate-800'
+                          videoTargetModel === model ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold' : 'bg-[#050508] text-slate-400 border border-slate-800'
                         }`}
                       >
                         {model}
@@ -434,7 +435,7 @@ export default function NexusMasterSuite() {
                 <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-slate-300">Descrição do Personagem</label>
                   <input
-                ype="text"
+                    type="text"
                     value={characterDesc}
                     onChange={(e) => setCharacterDesc(e.target.value)}
                     className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 outline-none focus:border-cyan-400 font-mono"
@@ -443,7 +444,8 @@ export default function NexusMasterSuite() {
 
                 <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-slate-300">Cenário & Ambiente</label>
-                  <inpu                type="text"
+                  <input
+                    type="text"
                     value={sceneDesc}
                     onChange={(e) => setSceneDesc(e.target.value)}
                     className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-cyan-400"
@@ -452,7 +454,8 @@ export default function NexusMasterSuite() {
 
                 <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-slate-300">Iluminação & Clima Visual</label>
-                  <                    type="text"
+                  <input
+                    type="text"
                     value={lightingStyle}
                     onChange={(e) => setLightingStyle(e.target.value)}
                     className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-cyan-400"
@@ -461,7 +464,7 @@ export default function NexusMasterSuite() {
 
                 <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-slate-300">Script de Narração (ElevenLabs)</label>
-             <textarea
+                  <textarea
                     value={scriptText}
                     onChange={(e) => setScriptText(e.target.value)}
                     rows={3}
@@ -470,14 +473,14 @@ export default function NexusMasterSuite() {
                 </div>
               </div>
 
-              <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4 flex flex-col justifyeen">
+              <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
                   <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Prompt Formatado</h3>
                   <pre className="p-4 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed min-h-[160px]">
                     {generatedPrompt || 'Clique no botão acima para montar o prompt com base nos seus parâmetros.'}
                   </pre>
                 </div>
-        </div>
+              </div>
             </div>
           </div>
         )}
@@ -488,7 +491,7 @@ export default function NexusMasterSuite() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
               <div>
                 <h2 className="text-xl font-black text-white">Post Studio 3x3 — Editor de Carrossel</h2>
-                <p className="text-xs text-slate-400">Direção de arte e cópia refinada parastagram e Facebook.</p>
+                <p className="text-xs text-slate-400">Direção de arte e cópia refinada para Instagram e Facebook.</p>
               </div>
             </div>
 
@@ -498,7 +501,7 @@ export default function NexusMasterSuite() {
                 value={postBriefing}
                 onChange={(e) => setPostBriefing(e.target.value)}
                 rows={2}
-                className="w-full p-3 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-hite outline-none focus:border-purple-400"
+                className="w-full p-3 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-purple-400"
               />
             </div>
 
@@ -517,7 +520,7 @@ export default function NexusMasterSuite() {
                 <span className="text-xs font-bold text-pink-400 uppercase font-mono">Slide 2: Problema</span>
                 <textarea
                   value={slide2Body}
-                  onChange={(e) => setSlide2Body(e.tarlue)}
+                  onChange={(e) => setSlide2Body(e.target.value)}
                   rows={3}
                   className="w-full p-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-slate-200 outline-none"
                 />
@@ -527,7 +530,7 @@ export default function NexusMasterSuite() {
                 <span className="text-xs font-bold text-cyan-400 uppercase font-mono">Slide 3: Chamada (CTA)</span>
                 <textarea
                   value={slide3Cta}
-                  onChange={(e> setSlide3Cta(e.target.value)}
+                  onChange={(e) => setSlide3Cta(e.target.value)}
                   rows={3}
                   className="w-full p-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-slate-200 outline-none"
                 />
@@ -541,7 +544,7 @@ export default function NexusMasterSuite() {
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <div>
-                className="text-xl font-black text-white">Engenharia SaaS — PostgreSQL & RLS Auditor</h2>
+                <h2 className="text-xl font-black text-white">Engenharia SaaS — PostgreSQL & RLS Auditor</h2>
                 <p className="text-xs text-slate-400">Scanner automatizado de schema e conformidade de índices.</p>
               </div>
               <button onClick={runAuditScan} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold rounded-xl text-xs hover:scale-105 transition-all">
@@ -555,7 +558,7 @@ export default function NexusMasterSuite() {
                 rows={8}
                 className="w-full p-4 bg-[#090912] border border-purple-500/30 rounded-2xl font-mono text-xs text-slate-200 outline-none focus:border-cyan-400"
               />
-              <div className="p-4 bg-[#090912] border border-purple-500/30 rounded-2xl font-mono text-xs text-cyan-300 whitespace-pre">
+              <div className="p-4 bg-[#090912] border border-purple-500/30 rounded-2xl font-mono text-xs text-cyan-300 whitespace-pre-wrap">
                 {auditResult || 'Clique em "Executar Auditoria SQL" acima.'}
               </div>
             </div>
@@ -568,7 +571,7 @@ export default function NexusMasterSuite() {
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <div>
                 <h2 className="text-xl font-black text-white">Pipeline de Leads ({leads.length})</h2>
-                <p className="text-xs text-slate-40>Dados integrados com Supabase RLS.</p>
+                <p className="text-xs text-slate-400">Dados integrados com Supabase RLS.</p>
               </div>
             </div>
             <div className="p-8 bg-[#090912] border border-purple-500/20 rounded-2xl text-center text-xs text-slate-400">
@@ -581,7 +584,7 @@ export default function NexusMasterSuite() {
         {activeTab === 'presell' && (
           <div className="space-y-6">
             <div className="border-b border-slate-800/80 pb-4">
-              <h2 className="text-xl font-black text-wite">Criador de Páginas Presell & Retenção VSL</h2>
+              <h2 className="text-xl font-black text-white">Criador de Páginas Presell & Retenção VSL</h2>
               <p className="text-xs text-slate-400">Estruturas de alta conversão para tráfego direto.</p>
             </div>
             <div className="p-6 bg-[#090912] border border-purple-500/20 rounded-2xl text-xs text-slate-300">
@@ -591,7 +594,7 @@ export default function NexusMasterSuite() {
         )}
 
         {/* LANDING 3D / OUTREACH PLACEHOLDERS */}
-        {(activeTab === 'landing' || activeTab === 'out') && (
+        {(activeTab === 'landing' || activeTab === 'outreach') && (
           <div className="p-12 bg-[#090912] border border-purple-500/20 rounded-3xl text-center space-y-3">
             <span className="text-3xl">🌌</span>
             <h3 className="text-lg font-bold text-white">Módulo Agêntico Ativo</h3>
