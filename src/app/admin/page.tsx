@@ -22,14 +22,12 @@ export default function NexusMasterSuite() {
   const [passwordInput, setPasswordInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
-
-  // Interatividade 3D no Banner
-  const [hoveredZone, setHoveredZone] = useState<string | null>(null);
+  const [hoveredModule, setHoveredModule] = useState<string | null>(null);
 
   // StoryForge States
   const [videoTargetModel, setVideoTargetModel] = useState<'runway-gen3' | 'kling' | 'luma' | 'sora'>('runway-gen3');
-  const [characterDesc, setCharacterDesc] = useState('Cyber Minifigure (Neon visor, titanium armor, matte dark plastic)');
-  const [sceneDesc, setSceneDesc] = useState('Futuristic monolith platform overlooking neon digital ocean');
+  const [characterDesc, setCharacterDesc] = useState('Cyber Lion Commander (Titanium armor, glowing cyan circuitry, natural mane)');
+  const [sceneDesc, setSceneDesc] = useState('Fortress server core with floating holographic telemetry');
   const [lightingStyle, setLightingStyle] = useState('Ultraviolet cyber-glow with cyan rim reflections');
   const [scriptText, setScriptText] = useState('No centro da tempestade neural, apenas as arquiteturas sólidas permanecem invioláveis.');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
@@ -140,10 +138,9 @@ export default function NexusMasterSuite() {
   return (
     <div className="min-h-screen bg-[#050508] text-slate-100 flex selection:bg-purple-500 selection:text-white">
       
-      {/* Menu Lateral Futurista */}
+      {/* Menu Lateral */}
       <aside className="w-72 bg-[#090910] border-r border-purple-500/20 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0 overflow-y-auto shadow-2xl">
         <div className="space-y-5">
-          {/* Logo */}
           <div className="px-3 py-2 border-b border-slate-800/80 pb-4 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1.5 font-mono font-black text-base text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 tracking-wider">
@@ -279,27 +276,27 @@ export default function NexusMasterSuite() {
               </button>
             </div>
 
-            {/* BANNER 3D FLUTUANTE COM DESTAQUE DINÂMICO */}
-            <div className="relative rounded-3xl overflow-hidden border border-purple-500/40 shadow-2xl shadow-purple-950/60 group transition-all duration-500 hover:scale-[1.01] hover:border-cyan-400">
+            {/* BANNER 3D COM O LEÃO CIBERNÉTICO NEXUS */}
+            <div className="relative rounded-3xl overflow-hidden border border-cyan-500/40 shadow-2xl shadow-cyan-950/50 group transition-all duration-500 hover:scale-[1.008] hover:border-cyan-300 bg-[#080811]">
               
-              {/* Imagem de Fundo com Efeito de Parallax */}
+              {/* Imagem do Leão Cibernético */}
               <div 
-                className="w-full h-80 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{ backgroundImage: "url('/hero-squad.jpg')" }}
+                className="w-full h-96 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{ backgroundImage: "url('/nexus-lion.jpg')" }}
               >
-                {/* Overlay Escuro com Gradiente Neon */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-black/40"></div>
+                {/* Gradiente de Fusão Escuro */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-black/30 to-transparent"></div>
               </div>
 
-              {/* Botões/Hotspots Neon Flutuantes sobre a Imagem */}
-              <div className="absolute inset-0 flex items-end p-6 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent">
-                <div className="w-full grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+              {/* Botões de Acesso Rápido sobre o Banner */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-[#050508] via-[#050508]/50 to-transparent">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5">
                   
                   <button
                     onClick={() => setActiveTab('landing')}
-                    onMouseEnter={() => setHoveredZone('nexusdados')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-cyan-500/40 hover:border-cyan-400 hover:bg-cyan-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-cyan-500/30"
+                    onMouseEnter={() => setHoveredModule('nexusdados')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-cyan-500/50 hover:border-cyan-300 hover:bg-cyan-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-cyan-500/40"
                   >
                     <span className="text-[10px] font-mono text-cyan-300 block">🌐 3D</span>
                     <span className="text-xs font-black text-white">NEXUSDADOS</span>
@@ -307,9 +304,9 @@ export default function NexusMasterSuite() {
 
                   <button
                     onClick={() => setActiveTab('saas')}
-                    onMouseEnter={() => setHoveredZone('saas')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-purple-500/40 hover:border-purple-400 hover:bg-purple-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/30"
+                    onMouseEnter={() => setHoveredModule('saas')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-purple-500/50 hover:border-purple-300 hover:bg-purple-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
                   >
                     <span className="text-[10px] font-mono text-purple-300 block">⚙️ SQL</span>
                     <span className="text-xs font-black text-white">MICRO SAAS</span>
@@ -317,9 +314,9 @@ export default function NexusMasterSuite() {
 
                   <button
                     onClick={() => setActiveTab('crm')}
-                    onMouseEnter={() => setHoveredZone('crm')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-emerald-500/30"
+                    onMouseEnter={() => setHoveredModule('crm')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-emerald-500/50 hover:border-emerald-300 hover:bg-emerald-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-emerald-500/40"
                   >
                     <span className="text-[10px] font-mono text-emerald-300 block">🎯 LEADS</span>
                     <span className="text-xs font-black text-white">PIPELINE</span>
@@ -327,9 +324,9 @@ export default function NexusMasterSuite() {
 
                   <button
                     onClick={() => setActiveTab('posts')}
-                    onMouseEnter={() => setHoveredZone('posts')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-pink-500/40 hover:border-pink-400 hover:bg-pink-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-pink-500/30"
+                    onMouseEnter={() => setHoveredModule('posts')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-pink-500/50 hover:border-pink-300 hover:bg-pink-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-pink-500/40"
                   >
                     <span className="text-[10px] font-mono text-pink-300 block">🎨 3x3</span>
                     <span className="text-xs font-black text-white">ESTÚDIO</span>
@@ -337,9 +334,9 @@ export default function NexusMasterSuite() {
 
                   <button
                     onClick={() => setActiveTab('historias')}
-                    onMouseEnter={() => setHoveredZone('video')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-amber-500/40 hover:border-amber-400 hover:bg-amber-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-amber-500/30"
+                    onMouseEnter={() => setHoveredModule('video')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-amber-500/50 hover:border-amber-300 hover:bg-amber-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-amber-500/40"
                   >
                     <span className="text-[10px] font-mono text-amber-300 block">✨ IA</span>
                     <span className="text-xs font-black text-white">VÍDEO</span>
@@ -347,9 +344,9 @@ export default function NexusMasterSuite() {
 
                   <button
                     onClick={() => setActiveTab('outreach')}
-                    onMouseEnter={() => setHoveredZone('outreach')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-orange-500/40 hover:border-orange-400 hover:bg-orange-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-orange-500/30"
+                    onMouseEnter={() => setHoveredModule('outreach')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-orange-500/50 hover:border-orange-300 hover:bg-orange-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-orange-500/40"
                   >
                     <span className="text-[10px] font-mono text-orange-300 block">📁 B2B</span>
                     <span className="text-xs font-black text-white">DEMO FORGE</span>
@@ -357,9 +354,9 @@ export default function NexusMasterSuite() {
 
                   <button
                     onClick={() => setActiveTab('historias')}
-                    onMouseEnter={() => setHoveredZone('historias')}
-                    onMouseLeave={() => setHoveredZone(null)}
-                    className="p-3 bg-slate-950/80 backdrop-blur-md border border-purple-500/40 hover:border-purple-300 hover:bg-purple-600/30 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
+                    onMouseEnter={() => setHoveredModule('historias')}
+                    onMouseLeave={() => setHoveredModule(null)}
+                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-purple-500/50 hover:border-purple-300 hover:bg-purple-600/30 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
                   >
                     <span className="text-[10px] font-mono text-purple-300 block">🎬 VÍDEO</span>
                     <span className="text-xs font-black text-white">FÁBRICA</span>
@@ -433,7 +430,7 @@ export default function NexusMasterSuite() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Descrição do Personagem</label>
+                  <label className="text-[11px] font-semibold text-slate-300">Descrição do Personagem (ID Visual)</label>
                   <input
                     type="text"
                     value={characterDesc}
