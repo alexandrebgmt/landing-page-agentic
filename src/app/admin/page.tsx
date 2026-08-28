@@ -99,17 +99,16 @@ export default function NexusMasterSuite() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050508] text-white flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Glow de fundo */}
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
         <form onSubmit={handleLogin} className="w-full max-w-md bg-[#0c0c14]/90 border border-purple-500/30 rounded-3xl p-8 space-y-6 shadow-2xl shadow-purple-950/50 backdrop-blur-xl relative z-10">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-[10px] font-mono text-purple-300 uppercase tracking-widest">
-              &lt;NEXUS 2.0 / OS&gt;
+              &lt;NEXUS // OS 2026&gt;
             </div>
             <h1 className="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
-              Acesse sua Área de Comando
+              Centro de Controle Master
             </h1>
             <p className="text-xs text-slate-400">Plataforma Agêntica de Alta Performance</p>
           </div>
@@ -128,7 +127,7 @@ export default function NexusMasterSuite() {
           </div>
 
           <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-xl text-sm shadow-lg shadow-purple-600/30 hover:shadow-purple-500/50 hover:scale-[1.02] transition-all">
-            Entrar na Plataforma
+            Acessar Plataforma
           </button>
         </form>
       </div>
@@ -141,18 +140,17 @@ export default function NexusMasterSuite() {
       {/* Menu Lateral Futurista */}
       <aside className="w-72 bg-[#090910] border-r border-purple-500/20 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0 overflow-y-auto shadow-2xl">
         <div className="space-y-5">
-          {/* Logo Futurista */}
+          {/* Logo Proprietária */}
           <div className="px-3 py-2 border-b border-slate-800/80 pb-4 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1.5 font-mono font-black text-base text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 tracking-wider">
-                <span>&lt;DEV</span><span>QUEST 2.0&gt;</span>
+                <span>&lt;NEXUS</span><span>AGENTIC&gt;</span>
               </div>
-              <span className="block text-[9px] font-mono text-cyan-400 uppercase tracking-widest mt-0.5">NEXUS AGENTIC OS</span>
+              <span className="block text-[9px] font-mono text-cyan-400 uppercase tracking-widest mt-0.5">HIGH-AGENCY OS</span>
             </div>
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/80 animate-pulse"></span>
           </div>
 
-          {/* Microfone com Neon */}
           <div className="px-1">
             <VoiceCommander onNavigate={(tab) => setActiveTab(tab)} />
           </div>
@@ -245,7 +243,7 @@ export default function NexusMasterSuite() {
           </div>
         </div>
 
-        {/* Perfil do Usuário */}
+        {/* Perfil */}
         <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center font-black text-xs shadow-md shadow-purple-500/40">
@@ -263,7 +261,7 @@ export default function NexusMasterSuite() {
       {/* Conteúdo Central */}
       <main className="flex-1 ml-72 p-8 max-w-7xl space-y-8">
         
-        {/* VITRINE & VISÃO GERAL (Cards estilo Poster Futurista) */}
+        {/* VITRINE & VISÃO GERAL */}
         {activeTab === 'hub' && (
           <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
@@ -278,7 +276,7 @@ export default function NexusMasterSuite() {
               </button>
             </div>
 
-            {/* Métricas com Neon Glow */}
+            {/* Badges de Métricas */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
                 <span className="text-[10px] font-mono text-slate-400 uppercase">Total de Leads</span>
@@ -286,7 +284,7 @@ export default function NexusMasterSuite() {
                 <span className="text-[10px] text-cyan-400">● Supabase RLS Synced</span>
               </div>
               <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
-                <span className="text-[10px] font-mono text-slate-400 uppercase">Design Standard</span>
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Padrão de Design</span>
                 <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mt-1">BrandKit 3×3</p>
                 <span className="text-[10px] text-slate-400">Anti-Slop Protocol</span>
               </div>
@@ -302,11 +300,11 @@ export default function NexusMasterSuite() {
               </div>
             </div>
 
-            {/* Vitrine Estilo Netflix / DevQuest (Cards Verticais) */}
+            {/* Vitrine Estilo Pôster Sci-Fi */}
             <div className="space-y-4 pt-2">
               <div className="flex justify-between items-center">
                 <h3 className="text-sm font-black text-white tracking-wide uppercase font-mono">
-                  Módulos de Formação e Produção
+                  Módulos de Formação & Produção
                 </h3>
                 <span className="text-xs text-purple-400 font-mono">6 Aplicações Conectadas</span>
               </div>
@@ -315,7 +313,7 @@ export default function NexusMasterSuite() {
                 
                 {/* Card 1: 3D Landing */}
                 <div onClick={() => setActiveTab('landing')} className="bg-[#090912] border border-purple-500/20 hover:border-cyan-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 flex flex-col justify-between h-64 group">
-                  <div className="w-full h-24 bg-gradient-to-br from-cyan-600/30 to-blue-900/40 rounded-xl flex items-center justify-center text-3xl border border-cyan-500/30">
+                  <div className="w-full h-24 bg-gradient-to-br from-cyan-600/30 to-blue-900/40 rounded-xl flex items-center justify-center text-3xl border border-cyan-500/30 group-hover:shadow-lg group-hover:shadow-cyan-500/30 transition-all">
                     🌐
                   </div>
                   <div className="space-y-1">
@@ -328,7 +326,7 @@ export default function NexusMasterSuite() {
 
                 {/* Card 2: SaaS Audit */}
                 <div onClick={() => setActiveTab('saas')} className="bg-[#090912] border border-purple-500/20 hover:border-purple-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between h-64 group">
-                  <div className="w-full h-24 bg-gradient-to-br from-purple-600/30 to-indigo-900/40 rounded-xl flex items-center justify-center text-3xl border border-purple-500/30">
+                  <div className="w-full h-24 bg-gradient-to-br from-purple-600/30 to-indigo-900/40 rounded-xl flex items-center justify-center text-3xl border border-purple-500/30 group-hover:shadow-lg group-hover:shadow-purple-500/30 transition-all">
                     ⚙️
                   </div>
                   <div className="space-y-1">
@@ -341,7 +339,7 @@ export default function NexusMasterSuite() {
 
                 {/* Card 3: Mini-CRM */}
                 <div onClick={() => setActiveTab('crm')} className="bg-[#090912] border border-purple-500/20 hover:border-teal-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-teal-500/10 flex flex-col justify-between h-64 group">
-                  <div className="w-full h-24 bg-gradient-to-br from-teal-600/30 to-emerald-900/40 rounded-xl flex items-center justify-center text-3xl border border-teal-500/30">
+                  <div className="w-full h-24 bg-gradient-to-br from-teal-600/30 to-emerald-900/40 rounded-xl flex items-center justify-center text-3xl border border-teal-500/30 group-hover:shadow-lg group-hover:shadow-teal-500/30 transition-all">
                     🎯
                   </div>
                   <div className="space-y-1">
@@ -354,7 +352,7 @@ export default function NexusMasterSuite() {
 
                 {/* Card 4: Post Studio */}
                 <div onClick={() => setActiveTab('posts')} className="bg-[#090912] border border-purple-500/20 hover:border-pink-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-pink-500/10 flex flex-col justify-between h-64 group">
-                  <div className="w-full h-24 bg-gradient-to-br from-pink-600/30 to-rose-900/40 rounded-xl flex items-center justify-center text-3xl border border-pink-500/30">
+                  <div className="w-full h-24 bg-gradient-to-br from-pink-600/30 to-rose-900/40 rounded-xl flex items-center justify-center text-3xl border border-pink-500/30 group-hover:shadow-lg group-hover:shadow-pink-500/30 transition-all">
                     🎨
                   </div>
                   <div className="space-y-1">
@@ -367,7 +365,7 @@ export default function NexusMasterSuite() {
 
                 {/* Card 5: StoryForge */}
                 <div onClick={() => setActiveTab('historias')} className="bg-[#090912] border border-purple-500/20 hover:border-purple-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between h-64 group">
-                  <div className="w-full h-24 bg-gradient-to-br from-purple-600/30 to-violet-900/40 rounded-xl flex items-center justify-center text-3xl border border-purple-500/30">
+                  <div className="w-full h-24 bg-gradient-to-br from-purple-600/30 to-violet-900/40 rounded-xl flex items-center justify-center text-3xl border border-purple-500/30 group-hover:shadow-lg group-hover:shadow-purple-500/30 transition-all">
                     ✨
                   </div>
                   <div className="space-y-1">
@@ -380,7 +378,7 @@ export default function NexusMasterSuite() {
 
                 {/* Card 6: Demo Forge */}
                 <div onClick={() => setActiveTab('outreach')} className="bg-[#090912] border border-purple-500/20 hover:border-amber-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-amber-500/10 flex flex-col justify-between h-64 group">
-                  <div className="w-full h-24 bg-gradient-to-br from-amber-600/30 to-orange-900/40 rounded-xl flex items-center justify-center text-3xl border border-amber-500/30">
+                  <div className="w-full h-24 bg-gradient-to-br from-amber-600/30 to-orange-900/40 rounded-xl flex items-center justify-center text-3xl border border-amber-500/30 group-hover:shadow-lg group-hover:shadow-amber-500/30 transition-all">
                     📨
                   </div>
                   <div className="space-y-1">
@@ -396,7 +394,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* FÁBRICA DE HISTÓRIAS (INTERATIVA COM NEON THEME) */}
+        {/* FÁBRICA DE HISTÓRIAS */}
         {activeTab === 'historias' && (
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
@@ -404,7 +402,7 @@ export default function NexusMasterSuite() {
                 <h2 className="text-xl font-black text-white flex items-center gap-2">
                   <span>✨</span> StoryForge — Estúdio de Vídeo & Roteiro
                 </h2>
-                <p className="text-xs text-slate-400">Controle criativo total de personagens, cenários e iluminação para IA de vídeo.</p>
+                <p className="text-xs text-slate-400">Controle criativo de personagens, cenários e iluminação para IA de vídeo.</p>
               </div>
               <button
                 onClick={generateStoryPrompts}
@@ -476,7 +474,7 @@ export default function NexusMasterSuite() {
 
               <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
-                  <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Prompt Formatado (Copiar com 1 Clique)</h3>
+                  <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Prompt Formatado</h3>
                   <pre className="p-4 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed min-h-[160px]">
                     {generatedPrompt || 'Clique no botão acima para montar o prompt com base nos seus parâmetros.'}
                   </pre>
@@ -486,7 +484,7 @@ export default function NexusMasterSuite() {
           </div>
         )}
 
-        {/* POST STUDIO (INTERATIVO) */}
+        {/* POST STUDIO */}
         {activeTab === 'posts' && (
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
@@ -595,7 +593,7 @@ export default function NexusMasterSuite() {
         )}
 
         {/* LANDING 3D / OUTREACH PLACEHOLDERS */}
-        {(activeTab === 'landing' || activeTab === 'outreach' || activeTab === 'mobile' || activeTab === 'radar') && (
+        {(activeTab === 'landing' || activeTab === 'outreach') && (
           <div className="p-12 bg-[#090912] border border-purple-500/20 rounded-3xl text-center space-y-3">
             <span className="text-3xl">🌌</span>
             <h3 className="text-lg font-bold text-white">Módulo Agêntico Ativo</h3>
