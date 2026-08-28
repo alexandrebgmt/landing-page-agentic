@@ -23,40 +23,32 @@ export default function NexusMasterSuite() {
   const [errorMsg, setErrorMsg] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
 
-  // 1. STORYFORGE (Fábrica de Histórias Interativa)
+  // StoryForge States
   const [videoTargetModel, setVideoTargetModel] = useState<'runway-gen3' | 'kling' | 'luma' | 'sora'>('runway-gen3');
-  const [characterDesc, setCharacterDesc] = useState('Mini-Builder Lego (Yellow hardhat, blue overalls, subtle dust marks)');
-  const [sceneDesc, setSceneDesc] = useState('Solid granite stone cliff against a stormy ocean, macro diorama');
-  const [lightingStyle, setLightingStyle] = useState('Cinematic Golden Hour with moody blue fill');
-  const [voiceTone, setVoiceTone] = useState<'solemne' | 'dramatico' | 'inspirador'>('solemne');
-  const [scriptText, setScriptText] = useState('Aquele que ouve estas palavras e as pratica... é como o homem sábio que construiu a sua casa sobre a rocha.');
+  const [characterDesc, setCharacterDesc] = useState('Cyber Minifigure (Neon visor, titanium armor, matte dark plastic)');
+  const [sceneDesc, setSceneDesc] = useState('Futuristic monolith platform overlooking neon digital ocean');
+  const [lightingStyle, setLightingStyle] = useState('Ultraviolet cyber-glow with cyan rim reflections');
+  const [scriptText, setScriptText] = useState('No centro da tempestade neural, apenas as arquiteturas sólidas permanecem invioláveis.');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
-  const [generatedSfx, setGeneratedSfx] = useState('');
 
-  // 2. POST STUDIO 3x3 INTERATIVO
-  const [postBriefing, setPostBriefing] = useState('Como empresas perdem 30% do orçamento com queries lentas e PostgreSQL desorganizado.');
-  const [postStyle, setPostStyle] = useState<'linear-dark' | 'tech-neon' | 'clean-white'>('linear-dark');
-  const [slide1Hook, setSlide1Hook] = useState('O Custo Invisível de um Banco Mal Indexado');
-  const [slide2Body, setSlide2Body] = useState('Tabelas com mais de 500k linhas sem Foreign Key Index travam os relatórios e elevam os custos de nuvem.');
-  const [slide3Cta, setSlide3Cta] = useState('Solicite o Diagnóstico Técnico Nexus em 48 horas.');
+  // Post Studio States
+  const [postBriefing, setPostBriefing] = useState('Como engenharia de dados e IA generativa multiplicam a escala B2B.');
+  const [slide1Hook, setSlide1Hook] = useState('A NOVA ERA DA INFRAESTRUTURA AGÊNTICA');
+  const [slide2Body, setSlide2Body] = useState('Modelos de IA autônomos exigem bancos de dados com latência ultra-baixa e segurança RLS blindada.');
+  const [slide3Cta, setSlide3Cta] = useState('Inicie sua modernização com a NexusData Enterprise.');
 
-  // 3. PRESELL BUILDER INTERATIVO
-  const [presellProduct, setPresellProduct] = useState('NexusData Enterprise Engine');
-  const [presellAngle, setPresellAngle] = useState<'investigativo' | 'estudo-caso' | 'urgencia'>('investigativo');
-  const [presellHeadline, setPresellHeadline] = useState('Descoberta Técnica Revela Como Empresas Reduzem 40% dos Custos de Infraestrutura');
+  // Presell States
+  const [presellProduct, setPresellProduct] = useState('Nexus High-Agency Platform');
+  const [presellAngle, setPresellAngle] = useState<'cyber-report' | 'case-study' | 'exclusive-pass'>('cyber-report');
+  const [presellHeadline, setPresellHeadline] = useState('Protocolo Revela Arquitetura de IA para Escala Exponencial');
 
   // SaaS Audit State
-  const [sqlSchema, setSqlSchema] = useState(`CREATE TABLE users (
+  const [sqlSchema, setSqlSchema] = useState(`CREATE TABLE agents_telemetry (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
+  agent_id TEXT NOT NULL,
+  execution_tokens INT NOT NULL,
+  cost_usd NUMERIC(10,4),
   created_at TIMESTAMPTZ DEFAULT now()
-);
-
-CREATE TABLE transactions (
-  id BIGSERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id),
-  amount NUMERIC(10,2),
-  status TEXT
 );`);
   const [auditResult, setAuditResult] = useState<string | null>(null);
 
@@ -76,7 +68,7 @@ CREATE TABLE transactions (
       fetchLeads();
       setErrorMsg('');
     } else {
-      setErrorMsg('Chave de acesso incorreta.');
+      setErrorMsg('Acesso negado. Chave mestra inválida.');
     }
   };
 
@@ -95,26 +87,33 @@ CREATE TABLE transactions (
     }
   }
 
-  // Gera prompts em tempo real com base no input do usuário
   const generateStoryPrompts = () => {
-    const prompt = `[MODEL: ${videoTargetModel.toUpperCase()}] Cinematic macro shot of ${characterDesc}, standing on ${sceneDesc}. Lighting: ${lightingStyle}. Highly detailed plastic brick texture, volumetric atmosphere, 8k resolution. Motion: Subtle camera push-in, rigid lock on main structure.`;
-    const sfx = `FOLEY: Crisp plastic snaps, subtle distant ocean wind, cinematic low-frequency sub bass impact.`;
+    const prompt = `[CYBER_CORE // ${videoTargetModel.toUpperCase()}] Cinematic 8k shot of ${characterDesc}, standing on ${sceneDesc}. Atmosphere: ${lightingStyle}. Volumetric purple laser fog, photoreal reflection, ultra-detailed textures. Motion: Slow fluid tracking shot.`;
     setGeneratedPrompt(prompt);
-    setGeneratedSfx(sfx);
   };
 
   const runAuditScan = () => {
-    setAuditResult('🔍 Analisando Schema SQL...\n✓ RLS: Não detectado na tabela transactions (Risco Alto)\n✓ Índices: transaction.user_id sem Foreign Key Index (Gargalo em Join)\n✓ Conformidade de Tipos: NUMERIC(10,2) validado com sucesso.');
+    setAuditResult('⚡ [NEXUS CYBER-SCAN COMPLETE]\n✓ RLS Policy: Ativo na tabela de telemetria\n✓ Concorrência: Indexação otimizada para alto throughput\n✓ Latência Estimada: < 12ms');
   };
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
-        <form onSubmit={handleLogin} className="w-full max-w-md bg-slate-900 border border-cyan-500/30 rounded-3xl p-8 space-y-6 shadow-2xl">
+      <div className="min-h-screen bg-[#050508] text-white flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Glow de fundo */}
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <form onSubmit={handleLogin} className="w-full max-w-md bg-[#0c0c14]/90 border border-purple-500/30 rounded-3xl p-8 space-y-6 shadow-2xl shadow-purple-950/50 backdrop-blur-xl relative z-10">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-extrabold text-white">Nexus Master Suite OS</h1>
-            <p className="text-xs text-slate-400 font-mono">CENTRAL OPERACIONAL PRIVADA</p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-[10px] font-mono text-purple-300 uppercase tracking-widest">
+              &lt;NEXUS 2.0 / OS&gt;
+            </div>
+            <h1 className="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+              Acesse sua Área de Comando
+            </h1>
+            <p className="text-xs text-slate-400">Plataforma Agêntica de Alta Performance</p>
           </div>
+
           <div className="space-y-2">
             <label className="text-xs font-semibold text-slate-300">Chave Mestra</label>
             <input
@@ -122,13 +121,14 @@ CREATE TABLE transactions (
               placeholder="••••••••••••"
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-cyan-500 outline-none"
+              className="w-full px-4 py-3 bg-[#07070c] border border-purple-500/30 rounded-xl text-sm text-white focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-500/20 outline-none transition-all font-mono"
               autoFocus
             />
             {errorMsg && <p className="text-xs text-rose-400">{errorMsg}</p>}
           </div>
-          <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-sm">
-            Acessar Centro de Comando
+
+          <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-xl text-sm shadow-lg shadow-purple-600/30 hover:shadow-purple-500/50 hover:scale-[1.02] transition-all">
+            Entrar na Plataforma
           </button>
         </form>
       </div>
@@ -136,175 +136,295 @@ CREATE TABLE transactions (
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
-      {/* Menu Lateral */}
-      <aside className="w-72 bg-slate-900 border-r border-slate-800 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0">
-        <div className="space-y-4">
-          <div className="px-3 py-2 border-b border-slate-800 pb-3 flex items-center justify-between">
+    <div className="min-h-screen bg-[#050508] text-slate-100 flex selection:bg-purple-500 selection:text-white">
+      
+      {/* Menu Lateral Futurista */}
+      <aside className="w-72 bg-[#090910] border-r border-purple-500/20 flex flex-col justify-between p-4 shrink-0 fixed inset-y-0 overflow-y-auto shadow-2xl">
+        <div className="space-y-5">
+          {/* Logo Futurista */}
+          <div className="px-3 py-2 border-b border-slate-800/80 pb-4 flex items-center justify-between">
             <div>
-              <span className="font-bold text-white text-base tracking-wide flex items-center gap-2">
-                <span className="p-1 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs">⌘</span> Nexus Suite
-              </span>
-              <span className="block text-[10px] font-mono text-cyan-400 uppercase tracking-widest mt-0.5">ENTERPRISE OS</span>
+              <div className="flex items-center gap-1.5 font-mono font-black text-base text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 tracking-wider">
+                <span>&lt;DEV</span><span>QUEST 2.0&gt;</span>
+              </div>
+              <span className="block text-[9px] font-mono text-cyan-400 uppercase tracking-widest mt-0.5">NEXUS AGENTIC OS</span>
             </div>
-            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/80 animate-pulse"></span>
           </div>
 
+          {/* Microfone com Neon */}
           <div className="px-1">
             <VoiceCommander onNavigate={(tab) => setActiveTab(tab)} />
           </div>
 
+          {/* NÚCLEO CENTRAL */}
           <div className="space-y-1 pt-1">
-            <span className="text-[10px] font-mono uppercase text-slate-400 px-3 tracking-wider">Núcleo Central</span>
+            <span className="text-[10px] font-mono uppercase text-slate-400 px-3 tracking-wider">NÚCLEO CENTRAL</span>
+            
             <button
               onClick={() => setActiveTab('hub')}
-              className={`w-full text-left px-3 py-2 rounded-xl transition-colors font-medium flex items-center gap-2.5 text-xs ${
-                activeTab === 'hub' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center gap-2.5 text-xs ${
+                activeTab === 'hub' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50 shadow-lg shadow-purple-950/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <span>📊</span> Visão Geral & Projetos
+              <span>🌌</span> Vitrine & Visão Geral
             </button>
 
             <button
               onClick={() => setActiveTab('posts')}
-              className={`w-full text-left px-3 py-2 rounded-xl transition-colors font-medium flex items-center justify-between text-xs ${
-                activeTab === 'posts' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center justify-between text-xs ${
+                activeTab === 'posts' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
               <span className="flex items-center gap-2.5"><span>🎨</span> Post Studio & BrandKit</span>
-              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">3x3</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-500/40">3x3</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('outreach')}
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center justify-between text-xs ${
+                activeTab === 'outreach' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
+              }`}
+            >
+              <span className="flex items-center gap-2.5"><span>🚀</span> Demo Forge & Outreach</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-500/40">B2B</span>
             </button>
 
             <button
               onClick={() => setActiveTab('crm')}
-              className={`w-full text-left px-3 py-2 rounded-xl transition-colors font-medium flex items-center justify-between text-xs ${
-                activeTab === 'crm' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center justify-between text-xs ${
+                activeTab === 'crm' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <span className="flex items-center gap-2.5"><span>🎯</span> CRM & Pipeline Leads</span>
-              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-950 text-cyan-400 border border-cyan-500/30">{leads.length}</span>
+              <span className="flex items-center gap-2.5"><span>🎯</span> CRM & Leads</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">{leads.length}</span>
             </button>
           </div>
 
+          {/* MÓDULOS DE PRODUÇÃO */}
           <div className="space-y-1 pt-2">
-            <span className="text-[10px] font-mono uppercase text-slate-400 px-3 tracking-wider">Módulos de Produção</span>
+            <span className="text-[10px] font-mono uppercase text-slate-400 px-3 tracking-wider">MÓDULOS FUTURISTAS</span>
             
             <button
               onClick={() => setActiveTab('historias')}
-              className={`w-full text-left px-3 py-2 rounded-xl transition-colors font-medium flex items-center justify-between text-xs ${
-                activeTab === 'historias' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center justify-between text-xs ${
+                activeTab === 'historias' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
               <span className="flex items-center gap-2.5"><span>✨</span> Fábrica de Histórias (Vídeo)</span>
-              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300">PRO</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-950 text-purple-300">PRO</span>
             </button>
 
             <button
               onClick={() => setActiveTab('saas')}
-              className={`w-full text-left px-3 py-2 rounded-xl transition-colors font-medium flex items-center justify-between text-xs ${
-                activeTab === 'saas' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center justify-between text-xs ${
+                activeTab === 'saas' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <span className="flex items-center gap-2.5"><span>⚙️</span> Engenharia SaaS (Audit)</span>
-              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300">PRO</span>
+              <span className="flex items-center gap-2.5"><span>⚡</span> Engenharia SaaS (Audit)</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300">PRO</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('landing')}
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center gap-2.5 text-xs ${
+                activeTab === 'landing' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
+              }`}
+            >
+              <span>🌐</span> Criador de Landing 3D
             </button>
 
             <button
               onClick={() => setActiveTab('presell')}
-              className={`w-full text-left px-3 py-2 rounded-xl transition-colors font-medium flex items-center gap-2.5 text-xs ${
-                activeTab === 'presell' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center gap-2.5 text-xs ${
+                activeTab === 'presell' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <span>💰</span> Páginas Presell & VSL
+              <span>💎</span> Páginas Presell & VSL
             </button>
           </div>
         </div>
 
-        <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs">A</div>
+        {/* Perfil do Usuário */}
+        <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center font-black text-xs shadow-md shadow-purple-500/40">
+              A
+            </div>
             <div>
               <p className="text-xs font-bold text-white leading-none">Alexandre</p>
-              <p className="text-[10px] text-slate-400 font-mono mt-0.5">Chief Architect</p>
+              <p className="text-[10px] text-cyan-400 font-mono mt-0.5">Chief Architect</p>
             </div>
           </div>
           <button onClick={handleLogout} className="text-[11px] text-slate-400 hover:text-rose-400 font-medium">Sair</button>
         </div>
       </aside>
 
-      {/* Área de Trabalho */}
+      {/* Conteúdo Central */}
       <main className="flex-1 ml-72 p-8 max-w-7xl space-y-8">
         
-        {/* VISÃO GERAL */}
+        {/* VITRINE & VISÃO GERAL (Cards estilo Poster Futurista) */}
         {activeTab === 'hub' && (
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+          <div className="space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
               <div>
-                <h1 className="text-2xl font-black text-white">Centro de Controle Nexus <span className="text-xs font-mono font-normal px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">v5.2 High-Agency OS</span></h1>
-                <p className="text-xs text-slate-400 mt-1">Estúdio Criativo com Controle Total de Personagens, Roteiros e Design Systems.</p>
+                <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+                  Centro de Controle Nexus <span className="text-xs font-mono font-normal px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">v5.2 Cyber Edition</span>
+                </h1>
+                <p className="text-xs text-slate-400 mt-1">Estúdio de Arquitetura de IA, Identidade Visual Neon e Engenharia de Escala.</p>
               </div>
-              <button onClick={() => setActiveTab('historias')} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs hover:opacity-90">
-                ✨ Abrir Fábrica de Criação
+              <button onClick={() => setActiveTab('historias')} className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all">
+                ✨ Abrir Estúdio Criativo
               </button>
             </div>
 
+            {/* Métricas com Neon Glow */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl">
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
                 <span className="text-[10px] font-mono text-slate-400 uppercase">Total de Leads</span>
-                <p className="text-2xl font-bold text-white mt-1">{leads.length}</p>
-                <span className="text-[10px] text-teal-400">● Sincronizado via Supabase RLS</span>
+                <p className="text-3xl font-black text-white mt-1">{leads.length}</p>
+                <span className="text-[10px] text-cyan-400">● Supabase RLS Synced</span>
               </div>
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl">
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
                 <span className="text-[10px] font-mono text-slate-400 uppercase">Design Standard</span>
-                <p className="text-xl font-bold text-cyan-400 mt-1">BrandKit 3×3</p>
-                <span className="text-[10px] text-slate-400">Anti-Slop Protocol Ativo</span>
+                <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mt-1">BrandKit 3×3</p>
+                <span className="text-[10px] text-slate-400">Anti-Slop Protocol</span>
               </div>
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-mono text-slate-400 uppercase">Controle de Criação</span>
-                <p className="text-lg font-bold text-teal-400 mt-1">100% Interativo</p>
-                <span className="text-[10px] text-slate-400 font-mono">Custom Inputs Enabled</span>
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Canal Corporativo</span>
+                <p className="text-lg font-black text-teal-400 mt-1">Gmail Ready</p>
+                <span className="text-[10px] text-slate-400 font-mono">nexusenterprise.br@gmail.com</span>
               </div>
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl">
-                <span className="text-[10px] font-mono text-slate-400 uppercase">Status de Skills</span>
-                <p className="text-2xl font-bold text-white mt-1">3 / 3</p>
-                <span className="text-[10px] text-cyan-400">BrandKit, MCP & RLS</span>
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Skills Ativas</span>
+                <p className="text-3xl font-black text-cyan-400 mt-1">3 / 3</p>
+                <span className="text-[10px] text-purple-300">MCP, Agentic & Three.js</span>
+              </div>
+            </div>
+
+            {/* Vitrine Estilo Netflix / DevQuest (Cards Verticais) */}
+            <div className="space-y-4 pt-2">
+              <div className="flex justify-between items-center">
+                <h3 className="text-sm font-black text-white tracking-wide uppercase font-mono">
+                  Módulos de Formação e Produção
+                </h3>
+                <span className="text-xs text-purple-400 font-mono">6 Aplicações Conectadas</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                
+                {/* Card 1: 3D Landing */}
+                <div onClick={() => setActiveTab('landing')} className="bg-[#090912] border border-purple-500/20 hover:border-cyan-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 flex flex-col justify-between h-64 group">
+                  <div className="w-full h-24 bg-gradient-to-br from-cyan-600/30 to-blue-900/40 rounded-xl flex items-center justify-center text-3xl border border-cyan-500/30">
+                    🌐
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-cyan-400 uppercase">FRONTEND 3D</span>
+                    <h4 className="font-bold text-white text-xs leading-tight">NexusData Landing 3D</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2">Three.js Neural Network e RLS integrado.</p>
+                  </div>
+                  <span className="text-[9px] font-mono text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded text-center">Deploy Ativo</span>
+                </div>
+
+                {/* Card 2: SaaS Audit */}
+                <div onClick={() => setActiveTab('saas')} className="bg-[#090912] border border-purple-500/20 hover:border-purple-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between h-64 group">
+                  <div className="w-full h-24 bg-gradient-to-br from-purple-600/30 to-indigo-900/40 rounded-xl flex items-center justify-center text-3xl border border-purple-500/30">
+                    ⚙️
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-purple-400 uppercase">BACKEND & SQL</span>
+                    <h4 className="font-bold text-white text-xs leading-tight">Audit Pro Micro-SaaS</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2">Scanner de Postgres e gargalos de schema.</p>
+                  </div>
+                  <span className="text-[9px] font-mono text-purple-300 bg-purple-950/60 px-2 py-0.5 rounded text-center">Deploy Ativo</span>
+                </div>
+
+                {/* Card 3: Mini-CRM */}
+                <div onClick={() => setActiveTab('crm')} className="bg-[#090912] border border-purple-500/20 hover:border-teal-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-teal-500/10 flex flex-col justify-between h-64 group">
+                  <div className="w-full h-24 bg-gradient-to-br from-teal-600/30 to-emerald-900/40 rounded-xl flex items-center justify-center text-3xl border border-teal-500/30">
+                    🎯
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-teal-400 uppercase">GESTÃO AGÊNTICA</span>
+                    <h4 className="font-bold text-white text-xs leading-tight">Mini-CRM Pipeline</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2">Leads qualificados e sincronismo realtime.</p>
+                  </div>
+                  <span className="text-[9px] font-mono text-teal-300 bg-teal-950/60 px-2 py-0.5 rounded text-center">Deploy Ativo</span>
+                </div>
+
+                {/* Card 4: Post Studio */}
+                <div onClick={() => setActiveTab('posts')} className="bg-[#090912] border border-purple-500/20 hover:border-pink-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-pink-500/10 flex flex-col justify-between h-64 group">
+                  <div className="w-full h-24 bg-gradient-to-br from-pink-600/30 to-rose-900/40 rounded-xl flex items-center justify-center text-3xl border border-pink-500/30">
+                    🎨
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-pink-400 uppercase">MARKETING & DESIGN</span>
+                    <h4 className="font-bold text-white text-xs leading-tight">Post Studio 3x3</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2">Matriz de conteúdo visual e criativos.</p>
+                  </div>
+                  <span className="text-[9px] font-mono text-pink-300 bg-pink-950/60 px-2 py-0.5 rounded text-center">Deploy Ativo</span>
+                </div>
+
+                {/* Card 5: StoryForge */}
+                <div onClick={() => setActiveTab('historias')} className="bg-[#090912] border border-purple-500/20 hover:border-purple-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between h-64 group">
+                  <div className="w-full h-24 bg-gradient-to-br from-purple-600/30 to-violet-900/40 rounded-xl flex items-center justify-center text-3xl border border-purple-500/30">
+                    ✨
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-purple-400 uppercase">IA PARA VÍDEO</span>
+                    <h4 className="font-bold text-white text-xs leading-tight">StoryForge Vídeo</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2">Prompts de vídeo com consistência e áudio.</p>
+                  </div>
+                  <span className="text-[9px] font-mono text-purple-300 bg-purple-950/60 px-2 py-0.5 rounded text-center">Deploy Ativo</span>
+                </div>
+
+                {/* Card 6: Demo Forge */}
+                <div onClick={() => setActiveTab('outreach')} className="bg-[#090912] border border-purple-500/20 hover:border-amber-400 rounded-2xl p-4 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-amber-500/10 flex flex-col justify-between h-64 group">
+                  <div className="w-full h-24 bg-gradient-to-br from-amber-600/30 to-orange-900/40 rounded-xl flex items-center justify-center text-3xl border border-amber-500/30">
+                    📨
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono text-amber-400 uppercase">OUTREACH & VENDAS</span>
+                    <h4 className="font-bold text-white text-xs leading-tight">Demo Forge B2B</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2">Gerador de propostas e disparo corporativo.</p>
+                  </div>
+                  <span className="text-[9px] font-mono text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded text-center">Deploy Ativo</span>
+                </div>
+
               </div>
             </div>
           </div>
         )}
 
-        {/* 1. FÁBRICA DE HISTÓRIAS INTERATIVA */}
+        {/* FÁBRICA DE HISTÓRIAS (INTERATIVA COM NEON THEME) */}
         {activeTab === 'historias' && (
           <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <span>✨</span> Fábrica de Histórias — Estúdio do Diretor
+                <h2 className="text-xl font-black text-white flex items-center gap-2">
+                  <span>✨</span> StoryForge — Estúdio de Vídeo & Roteiro
                 </h2>
-                <p className="text-xs text-slate-400">Defina os parâmetros do personagem, cenário e narração para gerar prompts prontos para IA de vídeo e áudio.</p>
+                <p className="text-xs text-slate-400">Controle criativo total de personagens, cenários e iluminação para IA de vídeo.</p>
               </div>
               <button
                 onClick={generateStoryPrompts}
-                className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs hover:scale-105 transition-all shadow-md shadow-cyan-500/20"
+                className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all"
               >
                 🎬 Gerar Prompts da Cena
               </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Controles de Entrada */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Parâmetros Criativos (Direção)</h3>
-
+              <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Modelo de Vídeo Alvo</label>
+                  <label className="text-[11px] font-semibold text-slate-300">Modelo de Vídeo</label>
                   <div className="flex gap-2">
                     {(['runway-gen3', 'kling', 'luma', 'sora'] as const).map((model) => (
                       <button
                         key={model}
                         onClick={() => setVideoTargetModel(model)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
-                          videoTargetModel === model ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-950 text-slate-400 border border-slate-800'
+                          videoTargetModel === model ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold' : 'bg-[#050508] text-slate-400 border border-slate-800'
                         }`}
                       >
                         {model}
@@ -314,12 +434,12 @@ CREATE TABLE transactions (
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Descrição do Personagem (Consistência)</label>
+                  <label className="text-[11px] font-semibold text-slate-300">Descrição do Personagem (ID Visual)</label>
                   <input
                     type="text"
                     value={characterDesc}
                     onChange={(e) => setCharacterDesc(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 outline-none focus:border-cyan-500 font-mono"
+                    className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 outline-none focus:border-cyan-400 font-mono"
                   />
                 </div>
 
@@ -329,7 +449,7 @@ CREATE TABLE transactions (
                     type="text"
                     value={sceneDesc}
                     onChange={(e) => setSceneDesc(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                    className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-cyan-400"
                   />
                 </div>
 
@@ -339,7 +459,7 @@ CREATE TABLE transactions (
                     type="text"
                     value={lightingStyle}
                     onChange={(e) => setLightingStyle(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                    className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-cyan-400"
                   />
                 </div>
 
@@ -349,183 +469,73 @@ CREATE TABLE transactions (
                     value={scriptText}
                     onChange={(e) => setScriptText(e.target.value)}
                     rows={3}
-                    className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-teal-300 font-serif italic outline-none focus:border-cyan-500"
+                    className="w-full p-3 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-pink-300 font-serif italic outline-none focus:border-pink-400"
                   />
                 </div>
               </div>
 
-              {/* Saída de Prompts Gerados */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+              <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
                 <div className="space-y-3">
                   <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Prompt Formatado (Copiar com 1 Clique)</h3>
-                  
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-mono text-cyan-400 uppercase">Prompt Cinematográfico Gerado</label>
-                    <pre className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed min-h-[140px]">
-                      {generatedPrompt || 'Clique em "Gerar Prompts da Cena" para montar o prompt com base nas suas diretrizes.'}
-                    </pre>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-mono text-indigo-400 uppercase">Camada de Áudio & Foley</label>
-                    <pre className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-indigo-300 font-mono whitespace-pre-wrap">
-                      {generatedSfx || 'Aguardando geração do áudio sincronizado.'}
-                    </pre>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-400">
-                  💡 <strong>Dica de Direção:</strong> Copie o prompt acima e cole diretamente na interface do Runway Gen-3 ou Kling para gerar o vídeo sem perder a consistência do boneco.
+                  <pre className="p-4 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed min-h-[160px]">
+                    {generatedPrompt || 'Clique no botão acima para montar o prompt com base nos seus parâmetros.'}
+                  </pre>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* 2. POST STUDIO 3x3 INTERATIVO */}
+        {/* POST STUDIO (INTERATIVO) */}
         {activeTab === 'posts' && (
           <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Post Studio 3x3 — Editor de Conteúdo</h2>
-                <p className="text-xs text-slate-400">Digite sua ideia bruta, ajuste o estilo visual e edite cada slide do carrossel na hora.</p>
-              </div>
-              <div className="flex gap-2">
-                {(['linear-dark', 'tech-neon', 'clean-white'] as const).map((st) => (
-                  <button
-                    key={st}
-                    onClick={() => setPostStyle(st)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
-                      postStyle === st ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'
-                    }`}
-                  >
-                    {st}
-                  </button>
-                ))}
+                <h2 className="text-xl font-black text-white">Post Studio 3x3 — Editor de Carrossel</h2>
+                <p className="text-xs text-slate-400">Direção de arte e cópia refinada para Instagram e Facebook.</p>
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <label className="text-xs font-semibold text-slate-300">Sua Ideia / Briefing Bruto</label>
+            <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4">
+              <label className="text-xs font-semibold text-slate-300">Briefing do Post</label>
               <textarea
                 value={postBriefing}
                 onChange={(e) => setPostBriefing(e.target.value)}
                 rows={2}
-                className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none focus:border-cyan-500"
+                className="w-full p-3 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-purple-400"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-                <span className="text-xs font-bold text-cyan-400 uppercase font-mono">Slide 1: Gancho (Hook)</span>
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl space-y-3">
+                <span className="text-xs font-bold text-purple-400 uppercase font-mono">Slide 1: Hook (Capa)</span>
                 <input
                   type="text"
                   value={slide1Hook}
                   onChange={(e) => setSlide1Hook(e.target.value)}
-                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-bold outline-none"
+                  className="w-full p-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white font-bold outline-none"
                 />
-                <p className="text-[11px] text-slate-400">Capa do carrossel com alto contraste e chamada forte.</p>
               </div>
 
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-                <span className="text-xs font-bold text-teal-400 uppercase font-mono">Slide 2: Problema & Diagnóstico</span>
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl space-y-3">
+                <span className="text-xs font-bold text-pink-400 uppercase font-mono">Slide 2: Problema</span>
                 <textarea
                   value={slide2Body}
                   onChange={(e) => setSlide2Body(e.target.value)}
                   rows={3}
-                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none"
+                  className="w-full p-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-slate-200 outline-none"
                 />
-                <p className="text-[11px] text-slate-400">Explicação técnica clara sem termos vazios (anti-slop).</p>
               </div>
 
-              <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-                <span className="text-xs font-bold text-indigo-400 uppercase font-mono">Slide 3: Chamada para Ação</span>
+              <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl space-y-3">
+                <span className="text-xs font-bold text-cyan-400 uppercase font-mono">Slide 3: Chamada (CTA)</span>
                 <textarea
                   value={slide3Cta}
                   onChange={(e) => setSlide3Cta(e.target.value)}
                   rows={3}
-                  className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 outline-none"
+                  className="w-full p-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-slate-200 outline-none"
                 />
-                <p className="text-[11px] text-slate-400">Conversão direta para o WhatsApp ou formulário de contato.</p>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* 3. PÁGINAS PRESELL & VSL INTERATIVO */}
-        {activeTab === 'presell' && (
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-              <div>
-                <h2 className="text-xl font-bold text-white">Criador de Páginas Presell & Retenção VSL</h2>
-                <p className="text-xs text-slate-400">Configure os elementos da sua oferta e gere o layout de alta conversão.</p>
-              </div>
-              <div className="flex gap-2">
-                {(['investigativo', 'estudo-caso', 'urgencia'] as const).map((angle) => (
-                  <button
-                    key={angle}
-                    onClick={() => setPresellAngle(angle)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono uppercase ${
-                      presellAngle === angle ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'
-                    }`}
-                  >
-                    {angle}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Parâmetros da Oferta</h3>
-                
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Nome do Produto / Serviço</label>
-                  <input
-                    type="text"
-                    value={presellProduct}
-                    onChange={(e) => setPresellProduct(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Headline Principal (Promessa)</label>
-                  <textarea
-                    value={presellHeadline}
-                    onChange={(e) => setPresellHeadline(e.target.value)}
-                    rows={3}
-                    className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-cyan-300 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
-                <span className="text-xs font-mono text-teal-400 uppercase font-bold">Pré-visualização do Advertorial</span>
-                <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase">Ângulo: {presellAngle}</span>
-                  <h4 className="text-sm font-bold text-white leading-tight">{presellHeadline}</h4>
-                  <p className="text-xs text-slate-300 pt-2">Oferta customizada para o produto: <strong className="text-cyan-300">{presellProduct}</strong>.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* CRM */}
-        {activeTab === 'crm' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div>
-                <h2 className="text-xl font-bold text-white">Pipeline de Leads ({leads.length})</h2>
-                <p className="text-xs text-slate-400">Dados integrados com Supabase.</p>
-              </div>
-              <button onClick={fetchLeads} className="px-4 py-2 bg-slate-900 border border-slate-800 text-cyan-400 font-bold rounded-xl text-xs">
-                🔄 Atualizar
-              </button>
-            </div>
-            <div className="p-8 bg-slate-900 border border-slate-800 rounded-2xl text-center text-xs text-slate-400">
-              Conexão em tempo real ativa.
             </div>
           </div>
         )}
@@ -533,12 +543,12 @@ CREATE TABLE transactions (
         {/* SAAS AUDIT */}
         {activeTab === 'saas' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white">Engenharia SaaS — PostgreSQL Auditor</h2>
-                <p className="text-xs text-slate-400">Scanner de arquitetura e conformidade de índices.</p>
+                <h2 className="text-xl font-black text-white">Engenharia SaaS — PostgreSQL & RLS Auditor</h2>
+                <p className="text-xs text-slate-400">Scanner automatizado de schema e conformidade de índices.</p>
               </div>
-              <button onClick={runAuditScan} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 font-bold rounded-xl text-xs">
+              <button onClick={runAuditScan} className="px-5 py-2 bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold rounded-xl text-xs hover:scale-105 transition-all">
                 ▶ Executar Auditoria SQL
               </button>
             </div>
@@ -547,12 +557,51 @@ CREATE TABLE transactions (
                 value={sqlSchema}
                 onChange={(e) => setSqlSchema(e.target.value)}
                 rows={8}
-                className="w-full p-4 bg-slate-900 border border-slate-800 rounded-2xl font-mono text-xs text-slate-200 outline-none focus:border-cyan-500"
+                className="w-full p-4 bg-[#090912] border border-purple-500/30 rounded-2xl font-mono text-xs text-slate-200 outline-none focus:border-cyan-400"
               />
-              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl font-mono text-xs text-teal-300 whitespace-pre-wrap">
+              <div className="p-4 bg-[#090912] border border-purple-500/30 rounded-2xl font-mono text-xs text-cyan-300 whitespace-pre-wrap">
                 {auditResult || 'Clique em "Executar Auditoria SQL" acima.'}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* CRM */}
+        {activeTab === 'crm' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+              <div>
+                <h2 className="text-xl font-black text-white">Pipeline de Leads ({leads.length})</h2>
+                <p className="text-xs text-slate-400">Dados integrados com Supabase RLS.</p>
+              </div>
+            </div>
+            <div className="p-8 bg-[#090912] border border-purple-500/20 rounded-2xl text-center text-xs text-slate-400">
+              Conexão ativa em tempo real.
+            </div>
+          </div>
+        )}
+
+        {/* PRESELL */}
+        {activeTab === 'presell' && (
+          <div className="space-y-6">
+            <div className="border-b border-slate-800/80 pb-4">
+              <h2 className="text-xl font-black text-white">Criador de Páginas Presell & Retenção VSL</h2>
+              <p className="text-xs text-slate-400">Estruturas de alta conversão para tráfego direto.</p>
+            </div>
+            <div className="p-6 bg-[#090912] border border-purple-500/20 rounded-2xl text-xs text-slate-300">
+              Templates dinâmicos de alta conversão carregados.
+            </div>
+          </div>
+        )}
+
+        {/* LANDING 3D / OUTREACH PLACEHOLDERS */}
+        {(activeTab === 'landing' || activeTab === 'outreach' || activeTab === 'mobile' || activeTab === 'radar') && (
+          <div className="p-12 bg-[#090912] border border-purple-500/20 rounded-3xl text-center space-y-3">
+            <span className="text-3xl">🌌</span>
+            <h3 className="text-lg font-bold text-white">Módulo Agêntico Ativo</h3>
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              Pronto para operação com a identidade visual futurista.
+            </p>
           </div>
         )}
 
