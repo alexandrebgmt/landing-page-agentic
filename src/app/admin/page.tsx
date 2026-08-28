@@ -22,13 +22,16 @@ export default function NexusMasterSuite() {
   const [passwordInput, setPasswordInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [hoveredModule, setHoveredModule] = useState<string | null>(null);
+  
+  // Guardião ativo no Banner (Dinâmico ao passar o mouse)
+  const [activeGuardian, setActiveGuardian] = useState<string>('/nexus-lion.jpg');
+  const [guardianTitle, setGuardianTitle] = useState<string>('NEXUS LEÃO // COMANDANTE GERAL');
 
   // StoryForge States
   const [videoTargetModel, setVideoTargetModel] = useState<'runway-gen3' | 'kling' | 'luma' | 'sora'>('runway-gen3');
-  const [characterDesc, setCharacterDesc] = useState('Cyber Lion Commander (Titanium armor, glowing cyan circuitry, natural mane)');
-  const [sceneDesc, setSceneDesc] = useState('Fortress server core with floating holographic telemetry');
-  const [lightingStyle, setLightingStyle] = useState('Ultraviolet cyber-glow with cyan rim reflections');
+  const [characterDesc, setCharacterDesc] = useState('Cyber Eagle Commander (Biomechanical wings, glowing amber circuits)');
+  const [sceneDesc, setSceneDesc] = useState('Futuristic virtual production cinema stage with audio waveforms');
+  const [lightingStyle, setLightingStyle] = useState('Dramatic studio spotlights with amber volumetric haze');
   const [scriptText, setScriptText] = useState('No centro da tempestade neural, apenas as arquiteturas sólidas permanecem invioláveis.');
   const [generatedPrompt, setGeneratedPrompt] = useState('');
 
@@ -89,7 +92,7 @@ export default function NexusMasterSuite() {
   }
 
   const generateStoryPrompts = () => {
-    const prompt = `[CYBER_CORE // ${videoTargetModel.toUpperCase()}] Cinematic 8k shot of ${characterDesc}, standing on ${sceneDesc}. Atmosphere: ${lightingStyle}. Volumetric purple laser fog, photoreal reflection, ultra-detailed textures. Motion: Slow fluid tracking shot.`;
+    const prompt = `[CYBER_CORE // ${videoTargetModel.toUpperCase()}] Cinematic 8k shot of ${characterDesc}, standing on ${sceneDesc}. Atmosphere: ${lightingStyle}. Volumetric gold laser fog, photoreal reflection, ultra-detailed textures. Motion: Slow fluid tracking shot.`;
     setGeneratedPrompt(prompt);
   };
 
@@ -269,97 +272,111 @@ export default function NexusMasterSuite() {
                 <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
                   Centro de Controle Nexus <span className="text-xs font-mono font-normal px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">v5.2 Cyber Edition</span>
                 </h1>
-                <p className="text-xs text-slate-400 mt-1">Estúdio de Arquitetura de IA, Identidade Visual Neon e Engenharia de Escala.</p>
+                <p className="text-xs text-slate-400 mt-1">Esquadrão Guardião Agêntico de Alta Performance.</p>
               </div>
               <button onClick={() => setActiveTab('historias')} className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all">
                 ✨ Abrir Estúdio Criativo
               </button>
             </div>
 
-            {/* BANNER 3D COM O LEÃO CIBERNÉTICO NEXUS */}
-            <div className="relative rounded-3xl overflow-hidden border border-cyan-500/40 shadow-2xl shadow-cyan-950/50 group transition-all duration-500 hover:scale-[1.008] hover:border-cyan-300 bg-[#080811]">
+            {/* BANNER 3D DINÂMICO DOS 6 GUARDIÕES */}
+            <div className="relative rounded-3xl overflow-hidden border border-purple-500/40 shadow-2xl shadow-purple-950/60 group transition-all duration-500 hover:border-cyan-400 bg-[#080811]">
               
-              {/* Imagem do Leão Cibernético */}
+              {/* Imagem de Fundo Dinâmica */}
               <div 
-                className="w-full h-96 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{ backgroundImage: "url('/nexus-lion.jpg')" }}
+                className="w-full h-96 bg-cover bg-center transition-all duration-500 group-hover:scale-[1.02]"
+                style={{ backgroundImage: `url('${activeGuardian}')` }}
               >
-                {/* Gradiente de Fusão Escuro */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-black/30 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-black/25 to-transparent"></div>
               </div>
 
-              {/* Botões de Acesso Rápido sobre o Banner */}
-              <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-[#050508] via-[#050508]/50 to-transparent">
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5">
+              {/* Tag Superior do Guardião Ativo */}
+              <div className="absolute top-4 left-6 px-3 py-1 bg-slate-950/80 border border-cyan-400/40 rounded-full backdrop-blur-md">
+                <span className="text-[10px] font-mono text-cyan-300 tracking-wider uppercase font-bold">
+                  {guardianTitle}
+                </span>
+              </div>
+
+              {/* Seletor Dinâmico dos 6 Guardiões */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
                   
+                  {/* 1. Leão - NexusData */}
                   <button
                     onClick={() => setActiveTab('landing')}
-                    onMouseEnter={() => setHoveredModule('nexusdados')}
-                    onMouseLeave={() => setHoveredModule(null)}
+                    onMouseEnter={() => {
+                      setActiveGuardian('/nexus-lion.jpg');
+                      setGuardianTitle('1. LEÃO // NEXUSDATA 3D & FRONTEND');
+                    }}
                     className="p-3 bg-slate-950/85 backdrop-blur-md border border-cyan-500/50 hover:border-cyan-300 hover:bg-cyan-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-cyan-500/40"
                   >
-                    <span className="text-[10px] font-mono text-cyan-300 block">🌐 3D</span>
+                    <span className="text-[10px] font-mono text-cyan-300 block">🦁 3D</span>
                     <span className="text-xs font-black text-white">NEXUSDADOS</span>
                   </button>
 
+                  {/* 2. Tigre - Micro-SaaS */}
                   <button
                     onClick={() => setActiveTab('saas')}
-                    onMouseEnter={() => setHoveredModule('saas')}
-                    onMouseLeave={() => setHoveredModule(null)}
+                    onMouseEnter={() => {
+                      setActiveGuardian('/nexus-tiger.jpg');
+                      setGuardianTitle('2. TIGRE // AUDIT PRO MICRO-SAAS & SQL');
+                    }}
                     className="p-3 bg-slate-950/85 backdrop-blur-md border border-purple-500/50 hover:border-purple-300 hover:bg-purple-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
                   >
-                    <span className="text-[10px] font-mono text-purple-300 block">⚙️ SQL</span>
+                    <span className="text-[10px] font-mono text-purple-300 block">🐯 SQL</span>
                     <span className="text-xs font-black text-white">MICRO SAAS</span>
                   </button>
 
+                  {/* 3. Tubarão - Pipeline CRM */}
                   <button
                     onClick={() => setActiveTab('crm')}
-                    onMouseEnter={() => setHoveredModule('crm')}
-                    onMouseLeave={() => setHoveredModule(null)}
+                    onMouseEnter={() => {
+                      setActiveGuardian('/nexus-shark.jpg');
+                      setGuardianTitle('3. TUBARÃO // PIPELINE CRM & LEADS RADAR');
+                    }}
                     className="p-3 bg-slate-950/85 backdrop-blur-md border border-emerald-500/50 hover:border-emerald-300 hover:bg-emerald-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-emerald-500/40"
                   >
-                    <span className="text-[10px] font-mono text-emerald-300 block">🎯 LEADS</span>
+                    <span className="text-[10px] font-mono text-emerald-300 block">🦈 LEADS</span>
                     <span className="text-xs font-black text-white">PIPELINE</span>
                   </button>
 
+                  {/* 4. Pantera - Estúdio 3x3 */}
                   <button
                     onClick={() => setActiveTab('posts')}
-                    onMouseEnter={() => setHoveredModule('posts')}
-                    onMouseLeave={() => setHoveredModule(null)}
+                    onMouseEnter={() => {
+                      setActiveGuardian('/nexus-panther.jpg');
+                      setGuardianTitle('4. PANTERA // ESTÚDIO 3X3 & BRANDKIT');
+                    }}
                     className="p-3 bg-slate-950/85 backdrop-blur-md border border-pink-500/50 hover:border-pink-300 hover:bg-pink-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-pink-500/40"
                   >
-                    <span className="text-[10px] font-mono text-pink-300 block">🎨 3x3</span>
+                    <span className="text-[10px] font-mono text-pink-300 block">🐆 3x3</span>
                     <span className="text-xs font-black text-white">ESTÚDIO</span>
                   </button>
 
+                  {/* 5. Águia - StoryForge */}
                   <button
                     onClick={() => setActiveTab('historias')}
-                    onMouseEnter={() => setHoveredModule('video')}
-                    onMouseLeave={() => setHoveredModule(null)}
+                    onMouseEnter={() => {
+                      setActiveGuardian('/nexus-eagle.jpg');
+                      setGuardianTitle('5. ÁGUIA // STORYFORGE VÍDEO & ÁUDIO');
+                    }}
                     className="p-3 bg-slate-950/85 backdrop-blur-md border border-amber-500/50 hover:border-amber-300 hover:bg-amber-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-amber-500/40"
                   >
-                    <span className="text-[10px] font-mono text-amber-300 block">✨ IA</span>
-                    <span className="text-xs font-black text-white">VÍDEO</span>
+                    <span className="text-[10px] font-mono text-amber-300 block">🦅 VÍDEO</span>
+                    <span className="text-xs font-black text-white">STORYFORGE</span>
                   </button>
 
+                  {/* 6. Mastodonte - Demo Forge B2B */}
                   <button
                     onClick={() => setActiveTab('outreach')}
-                    onMouseEnter={() => setHoveredModule('outreach')}
-                    onMouseLeave={() => setHoveredModule(null)}
+                    onMouseEnter={() => {
+                      setActiveGuardian('/nexus-mammoth.jpg');
+                      setGuardianTitle('6. MASTODONTE // DEMO FORGE & OUTREACH B2B');
+                    }}
                     className="p-3 bg-slate-950/85 backdrop-blur-md border border-orange-500/50 hover:border-orange-300 hover:bg-orange-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-orange-500/40"
                   >
-                    <span className="text-[10px] font-mono text-orange-300 block">📁 B2B</span>
+                    <span className="text-[10px] font-mono text-orange-300 block">🦣 B2B</span>
                     <span className="text-xs font-black text-white">DEMO FORGE</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('historias')}
-                    onMouseEnter={() => setHoveredModule('historias')}
-                    onMouseLeave={() => setHoveredModule(null)}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-purple-500/50 hover:border-purple-300 hover:bg-purple-600/30 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
-                  >
-                    <span className="text-[10px] font-mono text-purple-300 block">🎬 VÍDEO</span>
-                    <span className="text-xs font-black text-white">FÁBRICA</span>
                   </button>
 
                 </div>
