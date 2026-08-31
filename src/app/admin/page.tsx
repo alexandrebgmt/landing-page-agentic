@@ -16,6 +16,45 @@ interface Lead {
 
 const ADMIN_ACCESS_KEY = 'nexus2026';
 
+interface GuardianInfo {
+  image: string;
+  title: string;
+  position: string;
+}
+
+const GUARDIANS: Record<string, GuardianInfo> = {
+  lion: {
+    image: '/nexus-lion.jpg',
+    title: '1. LEÃO // NEXUSDATA 3D & FRONTEND',
+    position: 'center 20%',
+  },
+  tiger: {
+    image: '/nexus-tiger.jpg',
+    title: '2. TIGRE // AUDIT PRO MICRO-SAAS & SQL',
+    position: 'center 15%',
+  },
+  shark: {
+    image: '/nexus-shark.jpg',
+    title: '3. TUBARÃO // PIPELINE CRM & LEADS RADAR',
+    position: 'center 15%',
+  },
+  panther: {
+    image: '/nexus-panther.jpg',
+    title: '4. PANTERA // ESTÚDIO 3X3 & BRANDKIT',
+    position: 'center 15%',
+  },
+  eagle: {
+    image: '/nexus-eagle.jpg',
+    title: '5. ÁGUIA // STORYFORGE VÍDEO & ÁUDIO',
+    position: 'center 18%',
+  },
+  mammoth: {
+    image: '/nexus-mammoth.jpg',
+    title: '6. MASTODONTE // DEMO FORGE & OUTREACH B2B',
+    position: 'center 10%',
+  },
+};
+
 export default function NexusMasterSuite() {
   const [activeTab, setActiveTab] = useState<string>('hub');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -23,9 +62,14 @@ export default function NexusMasterSuite() {
   const [errorMsg, setErrorMsg] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
   
-  // Guardião ativo no Banner (Dinâmico ao passar o mouse)
-  const [activeGuardian, setActiveGuardian] = useState<string>('/nexus-lion.jpg');
-  const [guardianTitle, setGuardianTitle] = useState<string>('NEXUS LEÃO // COMANDANTE GERAL');
+  const [activeKey, setActiveKey] = useState<string>('lion');
+
+  // Knowledge-Master State
+  const [courseUrl, setCourseUrl] = useState('');
+  const [courseUser, setCourseUser] = useState('');
+  const [coursePass, setCoursePass] = useState('');
+  const [targetSkillName, setTargetSkillName] = useState('instagram-post-mastery');
+  const [kmStatus, setKmStatus] = useState<string | null>(null);
 
   // StoryForge States
   const [videoTargetModel, setVideoTargetModel] = useState<'runway-gen3' | 'kling' | 'luma' | 'sora'>('runway-gen3');
@@ -91,6 +135,10 @@ export default function NexusMasterSuite() {
     }
   }
 
+  const triggerKnowledgeMaster = () => {
+    setKmStatus(`🚀 Disparando sessão de assimilação...\n🎯 Plataforma: ${courseUrl || 'https://exemplo-curso.com'}\n📦 Gerando Skill Filha: ${targetSkillName}\n\nPara executar no terminal de fundo, execute:\npython3 .agents/skills/knowledge-master/crawler_learner.py "${courseUrl || 'URL'}" "${courseUser || 'USER'}" "${coursePass || 'PASS'}" "${targetSkillName}"`);
+  };
+
   const generateStoryPrompts = () => {
     const prompt = `[CYBER_CORE // ${videoTargetModel.toUpperCase()}] Cinematic 8k shot of ${characterDesc}, standing on ${sceneDesc}. Atmosphere: ${lightingStyle}. Volumetric gold laser fog, photoreal reflection, ultra-detailed textures. Motion: Slow fluid tracking shot.`;
     setGeneratedPrompt(prompt);
@@ -99,6 +147,8 @@ export default function NexusMasterSuite() {
   const runAuditScan = () => {
     setAuditResult('⚡ [NEXUS CYBER-SCAN COMPLETE]\n✓ RLS Policy: Ativo na tabela de telemetria\n✓ Concorrência: Indexação otimizada para alto throughput\n✓ Latência Estimada: < 12ms');
   };
+
+  const currentGuardian = GUARDIANS[activeKey] || GUARDIANS.lion;
 
   if (!isAuthenticated) {
     return (
@@ -169,6 +219,16 @@ export default function NexusMasterSuite() {
               }`}
             >
               <span>🌌</span> Vitrine & Visão Geral
+            </button>
+
+            <button
+              onClick={() => setActiveTab('knowledge')}
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium flex items-center justify-between text-xs ${
+                activeTab === 'knowledge' ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/30 text-purple-200 border border-purple-500/50 shadow-lg shadow-purple-950/50' : 'text-slate-400 hover:text-white hover:bg-slate-850'
+              }`}
+            >
+              <span className="flex items-center gap-2.5"><span>🧠</span> Knowledge-Master</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-500/40">MOTHER</span>
             </button>
 
             <button
@@ -274,41 +334,40 @@ export default function NexusMasterSuite() {
                 </h1>
                 <p className="text-xs text-slate-400 mt-1">Esquadrão Guardião Agêntico de Alta Performance.</p>
               </div>
-              <button onClick={() => setActiveTab('historias')} className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all">
-                ✨ Abrir Estúdio Criativo
+              <button onClick={() => setActiveTab('knowledge')} className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-purple-600/30 transition-all">
+                🧠 Abrir Knowledge-Master
               </button>
             </div>
 
-            {/* BANNER 3D DINÂMICO DOS 6 GUARDIÕES */}
+            {/* BANNER 3D DINÂMICO COM ENQUADRAMENTO PROPORCIONAL */}
             <div className="relative rounded-3xl overflow-hidden border border-purple-500/40 shadow-2xl shadow-purple-950/60 group transition-all duration-500 hover:border-cyan-400 bg-[#080811]">
               
-              {/* Imagem de Fundo Dinâmica */}
               <div 
-                className="w-full h-96 bg-cover bg-center transition-all duration-500 group-hover:scale-[1.02]"
-                style={{ backgroundImage: `url('${activeGuardian}')` }}
+                className="w-full h-[460px] bg-cover transition-all duration-700 ease-out group-hover:scale-[1.02]"
+                style={{ 
+                  backgroundImage: `url('${currentGuardian.image}')`,
+                  backgroundPosition: currentGuardian.position,
+                }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-black/25 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-black/20 to-transparent"></div>
               </div>
 
-              {/* Tag Superior do Guardião Ativo */}
-              <div className="absolute top-4 left-6 px-3 py-1 bg-slate-950/80 border border-cyan-400/40 rounded-full backdrop-blur-md">
-                <span className="text-[10px] font-mono text-cyan-300 tracking-wider uppercase font-bold">
-                  {guardianTitle}
+              <div className="absolute top-5 left-6 px-3.5 py-1.5 bg-slate-950/85 border border-cyan-400/50 rounded-full backdrop-blur-md shadow-lg shadow-cyan-950/50">
+                <span className="text-[11px] font-mono text-cyan-300 tracking-wider uppercase font-bold">
+                  {currentGuardian.title}
                 </span>
               </div>
 
-              {/* Seletor Dinâmico dos 6 Guardiões */}
               <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
                   
                   {/* 1. Leão - NexusData */}
                   <button
                     onClick={() => setActiveTab('landing')}
-                    onMouseEnter={() => {
-                      setActiveGuardian('/nexus-lion.jpg');
-                      setGuardianTitle('1. LEÃO // NEXUSDATA 3D & FRONTEND');
-                    }}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-cyan-500/50 hover:border-cyan-300 hover:bg-cyan-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-cyan-500/40"
+                    onMouseEnter={() => setActiveKey('lion')}
+                    className={`p-3 bg-slate-950/90 backdrop-blur-md rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg ${
+                      activeKey === 'lion' ? 'border-2 border-cyan-400 shadow-cyan-500/50 bg-cyan-950/40' : 'border border-cyan-500/40 hover:border-cyan-300'
+                    }`}
                   >
                     <span className="text-[10px] font-mono text-cyan-300 block">🦁 3D</span>
                     <span className="text-xs font-black text-white">NEXUSDADOS</span>
@@ -317,11 +376,10 @@ export default function NexusMasterSuite() {
                   {/* 2. Tigre - Micro-SaaS */}
                   <button
                     onClick={() => setActiveTab('saas')}
-                    onMouseEnter={() => {
-                      setActiveGuardian('/nexus-tiger.jpg');
-                      setGuardianTitle('2. TIGRE // AUDIT PRO MICRO-SAAS & SQL');
-                    }}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-purple-500/50 hover:border-purple-300 hover:bg-purple-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-purple-500/40"
+                    onMouseEnter={() => setActiveKey('tiger')}
+                    className={`p-3 bg-slate-950/90 backdrop-blur-md rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg ${
+                      activeKey === 'tiger' ? 'border-2 border-purple-400 shadow-purple-500/50 bg-purple-950/40' : 'border border-purple-500/40 hover:border-purple-300'
+                    }`}
                   >
                     <span className="text-[10px] font-mono text-purple-300 block">🐯 SQL</span>
                     <span className="text-xs font-black text-white">MICRO SAAS</span>
@@ -330,11 +388,10 @@ export default function NexusMasterSuite() {
                   {/* 3. Tubarão - Pipeline CRM */}
                   <button
                     onClick={() => setActiveTab('crm')}
-                    onMouseEnter={() => {
-                      setActiveGuardian('/nexus-shark.jpg');
-                      setGuardianTitle('3. TUBARÃO // PIPELINE CRM & LEADS RADAR');
-                    }}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-emerald-500/50 hover:border-emerald-300 hover:bg-emerald-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-emerald-500/40"
+                    onMouseEnter={() => setActiveKey('shark')}
+                    className={`p-3 bg-slate-950/90 backdrop-blur-md rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg ${
+                      activeKey === 'shark' ? 'border-2 border-emerald-400 shadow-emerald-500/50 bg-emerald-950/40' : 'border border-emerald-500/40 hover:border-emerald-300'
+                    }`}
                   >
                     <span className="text-[10px] font-mono text-emerald-300 block">🦈 LEADS</span>
                     <span className="text-xs font-black text-white">PIPELINE</span>
@@ -343,11 +400,10 @@ export default function NexusMasterSuite() {
                   {/* 4. Pantera - Estúdio 3x3 */}
                   <button
                     onClick={() => setActiveTab('posts')}
-                    onMouseEnter={() => {
-                      setActiveGuardian('/nexus-panther.jpg');
-                      setGuardianTitle('4. PANTERA // ESTÚDIO 3X3 & BRANDKIT');
-                    }}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-pink-500/50 hover:border-pink-300 hover:bg-pink-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-pink-500/40"
+                    onMouseEnter={() => setActiveKey('panther')}
+                    className={`p-3 bg-slate-950/90 backdrop-blur-md rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg ${
+                      activeKey === 'panther' ? 'border-2 border-pink-400 shadow-pink-500/50 bg-pink-950/40' : 'border border-pink-500/40 hover:border-pink-300'
+                    }`}
                   >
                     <span className="text-[10px] font-mono text-pink-300 block">🐆 3x3</span>
                     <span className="text-xs font-black text-white">ESTÚDIO</span>
@@ -356,11 +412,10 @@ export default function NexusMasterSuite() {
                   {/* 5. Águia - StoryForge */}
                   <button
                     onClick={() => setActiveTab('historias')}
-                    onMouseEnter={() => {
-                      setActiveGuardian('/nexus-eagle.jpg');
-                      setGuardianTitle('5. ÁGUIA // STORYFORGE VÍDEO & ÁUDIO');
-                    }}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-amber-500/50 hover:border-amber-300 hover:bg-amber-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-amber-500/40"
+                    onMouseEnter={() => setActiveKey('eagle')}
+                    className={`p-3 bg-slate-950/90 backdrop-blur-md rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg ${
+                      activeKey === 'eagle' ? 'border-2 border-amber-400 shadow-amber-500/50 bg-amber-950/40' : 'border border-amber-500/40 hover:border-amber-300'
+                    }`}
                   >
                     <span className="text-[10px] font-mono text-amber-300 block">🦅 VÍDEO</span>
                     <span className="text-xs font-black text-white">STORYFORGE</span>
@@ -369,11 +424,10 @@ export default function NexusMasterSuite() {
                   {/* 6. Mastodonte - Demo Forge B2B */}
                   <button
                     onClick={() => setActiveTab('outreach')}
-                    onMouseEnter={() => {
-                      setActiveGuardian('/nexus-mammoth.jpg');
-                      setGuardianTitle('6. MASTODONTE // DEMO FORGE & OUTREACH B2B');
-                    }}
-                    className="p-3 bg-slate-950/85 backdrop-blur-md border border-orange-500/50 hover:border-orange-300 hover:bg-orange-500/20 rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg hover:shadow-orange-500/40"
+                    onMouseEnter={() => setActiveKey('mammoth')}
+                    className={`p-3 bg-slate-950/90 backdrop-blur-md rounded-xl text-center transition-all hover:-translate-y-1.5 hover:shadow-lg ${
+                      activeKey === 'mammoth' ? 'border-2 border-orange-400 shadow-orange-500/50 bg-orange-950/40' : 'border border-orange-500/40 hover:border-orange-300'
+                    }`}
                   >
                     <span className="text-[10px] font-mono text-orange-300 block">🦣 B2B</span>
                     <span className="text-xs font-black text-white">DEMO FORGE</span>
@@ -401,9 +455,87 @@ export default function NexusMasterSuite() {
                 <span className="text-[10px] text-slate-400 font-mono">nexusenterprise.br@gmail.com</span>
               </div>
               <div className="p-5 bg-[#090912] border border-purple-500/20 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all">
-                <span className="text-[10px] font-mono text-slate-400 uppercase">Skills Ativas</span>
-                <p className="text-3xl font-black text-cyan-400 mt-1">3 / 3</p>
-                <span className="text-[10px] text-purple-300">MCP, Agentic & Three.js</span>
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Skill-Mother</span>
+                <p className="text-2xl font-black text-cyan-400 mt-1">Auto-Evolutiva</p>
+                <span className="text-[10px] text-purple-300">Knowledge-Master Ativa</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* KNOWLEDGE-MASTER // SKILL-MOTHER */}
+        {activeTab === 'knowledge' && (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+              <div>
+                <h2 className="text-xl font-black text-white flex items-center gap-2">
+                  <span>🧠</span> KNOWLEDGE-MASTER — Fábrica de Habilidades (Skill-Mother)
+                </h2>
+                <p className="text-xs text-slate-400">Insira o link e credenciais do curso para o agente aprender e gerar uma Execution Skill filha.</p>
+              </div>
+              <button
+                onClick={triggerKnowledgeMaster}
+                className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl text-xs hover:scale-105 shadow-lg shadow-cyan-600/30 transition-all"
+              >
+                🚀 Iniciar Aprendizado Autônomo
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">URL da Plataforma / Curso</label>
+                  <input
+                    type="text"
+                    placeholder="https://kiwify.com.br/... ou https://plataforma.com/login"
+                    value={courseUrl}
+                    onChange={(e) => setCourseUrl(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 outline-none focus:border-cyan-400 font-mono"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-300">Usuário / E-mail</label>
+                    <input
+                      type="text"
+                      placeholder="seu-email@gmail.com"
+                      value={courseUser}
+                      onChange={(e) => setCourseUser(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-300">Senha de Acesso</label>
+                    <input
+                      type="password"
+                      placeholder="••••••••••••"
+                      value={coursePass}
+                      onChange={(e) => setCoursePass(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-white outline-none focus:border-cyan-400"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-slate-300">Nome da Nova Execution Skill a Ser Gerada</label>
+                  <input
+                    type="text"
+                    placeholder="ex: instagram-carousel-pro"
+                    value={targetSkillName}
+                    onChange={(e) => setTargetSkillName(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-pink-300 outline-none focus:border-pink-400 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-[#090912] border border-purple-500/20 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-white uppercase font-mono tracking-wider">Log & Telemetria do Robô</h3>
+                  <pre className="p-4 bg-[#050508] border border-purple-500/30 rounded-xl text-xs text-cyan-300 font-mono whitespace-pre-wrap leading-relaxed min-h-[160px]">
+                    {kmStatus || 'Aguardando parâmetros para iniciar a sessão de assimilação de conhecimento...'}
+                  </pre>
+                </div>
               </div>
             </div>
           </div>
